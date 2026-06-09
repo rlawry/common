@@ -1,0 +1,12 @@
+# Raw exam source material — not part of the published site
+*.pdf
+*.txt
+
+# Claude Code memory
+.claude/
+
+# Editor / OS
+.vs/
+.vscode/
+Thumbs.db
+.DS_Store

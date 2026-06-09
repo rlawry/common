@@ -1,0 +1,2968 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NY Earth &amp; Space Sciences Regents - Study Game</title>
+<style>
+  :root {
+    --blue:   #1a4a7a;
+    --sky:    #e8f2fc;
+    --green:  #1a6b3c;
+    --mint:   #e8f7ee;
+    --orange: #b34a00;
+    --peach:  #fef0e8;
+    --red:    #7a1a1a;
+    --pink:   #fde8e8;
+    --purple: #4a1a7a;
+    --lavender: #f0e8fd;
+    --gray:   #4a4a4a;
+    --light:  #f8f9fa;
+    --border: #dde3ea;
+    --yellow: #e6c200;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #222;
+    background: #f4f6f9;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--blue);
+    color: #fff;
+    padding: 1.2rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  header h1 { font-size: 1.3rem; }
+  header p { font-size: .82rem; opacity: .75; margin-top: .15rem; }
+  .back-btn {
+    display: inline-block;
+    background: rgba(255,255,255,.15);
+    color: #fff;
+    text-decoration: none;
+    font-size: .82rem;
+    font-weight: bold;
+    padding: .35rem .9rem;
+    border: 1px solid rgba(255,255,255,.35);
+    white-space: nowrap;
+  }
+  .back-btn:hover { background: rgba(255,255,255,.25); }
+
+  /* ── MAIN LAYOUT ── */
+  main { max-width: 860px; margin: 1.5rem auto; padding: 0 1.5rem 4rem; }
+
+  /* ── GAME MODES ── */
+  .mode-grid {
+    display: flex;
+    flex-direction: row;
+    gap: .5rem;
+    margin-bottom: 1.5rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .mode-grid::-webkit-scrollbar { display: none; }
+  .mode-card {
+    flex: 1 0 0;
+    min-width: 88px;
+    background: #fff;
+    border: 2px solid var(--border);
+    padding: .65rem .5rem;
+    cursor: pointer;
+    transition: border-color .2s, box-shadow .2s;
+    text-align: center;
+  }
+  .mode-card:hover { border-color: var(--blue); box-shadow: 0 2px 10px rgba(26,74,122,.1); }
+  .mode-card.active { border-color: var(--blue); background: var(--sky); }
+  .mode-icon { font-size: 1.4rem; margin-bottom: .2rem; }
+  .mode-card h3 { font-size: .78rem; color: var(--blue); margin-bottom: .1rem; }
+  .mode-card p { font-size: .66rem; color: var(--gray); line-height: 1.3; }
+
+  /* ── TOPIC FILTER ── */
+  .topic-filter {
+    background: #fff;
+    border: 1px solid var(--border);
+    padding: .85rem 1.1rem;
+    margin-bottom: 1.2rem;
+  }
+  .topic-filter h3 {
+    font-size: .78rem;
+    color: var(--gray);
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    margin-bottom: .55rem;
+  }
+  .filter-chips { display: flex; flex-wrap: wrap; gap: .35rem; }
+  .chip {
+    font-size: .75rem;
+    font-weight: bold;
+    padding: .2rem .6rem;
+    cursor: pointer;
+    color: #fff;
+    opacity: .35;
+    transition: opacity .2s;
+    white-space: nowrap;
+  }
+  .chip.on { opacity: 1; }
+  .chip-blue   { background: var(--blue); }
+  .chip-green  { background: var(--green); }
+  .chip-orange { background: var(--orange); }
+  .chip-purple { background: var(--purple); }
+  .chip-red    { background: var(--red); }
+
+  /* ── HUD ── */
+  .hud {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--blue);
+    color: #fff;
+    padding: .5rem 1.2rem;
+    font-size: .78rem;
+  }
+  .hud-stat { text-align: center; min-width: 48px; }
+  .hud-stat strong { display: block; font-size: 1.15rem; }
+
+  /* ── GAME ARENA ── */
+  #game-arena {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-top: none;
+    min-height: 320px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    text-align: center;
+  }
+  .placeholder-icon { font-size: 2.8rem; margin-bottom: .8rem; opacity: .25; }
+  .placeholder-text { color: var(--gray); font-size: .92rem; }
+
+  /* ── START BTN ── */
+  .start-btn {
+    display: block;
+    width: 100%;
+    background: var(--green);
+    color: #fff;
+    font-size: 1rem;
+    font-weight: bold;
+    padding: .8rem;
+    border: none;
+    cursor: pointer;
+    letter-spacing: .04em;
+    margin-top: 1rem;
+  }
+  .start-btn:hover { background: #145230; }
+  .start-btn:disabled { background: var(--border); color: #999; cursor: not-allowed; }
+
+  /* ── FLASHCARD ── */
+  .fc-wrap { width: 100%; }
+
+  .fc-progress-bar {
+    width: 100%;
+    height: 5px;
+    background: var(--border);
+    margin-bottom: 1.2rem;
+  }
+  .fc-progress-fill {
+    height: 100%;
+    background: var(--blue);
+    transition: width .3s;
+  }
+
+  .fc-scene {
+    perspective: 1200px;
+    width: 100%;
+    height: 220px;
+    cursor: pointer;
+    margin-bottom: 1rem;
+  }
+  .fc-card {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform .45s ease;
+  }
+  .fc-card.flipped { transform: rotateY(180deg); }
+
+  .fc-front, .fc-back {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.2rem 1.6rem;
+    border: 2px solid var(--border);
+  }
+  .fc-front { background: #fff; }
+  .fc-back  { background: var(--sky); transform: rotateY(180deg); }
+
+  .fc-label {
+    font-size: .7rem;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--gray);
+    margin-bottom: .5rem;
+  }
+  .fc-topic-badge {
+    font-size: .68rem;
+    font-weight: bold;
+    color: #fff;
+    padding: .1rem .45rem;
+    margin-bottom: .55rem;
+  }
+  .fc-question {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #222;
+    line-height: 1.45;
+  }
+  .fc-hint { font-size: .75rem; color: var(--gray); margin-top: .6rem; }
+  .fc-answer {
+    font-size: .9rem;
+    color: #222;
+    line-height: 1.5;
+  }
+  .fc-answer strong { color: var(--blue); }
+
+  .fc-counter {
+    font-size: .8rem;
+    color: var(--gray);
+    margin-bottom: .5rem;
+    text-align: center;
+  }
+
+  .fc-nav {
+    display: flex;
+    gap: .5rem;
+    width: 100%;
+    margin-bottom: .6rem;
+  }
+  .fc-nav button {
+    flex: 1;
+    padding: .55rem;
+    font-size: .82rem;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    color: #fff;
+  }
+  .btn-nope   { background: var(--red); }
+  .btn-almost { background: #b38a00; }
+  .btn-know   { background: var(--green); }
+  .btn-nope:hover   { background: #5c1313; }
+  .btn-almost:hover { background: #8a6800; }
+  .btn-know:hover   { background: #145230; }
+
+  .fc-skip-nav {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    gap: .5rem;
+  }
+  .fc-skip-nav button {
+    background: none;
+    border: 1px solid var(--border);
+    padding: .3rem .9rem;
+    font-size: .78rem;
+    cursor: pointer;
+    color: var(--gray);
+  }
+  .fc-skip-nav button:hover { background: var(--light); }
+
+  .fc-summary {
+    width: 100%;
+    text-align: center;
+  }
+  .fc-summary h2 { color: var(--blue); margin-bottom: .8rem; font-size: 1.3rem; }
+  .fc-score-row {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-bottom: 1.2rem;
+    font-size: .9rem;
+  }
+  .fc-score-row div { text-align: center; }
+  .fc-score-row strong { display: block; font-size: 1.6rem; }
+  .s-know   { color: var(--green); }
+  .s-almost { color: #b38a00; }
+  .s-nope   { color: var(--red); }
+  .fc-restart {
+    background: var(--blue);
+    color: #fff;
+    border: none;
+    padding: .6rem 2rem;
+    font-size: .95rem;
+    font-weight: bold;
+    cursor: pointer;
+    margin: .3rem;
+  }
+  .fc-restart:hover { background: #133a60; }
+
+  /* ── MCQ ── */
+  .mcq-wrap { width: 100%; }
+
+  .mcq-timer-track {
+    width: 100%;
+    height: 6px;
+    background: var(--border);
+    margin-bottom: 1rem;
+  }
+  .mcq-timer-fill {
+    height: 100%;
+    background: var(--green);
+    transition: width 1s linear, background .3s;
+  }
+  .mcq-timer-fill.urgent { background: var(--red); }
+
+  .mcq-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: .78rem;
+    color: var(--gray);
+    margin-bottom: .7rem;
+  }
+  .mcq-topic-badge {
+    font-size: .68rem;
+    font-weight: bold;
+    color: #fff;
+    padding: .1rem .45rem;
+  }
+
+  .mcq-question {
+    font-size: 1rem;
+    font-weight: bold;
+    line-height: 1.45;
+    margin-bottom: 1.1rem;
+    text-align: left;
+  }
+
+  .mcq-choices {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: .55rem;
+    margin-bottom: .8rem;
+  }
+  .mcq-choice {
+    background: var(--light);
+    border: 2px solid var(--border);
+    padding: .65rem .8rem;
+    font-size: .85rem;
+    text-align: left;
+    cursor: pointer;
+    line-height: 1.35;
+    transition: border-color .15s, background .15s;
+  }
+  .mcq-choice:hover:not(:disabled) { border-color: var(--blue); background: var(--sky); }
+  .mcq-choice.correct  { background: var(--mint);  border-color: var(--green); color: var(--green); font-weight: bold; }
+  .mcq-choice.wrong    { background: var(--pink);  border-color: var(--red);   color: var(--red);   font-weight: bold; }
+  .mcq-choice.reveal   { background: var(--mint);  border-color: var(--green); color: var(--green); }
+  .mcq-choice:disabled { cursor: default; }
+
+  .mcq-feedback {
+    font-size: .88rem;
+    font-weight: bold;
+    text-align: center;
+    min-height: 1.4rem;
+    margin-bottom: .3rem;
+  }
+  .mcq-feedback.ok  { color: var(--green); }
+  .mcq-feedback.bad { color: var(--red); }
+
+  .mcq-streak-bonus {
+    font-size: .78rem;
+    color: #b38a00;
+    text-align: center;
+    min-height: 1.2rem;
+  }
+
+  .mcq-summary { width: 100%; text-align: center; }
+  .mcq-summary h2 { color: var(--blue); font-size: 1.3rem; margin-bottom: .9rem; }
+  .mcq-score-grid {
+    display: flex;
+    justify-content: center;
+    gap: 1.4rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    font-size: .88rem;
+  }
+  .mcq-score-grid div { text-align: center; }
+  .mcq-score-grid strong { display: block; font-size: 1.7rem; }
+  .mscore-pts   { color: var(--blue); }
+  .mscore-right { color: var(--green); }
+  .mscore-streak{ color: #b38a00; }
+  .mcq-restart {
+    background: var(--blue);
+    color: #fff;
+    border: none;
+    padding: .6rem 2rem;
+    font-size: .95rem;
+    font-weight: bold;
+    cursor: pointer;
+    margin: .3rem;
+  }
+  .mcq-restart:hover { background: #133a60; }
+
+  @media(max-width:560px){ .mcq-choices { grid-template-columns: 1fr; } }
+
+  /* ── FILL-IN-BLANK ── */
+  .fib-wrap { width: 100%; text-align: left; }
+
+  .fib-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: .78rem;
+    color: var(--gray);
+    margin-bottom: .7rem;
+  }
+  .fib-topic-badge {
+    font-size: .68rem;
+    font-weight: bold;
+    color: #fff;
+    padding: .1rem .45rem;
+  }
+
+  .fib-sentence {
+    font-size: 1rem;
+    line-height: 2.7;
+    margin: .8rem 0 1rem;
+    padding: .6rem 1rem;
+    background: var(--light);
+    border-left: 4px solid var(--border);
+  }
+
+  .fib-slot {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 90px;
+    height: 30px;
+    border: 2px dashed #aab;
+    padding: 0 10px;
+    margin: 0 3px;
+    vertical-align: middle;
+    font-weight: bold;
+    font-size: .84em;
+    color: var(--blue);
+    cursor: pointer;
+    background: #fff;
+    transition: background .15s, border-color .15s;
+    white-space: nowrap;
+  }
+  .fib-slot.empty { background: var(--sky); color: #999; font-weight: normal; font-size: .72em; }
+  .fib-slot.filled { border-style: solid; border-color: var(--blue); }
+  .fib-slot.drag-over { background: #c8ddf5; border-color: var(--blue); border-style: solid; }
+  .fib-slot.locked { border-style: solid; border-color: var(--green); background: var(--mint); color: var(--green); cursor: default; }
+
+  @keyframes fibGreen {
+    0%   { background: var(--mint); border-color: var(--green); color: var(--green); }
+    45%  { background: #2e7d32;     border-color: #2e7d32;      color: #fff; transform: scale(1.08); }
+    100% { background: var(--mint); border-color: var(--green); color: var(--green); }
+  }
+  @keyframes fibRed {
+    0%   { background: var(--pink); border-color: var(--red); color: var(--red); }
+    45%  { background: #c62828;     border-color: #c62828;    color: #fff; transform: scale(1.08); }
+    100% { background: var(--pink); border-color: var(--red); color: var(--red); }
+  }
+  .fib-slot.fib-correct { animation: fibGreen .85s ease forwards; }
+  .fib-slot.fib-wrong   { animation: fibRed .85s ease forwards; }
+
+  .fib-bank-label {
+    font-size: .72rem;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    color: var(--gray);
+    margin-bottom: .4rem;
+  }
+  .fib-bank {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .4rem;
+    padding: .65rem;
+    background: var(--light);
+    border: 1px dashed var(--border);
+    margin-bottom: .8rem;
+    min-height: 50px;
+  }
+  .fib-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: .28rem .75rem;
+    background: #fff;
+    border: 1.5px solid var(--border);
+    font-size: .84rem;
+    font-weight: bold;
+    color: #333;
+    cursor: grab;
+    user-select: none;
+    transition: box-shadow .15s, border-color .15s;
+    white-space: nowrap;
+  }
+  .fib-chip:hover { border-color: var(--blue); box-shadow: 0 2px 6px rgba(26,74,122,.15); }
+  .fib-chip.dragging { opacity: .35; cursor: grabbing; }
+  .fib-chip.used { display: none; }
+
+  .fib-feedback {
+    min-height: 1.4rem;
+    font-size: .88rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: .4rem;
+  }
+  .fib-feedback.ok  { color: var(--green); }
+  .fib-feedback.bad { color: var(--red); }
+
+  .fib-submit {
+    display: block;
+    width: 100%;
+    background: var(--blue);
+    color: #fff;
+    border: none;
+    padding: .65rem;
+    font-size: .95rem;
+    font-weight: bold;
+    cursor: pointer;
+    letter-spacing: .03em;
+  }
+  .fib-submit:hover { background: #133a60; }
+
+  .fib-summary { width: 100%; text-align: center; }
+  .fib-summary h2 { color: var(--blue); font-size: 1.3rem; margin-bottom: .9rem; }
+
+  /* ── TEMPORAL SORT ── */
+  .sort-wrap { width: 100%; }
+  .sort-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: .78rem;
+    color: var(--gray);
+    margin-bottom: .6rem;
+  }
+  .sort-topic-badge {
+    font-size: .68rem;
+    font-weight: bold;
+    color: #fff;
+    padding: .1rem .45rem;
+  }
+  .sort-dir-edge {
+    text-align: center;
+    font-size: .7rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: var(--gray);
+    padding: .3rem .6rem;
+    border: 1px dashed var(--border);
+    background: var(--light);
+    margin: .3rem 0;
+  }
+  .sort-list {
+    display: flex;
+    flex-direction: column;
+    gap: .3rem;
+    margin: 0;
+  }
+  .sort-card {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .5rem .6rem .5rem .4rem;
+    background: #fff;
+    border: 1.5px solid var(--border);
+    cursor: grab;
+    user-select: none;
+    position: relative;
+    transition: border-color .12s, background .12s, box-shadow .12s;
+  }
+  .sort-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 4px;
+    background: var(--orange);
+  }
+  .sort-card:hover { border-color: var(--orange); box-shadow: 0 2px 8px rgba(179,74,0,.12); }
+  .sort-card.dragging { opacity: .4; }
+  .sort-card.drag-over-above { border-top: 3px solid var(--blue); }
+  .sort-handle { font-size: .85rem; color: #ccc; padding: 0 .3rem; cursor: grab; flex-shrink: 0; }
+  .sort-text { flex: 1; min-width: 0; }
+  .sort-label { font-size: .86rem; font-weight: bold; line-height: 1.35; color: #222; }
+  .sort-hint { font-size: .69rem; color: var(--gray); margin-top: .1rem; }
+  .sort-btn-group { display: flex; flex-direction: column; gap: .15rem; flex-shrink: 0; }
+  .sort-move-btn {
+    width: 28px; height: 24px;
+    border: 1px solid var(--border);
+    background: var(--light);
+    font-size: .65rem;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 0; line-height: 1;
+  }
+  .sort-move-btn:hover { background: #dde3ea; }
+
+  @keyframes sortGreen {
+    0%   { background: var(--mint); border-color: var(--green); color: #222; }
+    45%  { background: #2e7d32;     border-color: #2e7d32;      color: #fff; transform: scale(1.02); }
+    100% { background: var(--mint); border-color: var(--green); color: #222; }
+  }
+  @keyframes sortRed {
+    0%   { background: var(--pink); border-color: var(--red); color: #222; }
+    45%  { background: #c62828;     border-color: #c62828;    color: #fff; transform: scale(1.02); }
+    100% { background: var(--pink); border-color: var(--red); color: #222; }
+  }
+  .sort-card.sort-correct { animation: sortGreen .9s ease forwards; }
+  .sort-card.sort-wrong   { animation: sortRed .9s ease forwards; }
+
+  .sort-feedback {
+    min-height: 1.4rem;
+    font-size: .88rem;
+    font-weight: bold;
+    text-align: center;
+    margin: .45rem 0 .35rem;
+  }
+  .sort-feedback.ok  { color: var(--green); }
+  .sort-feedback.bad { color: var(--red); }
+
+  .sort-actions { display: flex; gap: .5rem; }
+  .sort-check-btn {
+    flex: 1;
+    background: var(--blue);
+    color: #fff;
+    border: none;
+    padding: .6rem;
+    font-size: .9rem;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  .sort-check-btn:hover { background: #133a60; }
+  .sort-next-btn {
+    background: var(--green);
+    color: #fff;
+    border: none;
+    padding: .6rem 1.4rem;
+    font-size: .9rem;
+    font-weight: bold;
+    cursor: pointer;
+    display: none;
+  }
+  .sort-next-btn.show { display: block; }
+  .sort-next-btn:hover { background: #145230; }
+
+  /* ── MATCH-UP ── */
+  .match-wrap { width: 100%; }
+  .match-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: .78rem;
+    color: var(--gray);
+    margin-bottom: .35rem;
+  }
+  .match-hint {
+    font-size: .72rem;
+    color: var(--gray);
+    margin-bottom: .55rem;
+    font-style: italic;
+  }
+  .match-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.4rem;
+    margin-bottom: .5rem;
+    align-items: stretch;
+  }
+  .match-col { display: flex; flex-direction: column; gap: .35rem; }
+  .match-card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: .55rem .65rem .55rem .75rem;
+    background: #fff;
+    border: 1.5px solid var(--border);
+    cursor: pointer;
+    font-size: .78rem;
+    line-height: 1.35;
+    user-select: none;
+    position: relative;
+    transition: border-color .12s, background .12s, box-shadow .12s;
+  }
+  .match-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 4px;
+  }
+  /* Left column - blue */
+  #match-terms .match-card { background: var(--sky); border-color: #b0c8e4; }
+  #match-terms .match-card::before { background: var(--blue); }
+  #match-terms .match-card:hover:not(.matched):not(.wrong) {
+    background: #cce0f5;
+    border-color: var(--blue);
+  }
+  /* Right column - purple/lavender */
+  #match-defs .match-card { background: var(--lavender); border-color: #c4aee6; }
+  #match-defs .match-card::before { background: var(--purple); }
+  #match-defs .match-card:hover:not(.matched):not(.wrong) {
+    background: #d8c5f5;
+    border-color: var(--purple);
+  }
+  .match-card.selected {
+    border-color: var(--blue);
+    background: var(--sky);
+    box-shadow: 0 0 0 2px rgba(26,74,122,.25);
+  }
+  .match-card.matched {
+    background: var(--mint);
+    border-color: var(--green);
+    color: var(--green);
+    cursor: default;
+    font-weight: bold;
+  }
+  .match-card.matched::after { content: ' ✓'; font-size: .75em; }
+  .match-badge {
+    display: block;
+    font-size: .6rem;
+    font-weight: bold;
+    color: #fff;
+    padding: .05rem .4rem;
+    margin-bottom: .2rem;
+    width: fit-content;
+  }
+
+  @keyframes matchWrong {
+    0%,100% { background: var(--pink); border-color: var(--red); color: var(--red); }
+    50%     { background: #c62828;     border-color: #c62828;    color: #fff; }
+  }
+  .match-card.wrong { animation: matchWrong .65s ease forwards; }
+
+  .match-feedback {
+    min-height: 1.3rem;
+    font-size: .84rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: .35rem;
+  }
+  .match-feedback.ok  { color: var(--green); }
+  .match-feedback.bad { color: var(--red); }
+
+  .match-next-btn {
+    display: block;
+    width: 100%;
+    background: var(--green);
+    color: #fff;
+    border: none;
+    padding: .6rem;
+    font-size: .92rem;
+    font-weight: bold;
+    cursor: pointer;
+    letter-spacing: .03em;
+  }
+  .match-next-btn:hover { background: #145230; }
+
+  @media(max-width:500px) { .match-grid { grid-template-columns: 1fr; } }
+
+  /* ── BOSS ROUND ─────────────────────────────────────────────────────── */
+  .boss-wrap { width: 100%; }
+  .boss-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: .4rem;
+  }
+  .boss-title {
+    font-size: .82rem;
+    font-weight: bold;
+    color: var(--red);
+    letter-spacing: .06em;
+    text-transform: uppercase;
+  }
+  .boss-shields { display: flex; gap: .15rem; font-size: 1rem; }
+  .boss-shield { transition: opacity .2s, filter .2s; }
+  .boss-shield.broken { opacity: .22; filter: grayscale(1); }
+
+  .boss-hp-row {
+    display: flex;
+    align-items: center;
+    gap: .45rem;
+    margin-bottom: .55rem;
+  }
+  .boss-hp-label { font-size: .68rem; font-weight: bold; color: var(--red); white-space: nowrap; letter-spacing: .04em; }
+  .boss-hp-track {
+    flex: 1;
+    height: 14px;
+    background: #1a1a1a;
+    overflow: hidden;
+    border: 2px solid #333;
+  }
+  .boss-hp-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #22c755, #7fff00);
+    transition: width .45s cubic-bezier(.3,1.4,.5,1), background .6s;
+  }
+  .boss-hp-num { font-size: .7rem; font-weight: bold; color: var(--gray); white-space: nowrap; min-width: 2.8rem; text-align: right; }
+
+  /* Blob arena */
+  .boss-scene {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 210px;
+    margin-bottom: .5rem;
+  }
+  .boss-blob-wrap {
+    position: relative;
+    width: 200px;
+    height: 170px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .boss-blob {
+    width: 155px;
+    height: 138px;
+    background: radial-gradient(ellipse at 40% 35%, #80ff80, #1e9e1e);
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+    animation: blobMorph 2.5s ease-in-out infinite;
+    position: relative;
+    filter: drop-shadow(0 8px 22px rgba(0,180,0,.4));
+    transition: background .55s;
+  }
+  @keyframes blobMorph {
+    0%,100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+    33%     { border-radius: 40% 60% 70% 30% / 30% 50% 50% 70%; }
+    66%     { border-radius: 70% 30% 40% 60% / 60% 40% 60% 40%; }
+  }
+  .boss-eye {
+    position: absolute;
+    width: 30px;
+    height: 34px;
+    background: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: 24%;
+  }
+  .boss-eye.left  { left: 17%; }
+  .boss-eye.right { right: 17%; }
+  .boss-pupil { width: 14px; height: 18px; background: #111; border-radius: 50%; }
+  .boss-mouth {
+    position: absolute;
+    width: 50px;
+    height: 14px;
+    background: #111;
+    border-radius: 0 0 25px 25px;
+    bottom: 23%;
+    left: 50%;
+    transform: translateX(-50%);
+    transition: border-radius .35s, bottom .35s;
+  }
+  .boss-mouth.angry { border-radius: 25px 25px 0 0; bottom: 29%; } /* frown */
+
+  /* Laser beam */
+  .boss-laser {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 7px;
+    height: 0;
+    background: linear-gradient(0deg, #00ffcc, #aa00ff);
+    box-shadow: 0 0 14px #00ffcc, 0 0 32px #aa00ff, 0 0 60px rgba(0,200,255,.4);
+    pointer-events: none;
+    opacity: 0;
+  }
+  @keyframes laserFire {
+    0%   { height: 0; opacity: 0; }
+    6%   { opacity: 1; }
+    55%  { height: 155px; opacity: 1; }
+    85%  { height: 155px; opacity: .6; }
+    100% { height: 155px; opacity: 0; }
+  }
+  .boss-laser.firing { animation: laserFire .56s ease-out forwards; }
+
+  /* Blob hit / attack / explode */
+  @keyframes blobHit {
+    0%   { transform: scale(1) rotate(0deg); filter: brightness(1); }
+    12%  { transform: scale(1.2) rotate(-7deg); filter: brightness(4) invert(.7); }
+    35%  { transform: scale(.88) rotate(5deg); filter: brightness(1.8); }
+    65%  { transform: scale(1.05) rotate(-2deg); filter: brightness(1.2); }
+    100% { transform: scale(1) rotate(0deg); filter: brightness(1); }
+  }
+  .boss-blob.hit { animation: blobHit .62s ease forwards; }
+
+  @keyframes blobAttack {
+    0%   { transform: scale(1) translateY(0); filter: brightness(1); }
+    18%  { transform: scale(1.38) translateY(20px); filter: brightness(2) hue-rotate(-25deg) saturate(2); }
+    48%  { transform: scale(1.15) translateY(9px); }
+    100% { transform: scale(1) translateY(0); filter: brightness(1); }
+  }
+  .boss-blob.boss-attack { animation: blobAttack .72s ease forwards; }
+
+  @keyframes blobExplode {
+    0%   { transform: scale(1); opacity: 1; filter: brightness(1); }
+    18%  { transform: scale(1.7); filter: brightness(6) saturate(3) hue-rotate(60deg); opacity: 1; }
+    45%  { transform: scale(2.8); filter: brightness(3) saturate(5); opacity: .85; }
+    78%  { transform: scale(3.8); opacity: .3; }
+    100% { transform: scale(5); opacity: 0; }
+  }
+  .boss-blob.exploding { animation: blobExplode 1s ease-out forwards; }
+
+  /* Floating damage numbers */
+  .boss-damage-num {
+    position: absolute;
+    top: 8%;
+    font-size: 1.05rem;
+    font-weight: bold;
+    color: #ff2222;
+    text-shadow: 0 2px 6px rgba(0,0,0,.25), 0 0 18px rgba(255,0,0,.45);
+    pointer-events: none;
+    z-index: 20;
+    white-space: nowrap;
+    animation: damageFloat .9s ease-out forwards;
+  }
+  .boss-regen-num {
+    position: absolute;
+    top: 8%;
+    font-size: 1.05rem;
+    font-weight: bold;
+    color: #22cc55;
+    text-shadow: 0 2px 6px rgba(0,0,0,.2), 0 0 14px rgba(0,200,80,.45);
+    pointer-events: none;
+    z-index: 20;
+    white-space: nowrap;
+    animation: damageFloat .9s ease-out forwards;
+  }
+  @keyframes damageFloat {
+    0%   { transform: translateY(0) scale(.8); opacity: 1; }
+    28%  { transform: translateY(-28px) scale(1.35); opacity: 1; }
+    100% { transform: translateY(-75px) scale(.85); opacity: 0; }
+  }
+
+  /* Shake when boss attacks */
+  @keyframes arenaShake {
+    0%,100% { transform: translateX(0); }
+    18%     { transform: translateX(-8px); }
+    36%     { transform: translateX(8px); }
+    54%     { transform: translateX(-5px); }
+    72%     { transform: translateX(5px); }
+  }
+  .boss-wrap.shaking { animation: arenaShake .45s ease; }
+
+  /* Question area */
+  .boss-q-label {
+    display: inline-block;
+    font-size: .6rem;
+    font-weight: bold;
+    color: #fff;
+    padding: .1rem .5rem;
+    margin-bottom: .32rem;
+  }
+  .boss-question {
+    font-size: .88rem;
+    font-weight: 600;
+    line-height: 1.42;
+    color: var(--dark);
+    background: #f5f7fa;
+    border: 2px solid var(--border);
+    padding: .6rem .8rem;
+    margin-bottom: .55rem;
+  }
+  .boss-choices {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: .38rem;
+    margin-bottom: .5rem;
+  }
+  .boss-choice {
+    background: #fff;
+    border: 1.5px solid var(--border);
+    padding: .48rem .6rem;
+    font-size: .77rem;
+    font-family: inherit;
+    cursor: pointer;
+    text-align: left;
+    line-height: 1.35;
+    transition: border-color .1s, background .1s;
+  }
+  .boss-choice:hover:not(:disabled) { border-color: var(--blue); background: var(--sky); }
+  .boss-choice.boss-correct { background: var(--mint); border-color: var(--green); color: var(--green); font-weight: bold; }
+  .boss-choice.boss-wrong   { background: var(--pink); border-color: var(--red); color: var(--red); }
+
+  /* Victory / Game Over */
+  .boss-victory, .boss-gameover { text-align: center; padding: 2rem 1rem; }
+  .boss-victory h2  { color: var(--green); font-size: 1.55rem; margin-bottom: .5rem; }
+  .boss-gameover h2 { color: var(--red);   font-size: 1.55rem; margin-bottom: .5rem; }
+  .boss-victory-boom, .boss-gameover-blob { font-size: 4rem; margin-bottom: .8rem; }
+  .boss-retry-btn {
+    margin-top: 1.2rem;
+    background: var(--blue);
+    color: #fff;
+    border: none;
+    padding: .65rem 1.8rem;
+    font-size: .9rem;
+    font-weight: bold;
+    cursor: pointer;
+    letter-spacing: .03em;
+  }
+  .boss-retry-btn:hover { background: #122d50; }
+
+  /* ── CRQ JUDGE ──────────────────────────────────────────────────────── */
+  .crq-wrap { width: 100%; }
+  .crq-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: .5rem;
+    font-size: .78rem;
+    color: var(--gray);
+  }
+  .crq-title { font-weight: bold; color: var(--blue); font-size: .82rem; letter-spacing: .04em; }
+  .crq-box-label {
+    font-size: .62rem;
+    font-weight: bold;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    margin-bottom: .28rem;
+    display: block;
+  }
+  .crq-stem .crq-box-label { color: var(--blue); }
+  .crq-answer .crq-box-label { color: #7a5f00; font-style: normal; }
+  .crq-stem {
+    background: var(--sky);
+    border: 1.5px solid #b0c8e4;
+    border-left: 4px solid var(--blue);
+    padding: .6rem .75rem;
+    font-size: .86rem;
+    font-weight: 600;
+    line-height: 1.45;
+    color: var(--dark);
+    margin-bottom: .6rem;
+  }
+  .crq-answer {
+    background: #fffef5;
+    border: 1.5px solid #e0d8a0;
+    border-left: 4px solid #c8a000;
+    padding: .6rem .75rem;
+    font-size: .84rem;
+    font-style: italic;
+    line-height: 1.45;
+    color: #3a3000;
+    margin-bottom: .75rem;
+    position: relative;
+  }
+  .crq-answer::before {
+    content: '\201C';
+    font-size: 2rem;
+    line-height: 1;
+    color: #c8a000;
+    position: absolute;
+    top: .1rem;
+    left: .35rem;
+    font-style: normal;
+  }
+  .crq-answer-text { padding-left: 1.1rem; display: block; }
+  .crq-btns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: .45rem;
+    margin-bottom: .5rem;
+  }
+  .crq-btn {
+    border: 2px solid transparent;
+    padding: .6rem .4rem;
+    font-size: .8rem;
+    font-weight: bold;
+    font-family: inherit;
+    cursor: pointer;
+    transition: transform .1s, box-shadow .1s;
+    text-align: center;
+  }
+  .crq-btn:hover { transform: translateY(-1px); box-shadow: 0 3px 10px rgba(0,0,0,.12); }
+  .crq-btn:active { transform: translateY(0); }
+  .crq-btn.full { background: var(--mint); border-color: var(--green); color: var(--green); }
+  .crq-btn.none { background: var(--pink); border-color: var(--red); color: var(--red); }
+  .crq-btn:disabled { opacity: .55; cursor: default; transform: none; box-shadow: none; }
+  .crq-btn.selected { opacity: 1 !important; box-shadow: 0 0 0 3px rgba(0,0,0,.18); }
+
+  .crq-reveal {
+    padding: .65rem .8rem;
+    font-size: .8rem;
+    line-height: 1.5;
+    margin-bottom: .5rem;
+  }
+  .crq-reveal.correct { background: var(--mint); border: 1.5px solid var(--green); }
+  .crq-reveal.wrong   { background: var(--pink); border: 1.5px solid var(--red); }
+  .crq-reveal-verdict {
+    font-weight: bold;
+    font-size: .88rem;
+    margin-bottom: .3rem;
+  }
+  .crq-reveal.correct .crq-reveal-verdict { color: var(--green); }
+  .crq-reveal.wrong   .crq-reveal-verdict { color: var(--red); }
+  .crq-next-btn {
+    display: block;
+    width: 100%;
+    background: var(--blue);
+    color: #fff;
+    border: none;
+    padding: .6rem;
+    font-size: .9rem;
+    font-weight: bold;
+    cursor: pointer;
+    letter-spacing: .03em;
+  }
+  .crq-next-btn:hover { background: #122d50; }
+
+  footer {
+    text-align: center;
+    padding: 1.5rem;
+    font-size: .75rem;
+    color: #aaa;
+    border-top: 1px solid var(--border);
+  }
+
+  @media(max-width:600px){
+    .mode-card { min-width: 72px; padding: .55rem .35rem; }
+    header { padding: .9rem 1rem; }
+    .fc-scene { height: 200px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>NY Regents: Earth &amp; Space Sciences</h1>
+    <p>Study Game</p>
+  </div>
+  <a href="index.html" class="back-btn">&#8592; Back to Guide</a>
+</header>
+
+<main>
+
+  <!-- GAME MODE SELECTOR -->
+  <div class="mode-grid">
+    <div class="mode-card active" data-mode="flashcard">
+      <div class="mode-icon">&#x1F4D6;</div>
+      <h3>Flashcards</h3>
+      <p>Flip and rate your confidence</p>
+    </div>
+    <div class="mode-card" data-mode="mcq">
+      <div class="mode-icon">&#x2753;</div>
+      <h3>Multiple Choice</h3>
+      <p>Timed questions from real stems</p>
+    </div>
+    <div class="mode-card" data-mode="fillblank">
+      <div class="mode-icon">&#x270F;&#xFE0F;</div>
+      <h3>Fill in the Blank</h3>
+      <p>Complete the cause-effect chain</p>
+    </div>
+    <div class="mode-card" data-mode="sort">
+      <div class="mode-icon">&#x1F522;</div>
+      <h3>Temporal Sort</h3>
+      <p>Drag events into geologic order</p>
+    </div>
+    <div class="mode-card" data-mode="match">
+      <div class="mode-icon">&#x1F9E9;</div>
+      <h3>Match-Up</h3>
+      <p>Pair concepts with rated phrases</p>
+    </div>
+    <div class="mode-card" data-mode="boss">
+      <div class="mode-icon">&#x1F47E;</div>
+      <h3>Boss Round</h3>
+      <p>Fire lasers at the Blob Monster</p>
+    </div>
+    <div class="mode-card" data-mode="crq">
+      <div class="mode-icon">&#x1F4DD;</div>
+      <h3>CRQ Judge</h3>
+      <p>Rate sample constructed responses</p>
+    </div>
+  </div>
+
+  <!-- TOPIC FILTER -->
+  <div class="topic-filter">
+    <h3>Topics to include</h3>
+    <div class="filter-chips">
+      <span class="chip chip-blue on"   data-topic="stars">Stars &amp; Universe</span>
+      <span class="chip chip-green on"  data-topic="climate">Climate &amp; CO&#x2082;</span>
+      <span class="chip chip-orange on" data-topic="history">Earth History</span>
+      <span class="chip chip-purple on" data-topic="orbits">Orbital Mechanics</span>
+      <span class="chip chip-red on"    data-topic="water">Water &amp; Erosion</span>
+      <span class="chip chip-green on"  data-topic="human">Human Impact</span>
+    </div>
+  </div>
+
+  <!-- HUD -->
+  <div class="hud" id="hud" style="display:none">
+    <div class="hud-stat"><strong id="hud-know">-</strong>Know It</div>
+    <div class="hud-stat"><strong id="hud-almost">-</strong>Almost</div>
+    <div class="hud-stat"><strong id="hud-nope">-</strong>Nope</div>
+    <div class="hud-stat"><strong id="hud-q">-</strong>Card</div>
+  </div>
+
+  <!-- GAME ARENA -->
+  <div id="game-arena">
+    <div class="placeholder-icon">&#x1F4D6;</div>
+    <div class="placeholder-text">Choose topics above, then hit <strong>Start Flashcards</strong>.</div>
+  </div>
+
+  <button class="start-btn" id="start-btn">Start Flashcards</button>
+
+</main>
+
+<script>
+// ── FLASHCARD DATA ─────────────────────────────────────────────────────────
+const CARDS = [
+  // TOPIC: STARS
+  { topic:'stars', color:'#1a4a7a', label:'Stars & Universe',
+    q:'What happens to a star\'s temperature and absolute magnitude as it becomes a red giant?',
+    a:'<strong>Temperature decreases</strong> and <strong>absolute magnitude decreases</strong> (lower number = brighter, so it gets brighter). Red giants are large, cool, and bright - upper right of the H-R diagram.' },
+  { topic:'stars', color:'#1a4a7a', label:'Stars & Universe',
+    q:'Where are main sequence stars located on the H-R diagram?',
+    a:'They run from <strong>hot and bright in the upper left</strong> to <strong>cool and dim in the lower right</strong>. White dwarfs are lower left; red giants are upper right.' },
+  { topic:'stars', color:'#1a4a7a', label:'Stars & Universe',
+    q:'How does a star\'s mass affect the rate of nucleosynthesis?',
+    a:'<strong>Greater mass = faster rate of fusion/nucleosynthesis.</strong> More massive stars burn fuel faster, have shorter lifespans, and produce heavier elements. Elements heavier than iron only form in a <strong>supernova</strong>.' },
+  { topic:'stars', color:'#1a4a7a', label:'Stars & Universe',
+    q:'In what order do massive stars fuse elements?',
+    a:'Hydrogen &rarr; Helium &rarr; Carbon &rarr; Oxygen &rarr; Neon &rarr; <strong>Iron</strong>. Heavier elements form at higher temperatures later in the star\'s life. Elements heavier than iron require a <strong>supernova</strong>.' },
+  { topic:'stars', color:'#1a4a7a', label:'Stars & Universe',
+    q:'Name the three main lines of evidence for the Big Bang.',
+    a:'1. <strong>CMBR</strong> - energy distributed throughout the universe; universe cooled and became transparent.<br>2. <strong>Hubble\'s Law</strong> - galaxies farther away have greater recessional velocities.<br>3. <strong>Redshift</strong> - wavelengths of light from distant galaxies are longer.' },
+  { topic:'stars', color:'#1a4a7a', label:'Stars & Universe',
+    q:'What does redshift tell us about the universe?',
+    a:'Wavelengths from distant galaxies are <strong>stretched longer (red shifted)</strong>. This is evidence that the <strong>universe is expanding</strong>. You must say "expanding" - just "wavelengths increased" is not enough for credit.' },
+  { topic:'stars', color:'#1a4a7a', label:'Stars & Universe',
+    q:'What is the sunspot cycle, and how do sunspots relate to solar irradiance?',
+    a:'The cycle is approximately <strong>11 years</strong>. <strong>More sunspots = higher solar irradiance</strong> (more energy output) and higher frequency radiation. Sunspots themselves are <strong>cooler</strong> regions on the Sun\'s surface.' },
+  { topic:'stars', color:'#1a4a7a', label:'Stars & Universe',
+    q:'What does Cosmic Microwave Background Radiation (CMBR) tell us about the early universe?',
+    a:'CMBR is <strong>energy left over from the Big Bang</strong>, found uniformly in all directions throughout the universe. It became detectable when the early universe cooled enough to become transparent. Density variations in CMBR show where galaxies later formed - regions of higher density became galaxies.' },
+
+  // TOPIC: CLIMATE
+  { topic:'climate', color:'#1a6b3c', label:'Climate & CO₂',
+    q:'Explain the mechanism by which increased atmospheric CO₂ leads to higher surface temperatures.',
+    a:'CO₂ is a greenhouse gas that absorbs outgoing infrared radiation. As CO₂ increases, <strong>less energy is able to escape the atmosphere</strong>, so surface temperatures rise. You must name this energy-trapping mechanism - simply stating that CO₂ "causes warming" is not a complete scientific explanation.' },
+  { topic:'climate', color:'#1a6b3c', label:'Climate & CO₂',
+    q:'What happens when CO₂ levels decrease?',
+    a:'<strong>"Decreased CO₂ levels caused Earth\'s surface temperature to decrease / the temperature was lower/cooler."</strong> Less greenhouse gas = more energy escapes atmosphere = cooling.' },
+  { topic:'climate', color:'#1a6b3c', label:'Climate & CO₂',
+    q:'How do plants and forests affect the carbon cycle and atmospheric CO₂ levels?',
+    a:'Plants take in CO₂ during <strong>photosynthesis</strong>, storing carbon in biomass and soil. This <strong>removes CO₂ from the atmosphere</strong> and reduces the greenhouse effect. When forests are burned or cleared, stored carbon is released back as CO₂, increasing atmospheric levels.' },
+  { topic:'climate', color:'#1a6b3c', label:'Climate & CO₂',
+    q:'What happens to ocean carbonate ions as atmospheric CO₂ increases?',
+    a:'More CO₂ enters the ocean &rarr; carbonate ions <strong>decrease</strong> &rarr; marine calcifiers (coral, shellfish) <strong>cannot build shells</strong> &rarr; populations decline. This is ocean acidification.' },
+  { topic:'climate', color:'#1a6b3c', label:'Climate & CO₂',
+    q:'Describe the ice melt feedback on sea level and ocean salinity.',
+    a:'Ice mass decreases &rarr; ice melts &rarr; <strong>sea level rises</strong>. Fresh meltwater enters ocean &rarr; <strong>salinity decreases</strong>. Darker surface exposed &rarr; more energy absorbed &rarr; more melting (positive feedback / albedo effect).' },
+  { topic:'climate', color:'#1a6b3c', label:'Climate & CO₂',
+    q:'How does Earth\'s axial tilt (obliquity) affect seasonal energy distribution and ice formation?',
+    a:'<strong>Greater tilt &rarr; more extreme seasons &rarr; more energy reaches poles in summer.</strong><br><strong>Smaller tilt &rarr; milder seasons &rarr; less energy reaches poles in winter &rarr; more ice forms in polar regions.</strong> Obliquity is one of several natural factors that drive long-term climate cycles.' },
+
+  // TOPIC: EARTH HISTORY
+  { topic:'history', color:'#b34a00', label:'Earth History',
+    q:'What caused the Great Oxidation Event (~2.4 Ga), and what must your answer include?',
+    a:'<strong>Cyanobacteria/stromatolites performed photosynthesis in the ocean</strong>, releasing oxygen that entered the atmosphere. Your answer MUST include <strong>photosynthetic ocean organisms</strong> releasing O₂ - "stromatolites made oxygen" alone is insufficient.' },
+  { topic:'history', color:'#b34a00', label:'Earth History',
+    q:'What happened to methane levels during the Great Oxidation Event?',
+    a:'Oxygen released by photosynthesis <strong>reacted with methane</strong>, causing methane levels to <strong>decrease</strong>. Less methane (a greenhouse gas) &rarr; less energy absorbed &rarr; Earth cooled &rarr; earliest ice ages (Huronian).' },
+  { topic:'history', color:'#b34a00', label:'Earth History',
+    q:'Place these events in order from oldest to youngest: GOE, First oceans, Cambrian explosion, Earth forms, First life.',
+    a:'1. <strong>Earth forms</strong> (~4.6 Ga)<br>2. <strong>First oceans</strong> (~4.2 Ga)<br>3. <strong>First life</strong> (~3.8 Ga)<br>4. <strong>Great Oxidation Event</strong> (~2.4 Ga)<br>5. <strong>Cambrian explosion</strong> (~560 mya)' },
+  { topic:'history', color:'#b34a00', label:'Earth History',
+    q:'What is the half-life of Uranium-238, and what does it tell us about Earth\'s age?',
+    a:'U-238 half-life = <strong>4.5 billion years</strong>. If ~50% of U-238 remains in a sample, it is ~4.5 billion years old. Since meteorites and Earth formed at the same time, <strong>Earth is approximately 4.5 billion years old</strong>.' },
+  { topic:'history', color:'#b34a00', label:'Earth History',
+    q:'What pattern do the Hawaiian Islands show, and what does it tell us about plate movement?',
+    a:'Islands get <strong>older to the northwest</strong> (increasing distance from the hotspot). This means the <strong>Pacific Plate moves to the northwest</strong>.' },
+  { topic:'history', color:'#b34a00', label:'Earth History',
+    q:'What forms at divergent boundaries vs. convergent boundaries?',
+    a:'<strong>Divergent:</strong> mid-ocean ridges, new ocean crust, magma rises.<br><strong>Convergent:</strong> subduction - oceanic plate sinks, magma forms, rises back to surface (volcanoes).' },
+
+  // TOPIC: ORBITS
+  { topic:'orbits', color:'#4a1a7a', label:'Orbital Mechanics',
+    q:'State Kepler\'s 3rd Law in your own words.',
+    a:'<strong>"Objects orbiting at a greater distance from the central body have a longer period of revolution."</strong> Farther = slower = longer orbit time.' },
+  { topic:'orbits', color:'#4a1a7a', label:'Orbital Mechanics',
+    q:'State Kepler\'s 2nd Law (Equal Areas) and its implication for orbital speed.',
+    a:'An object sweeps <strong>equal areas in equal times</strong>. This means it travels <strong>faster when closer</strong> to the central body, causing a <strong>shorter orbital period</strong> for moons/planets that are closer.' },
+  { topic:'orbits', color:'#4a1a7a', label:'Orbital Mechanics',
+    q:'What is tidal locking, and give an example.',
+    a:'Tidal locking occurs when a moon\'s <strong>orbital period = its rotational period</strong>, so the same side always faces the central body.<br>Example: Earth\'s Moon (27.3 days each) and Charon (6.4 days each, always faces Pluto).' },
+  { topic:'orbits', color:'#4a1a7a', label:'Orbital Mechanics',
+    q:'Why does a satellite in low Earth orbit have a shorter orbital period than the Moon?',
+    a:'A low-orbit satellite is much <strong>closer to Earth</strong> than the Moon &rarr; it experiences a <strong>stronger gravitational field</strong> &rarr; must travel faster to maintain orbit &rarr; <strong>shorter orbital period</strong>. Gravitational field strength increases as distance decreases (g = GmE / r²).' },
+  { topic:'orbits', color:'#4a1a7a', label:'Orbital Mechanics',
+    q:'True or False: A planet\'s own mass affects its orbital speed around the Sun.',
+    a:'<strong>FALSE.</strong> Orbital speed depends on <strong>distance from the Sun</strong>, not the planet\'s own mass. This is a common exam trap - Kepler\'s Laws do not include planet mass as a factor.' },
+  { topic:'orbits', color:'#4a1a7a', label:'Orbital Mechanics',
+    q:'What does an eccentricity of 0 mean for an orbit?',
+    a:'Eccentricity of <strong>0 = perfect circle</strong>. Higher eccentricity = more elongated ellipse. All planetary orbits are ellipses (Kepler\'s 1st Law), with the Sun at one focus.' },
+
+  // TOPIC: WATER
+  { topic:'water', color:'#7a1a1a', label:'Water & Erosion',
+    q:'Why does freeze-thaw weathering break apart rock and concrete?',
+    a:'Water <strong>expands by approximately 10%</strong> when it freezes. This expansion increases pressure inside cracks, causing deformation and weathering. Adding <strong>rebar to concrete reduces deformation</strong>.' },
+  { topic:'water', color:'#7a1a1a', label:'Water & Erosion',
+    q:'Which rock type is more resistant to erosion - sandstone or shale? How can you tell from a cliff?',
+    a:'<strong>Sandstone is more resistant</strong> than shale. Rock layers that extend <strong>farther out from the cliff face</strong> are more resistant (less eroded). Shale shows more erosional cutback.' },
+  { topic:'water', color:'#7a1a1a', label:'Water & Erosion',
+    q:'How does building a dam affect coastal sediment deposition?',
+    a:'Dams <strong>trap sediment behind them</strong> &rarr; <strong>less sediment reaches the coast</strong> &rarr; coastal erosion increases, beaches and deltas shrink. Before the dam, more sediment was deposited along the coast.' },
+  { topic:'water', color:'#7a1a1a', label:'Water & Erosion',
+    q:'What is the relationship between plant cover, runoff, and soil erosion?',
+    a:'<strong>More plant cover &rarr; less runoff &rarr; less soil erosion.</strong><br><strong>Less plant cover &rarr; more runoff &rarr; more soil erosion.</strong> Plants intercept rainfall and roots stabilize soil.' },
+  { topic:'water', color:'#7a1a1a', label:'Water & Erosion',
+    q:'How do the timescales of rapid geologic events compare to gradual landscape changes?',
+    a:'<strong>Rapid events</strong> (earthquakes, volcanic eruptions, landslides): seconds to hours - dramatic changes in a short time.<br><strong>Gradual processes</strong> (erosion, coastal change, soil development, ecosystem shifts from sea-level rise): years to centuries.<br><strong>Plate movement:</strong> millions of years. Knowing the correct timescale is commonly tested.' },
+  { topic:'water', color:'#7a1a1a', label:'Water & Erosion',
+    q:'How does sea level rise lead to saltwater intrusion, and what gets affected?',
+    a:'Sea level rises &rarr; saltwater moves inland &rarr; <strong>contaminates freshwater aquifers and wells</strong> (hydrosphere) and <strong>kills freshwater trees</strong> (biosphere). Drinking water quality and timber supply both decline.' },
+
+  // TOPIC: HUMAN IMPACT
+  { topic:'human', color:'#1a6b3c', label:'Human Impact',
+    q:'Name two ways mining negatively affects Earth systems. Identify which system each affects.',
+    a:'1. <strong>Land clearing/deforestation &rarr; biodiversity of the biosphere reduced.</strong><br>2. <strong>Mine tailings on surface &rarr; precipitation dissolves materials &rarr; groundwater polluted (hydrosphere).</strong><br>Also: airborne particles &rarr; air pollution (atmosphere).' },
+  { topic:'human', color:'#1a6b3c', label:'Human Impact',
+    q:'When comparing transportation options for environmental impact, what scientific principle applies?',
+    a:'Different modes of transport produce different amounts of CO₂ per unit of travel. <strong>Electric or rail-based transport</strong> generally produces fewer emissions per passenger than air or private vehicle travel. You must always <strong>cite specific data values</strong> from the source when justifying your answer - a claim without numbers earns no credit on numerical evidence questions.' },
+  { topic:'human', color:'#1a6b3c', label:'Human Impact',
+    q:'Why do electric vehicles generally have lower lifetime carbon emissions than gasoline vehicles?',
+    a:'Electric vehicles produce <strong>zero direct emissions during use</strong>. Although manufacturing (especially batteries) has a carbon cost, the <strong>total lifecycle emissions</strong> are lower than gasoline vehicles. Hybrid vehicles fall in between. Switching to lower-emission vehicles reduces the impact on the <strong>atmosphere</strong> (a key Earth system).' },
+  { topic:'human', color:'#1a6b3c', label:'Human Impact',
+    q:'When the exam asks you to compare two design solutions, what must your response include?',
+    a:'1. <strong>Specific evidence from the provided data</strong> - not general knowledge.<br>2. Address both <strong>economic and environmental</strong> dimensions if the data shows both.<br>3. Identify a clear <strong>benefit and/or drawback</strong> for the solution you choose. Read all options before answering - data you overlook can cost you the credit.' },
+  { topic:'human', color:'#1a6b3c', label:'Human Impact',
+    q:'Describe three types of actions used to reclaim land after mining, and the purpose of each.',
+    a:'1. <strong>Planting deep-rooted vegetation near waterways</strong> &rarr; stabilizes banks, reduces erosion and flooding risk.<br>2. <strong>Creating retention ponds</strong> &rarr; captures runoff, prevents sediment from entering nearby rivers.<br>3. <strong>Revegetating disturbed land</strong> &rarr; stabilizes slopes, restores native habitat and biodiversity of the biosphere.' },
+];
+
+// ── MCQ DATA ─────────────────────────────────────────────────────────────
+// Each entry: { topic, color, label, q, choices:[A,B,C,D], correct:0-3 }
+const MCQ = [
+  // STARS
+  { topic:'stars', color:'#1a4a7a', label:'Stars & Universe',
+    q:'Where are red giants located on the H-R diagram?',
+    choices:['Lower left - hot and dim','Upper left - hot and bright','Upper right - cool and bright','Lower right - cool and dim'], correct:2 },
+  { topic:'stars', color:'#1a4a7a', label:'Stars & Universe',
+    q:'As the Sun evolves into a red giant, what happens to its absolute magnitude?',
+    choices:['It increases (gets dimmer)','It decreases (gets brighter)','It stays the same','It becomes negative instantly'], correct:1 },
+  { topic:'stars', color:'#1a4a7a', label:'Stars & Universe',
+    q:'Which best explains why more massive stars have shorter lifespans?',
+    choices:['They have less hydrogen to begin with','They rotate slower, losing energy','They fuse fuel at a faster rate, exhausting it sooner','They are farther from other stars'], correct:2 },
+  { topic:'stars', color:'#1a4a7a', label:'Stars & Universe',
+    q:'Elements heavier than iron can only form during:',
+    choices:['Main sequence fusion','The red giant phase','White dwarf cooling','Supernova explosions'], correct:3 },
+  { topic:'stars', color:'#1a4a7a', label:'Stars & Universe',
+    q:'Galaxy redshift is evidence that the universe is:',
+    choices:['Contracting toward a central point','Rotating around a fixed axis','Expanding outward','Static and unchanging'], correct:2 },
+  { topic:'stars', color:'#1a4a7a', label:'Stars & Universe',
+    q:'The sunspot cycle repeats approximately every:',
+    choices:['1 year','11 years','100 years','26,000 years'], correct:1 },
+  { topic:'stars', color:'#1a4a7a', label:'Stars & Universe',
+    q:'Hubble\'s Law states that galaxies farther from Earth have:',
+    choices:['Smaller recessional velocities','Greater recessional velocities','The same recessional velocity','No measurable velocity'], correct:1 },
+  { topic:'stars', color:'#1a4a7a', label:'Stars & Universe',
+    q:'Cosmic Microwave Background Radiation (CMBR) became detectable when the early universe:',
+    choices:['Began expanding for the first time','Formed its first stars','Cooled and became transparent','Collapsed into a singularity'], correct:2 },
+  { topic:'stars', color:'#1a4a7a', label:'Stars & Universe',
+    q:'Which is NOT considered evidence for the Big Bang?',
+    choices:['CMBR found in all directions','Galaxy recessional velocities','The 11-year sunspot cycle','Redshift of distant galaxies'], correct:2 },
+
+  // CLIMATE
+  { topic:'climate', color:'#1a6b3c', label:'Climate & CO₂',
+    q:'Increased atmospheric CO₂ raises surface temperatures because:',
+    choices:['CO₂ reflects sunlight back to space','CO₂ absorbs outgoing energy, reducing heat loss from the atmosphere','CO₂ increases ocean current speed','CO₂ directly absorbs incoming solar radiation'], correct:1 },
+  { topic:'climate', color:'#1a6b3c', label:'Climate & CO₂',
+    q:'When a forest is burned, atmospheric CO₂ levels:',
+    choices:['Decrease because burning releases O₂','Stay the same because carbon is recycled','Increase because stored carbon is released as CO₂','Decrease because less photosynthesis occurs'], correct:2 },
+  { topic:'climate', color:'#1a6b3c', label:'Climate & CO₂',
+    q:'Ocean acidification occurs when increased CO₂ causes ocean carbonate ions to:',
+    choices:['Increase, helping shell-building organisms','Decrease, making it harder for organisms to build shells','Stay the same but temperature rises','Combine with salt to form acid'], correct:1 },
+  { topic:'climate', color:'#1a6b3c', label:'Climate & CO₂',
+    q:'As polar ice melts and freshwater enters the ocean, salinity:',
+    choices:['Increases because ice contains concentrated salt','Increases because pressure increases with more water','Decreases because freshwater dilutes the ocean','Stays the same because oceans self-regulate'], correct:2 },
+  { topic:'climate', color:'#1a6b3c', label:'Climate & CO₂',
+    q:'The ice-albedo feedback loop means that as ice melts:',
+    choices:['More sunlight is reflected, slowing further warming','More energy is absorbed by darker surfaces, accelerating warming','Ocean salinity increases, refreezing the water','CO₂ levels drop because less gas is trapped under ice'], correct:1 },
+  { topic:'climate', color:'#1a6b3c', label:'Climate & CO₂',
+    q:'A smaller axial tilt (obliquity) leads to:',
+    choices:['More extreme seasons and less polar ice','Milder seasons and more polar ice formation','No change in seasonal energy distribution','Increased solar irradiance year-round'], correct:1 },
+
+  // EARTH HISTORY
+  { topic:'history', color:'#b34a00', label:'Earth History',
+    q:'Which organisms were primarily responsible for the Great Oxidation Event?',
+    choices:['Trilobites','Ferns and mosses','Photosynthetic cyanobacteria in the ocean','Deep-sea hydrothermal vent bacteria'], correct:2 },
+  { topic:'history', color:'#b34a00', label:'Earth History',
+    q:'During the Great Oxidation Event, atmospheric oxygen reacted with methane, causing methane to:',
+    choices:['Increase significantly','Stay at the same level','Decrease significantly','Convert into carbon dioxide only'], correct:2 },
+  { topic:'history', color:'#b34a00', label:'Earth History',
+    q:'Which event occurred EARLIEST in Earth\'s history?',
+    choices:['Great Oxidation Event (~2.4 Ga)','Cambrian explosion (~560 mya)','Formation of the first oceans (~4.2 Ga)','First evidence of life (~3.8 Ga)'], correct:2 },
+  { topic:'history', color:'#b34a00', label:'Earth History',
+    q:'Uranium-238 has a half-life of 4.5 billion years. A sample with ~50% of its original U-238 is approximately:',
+    choices:['9 billion years old','2.25 billion years old','4.5 billion years old','1 billion years old'], correct:2 },
+  { topic:'history', color:'#b34a00', label:'Earth History',
+    q:'The Hawaiian Islands get progressively older in which direction from the active hotspot?',
+    choices:['Southeast','Northeast','Southwest','Northwest'], correct:3 },
+  { topic:'history', color:'#b34a00', label:'Earth History',
+    q:'New oceanic crust forms at:',
+    choices:['Convergent subduction zones','Transform fault boundaries','Divergent boundaries (mid-ocean ridges)','Continental hotspot regions only'], correct:2 },
+  { topic:'history', color:'#b34a00', label:'Earth History',
+    q:'The Great Oxidation Event ultimately caused Earth\'s climate to:',
+    choices:['Warm significantly due to oxygen buildup','Cool, contributing to early ice ages','Stay unchanged because methane replaced oxygen','Warm because the ozone layer formed'], correct:1 },
+
+  // ORBITS
+  { topic:'orbits', color:'#4a1a7a', label:'Orbital Mechanics',
+    q:'According to Kepler\'s 3rd Law, a planet orbiting farther from the Sun has:',
+    choices:['A shorter orbital period and faster speed','A longer orbital period and slower speed','The same period as closer planets','A period determined only by its mass'], correct:1 },
+  { topic:'orbits', color:'#4a1a7a', label:'Orbital Mechanics',
+    q:'Kepler\'s 2nd Law (equal areas in equal time) means a planet travels fastest when:',
+    choices:['At its farthest point from the Sun (aphelion)','At the midpoint of its orbit','At its closest point to the Sun (perihelion)','Its speed is always constant'], correct:2 },
+  { topic:'orbits', color:'#4a1a7a', label:'Orbital Mechanics',
+    q:'Tidal locking of a moon means its orbital period:',
+    choices:['Is twice its rotational period','Is half its rotational period','Equals its rotational period, so one face always points toward the planet','Is unrelated to its rotation'], correct:2 },
+  { topic:'orbits', color:'#4a1a7a', label:'Orbital Mechanics',
+    q:'Why does a satellite in low Earth orbit have a shorter period than the Moon?',
+    choices:['It has less mass than the Moon','It moves slower than the Moon','It is closer to Earth and experiences a stronger gravitational field','Its orbit is more elliptical'], correct:2 },
+  { topic:'orbits', color:'#4a1a7a', label:'Orbital Mechanics',
+    q:'Which factor does NOT determine a planet\'s orbital period around the Sun?',
+    choices:['The planet\'s distance from the Sun','The Sun\'s gravitational pull','The planet\'s own mass','The orbital radius'], correct:2 },
+  { topic:'orbits', color:'#4a1a7a', label:'Orbital Mechanics',
+    q:'An orbit with an eccentricity of 0 is:',
+    choices:['A highly elongated ellipse','A parabola','A perfect circle','An open curve'], correct:2 },
+
+  // WATER & EROSION
+  { topic:'water', color:'#7a1a1a', label:'Water & Erosion',
+    q:'Freeze-thaw weathering breaks rock because water expands approximately ___% when it freezes:',
+    choices:['1%','5%','10%','25%'], correct:2 },
+  { topic:'water', color:'#7a1a1a', label:'Water & Erosion',
+    q:'In a cliff face, a rock layer that extends farther outward is likely:',
+    choices:['Younger than surrounding rock','More resistant to erosion than surrounding rock','Less resistant to erosion than surrounding rock','Made primarily of shale'], correct:1 },
+  { topic:'water', color:'#7a1a1a', label:'Water & Erosion',
+    q:'After a dam is built on a river, sediment deposition along the coast generally:',
+    choices:['Increases because more water flows','Stays the same','Decreases because sediment is trapped behind the dam','Increases because the river slows down'], correct:2 },
+  { topic:'water', color:'#7a1a1a', label:'Water & Erosion',
+    q:'Increasing plant cover on a hillside primarily reduces erosion by:',
+    choices:['Increasing runoff velocity','Reducing runoff and stabilizing soil with roots','Increasing the amount of sediment carried by rain','Raising local temperatures'], correct:1 },
+  { topic:'water', color:'#7a1a1a', label:'Water & Erosion',
+    q:'Sea level rise causes saltwater intrusion, which primarily threatens which Earth system?',
+    choices:['The atmosphere only','The geosphere only','The biosphere and hydrosphere (freshwater supply and vegetation)','The lithosphere only'], correct:2 },
+  { topic:'water', color:'#7a1a1a', label:'Water & Erosion',
+    q:'Which geologic process occurs over the LONGEST timescale?',
+    choices:['An earthquake','A landslide triggered by heavy rain','Coastal dune erosion over a decade','Movement of tectonic plates'], correct:3 },
+
+  // HUMAN IMPACT
+  { topic:'human', color:'#1a6b3c', label:'Human Impact',
+    q:'Land clearing for mining most directly reduces biodiversity in the:',
+    choices:['Hydrosphere','Atmosphere','Geosphere','Biosphere'], correct:3 },
+  { topic:'human', color:'#1a6b3c', label:'Human Impact',
+    q:'Mine tailings (waste rock) left on the surface can pollute groundwater because:',
+    choices:['They block sunlight from reaching aquifers','Precipitation dissolves minerals from tailings and infiltrates to groundwater','They emit gases that condense into acid rain','They increase the temperature of nearby streams'], correct:1 },
+  { topic:'human', color:'#1a6b3c', label:'Human Impact',
+    q:'Electric vehicles generally have lower environmental impact than gasoline vehicles because:',
+    choices:['They require no energy to manufacture','Their total lifecycle carbon emissions are lower','They have zero environmental impact at all stages','They use no natural resources'], correct:1 },
+  { topic:'human', color:'#1a6b3c', label:'Human Impact',
+    q:'When comparing two engineering design solutions on the Regents exam, a complete answer must:',
+    choices:['Only describe the most popular solution','Cite specific data from the provided source','Use only general scientific knowledge','Identify the solution with the lowest cost only'], correct:1 },
+  { topic:'human', color:'#1a6b3c', label:'Human Impact',
+    q:'Planting native vegetation around a reclaimed mine site primarily benefits which Earth system?',
+    choices:['Atmosphere, by increasing evaporation','Hydrosphere, by adding water','Biosphere, by restoring habitat and biodiversity','Geosphere, by adding minerals to the soil'], correct:2 },
+];
+
+// ── FILL-IN-BLANK DATA ───────────────────────────────────────────────────
+// Each entry: { topic, color, label, text (with [_] for each blank), blanks:[], distractors:[] }
+const FILL = [
+  // STARS
+  { topic:'stars', color:'#1a4a7a', label:'Stars & Universe',
+    text:'More massive stars have [_] lifespans because they fuse fuel at a [_] rate.',
+    blanks:['shorter','faster'], distractors:['longer','slower','equal'] },
+  { topic:'stars', color:'#1a4a7a', label:'Stars & Universe',
+    text:'The universe is expanding because distant galaxies show [_], meaning their light wavelengths are [_] than expected.',
+    blanks:['redshift','longer'], distractors:['blueshift','shorter','brighter'] },
+  { topic:'stars', color:'#1a4a7a', label:'Stars & Universe',
+    text:'CMBR became detectable when the early universe [_] and became [_] to radiation.',
+    blanks:['cooled','transparent'], distractors:['heated','contracted','opaque','dense'] },
+  { topic:'stars', color:'#1a4a7a', label:'Stars & Universe',
+    text:'The sunspot cycle repeats approximately every [_] years. More sunspots mean [_] solar irradiance.',
+    blanks:['11','higher'], distractors:['22','100','lower','equal'] },
+
+  // CLIMATE
+  { topic:'climate', color:'#1a6b3c', label:'Climate & CO₂',
+    text:'CO₂ raises surface temperatures by [_] outgoing infrared radiation, so less energy [_] the atmosphere.',
+    blanks:['absorbing','escapes'], distractors:['reflecting','enters','emitting','passes through'] },
+  { topic:'climate', color:'#1a6b3c', label:'Climate & CO₂',
+    text:'As polar ice melts, darker ocean surfaces [_] more solar energy, causing [_] warming in a positive feedback loop.',
+    blanks:['absorb','additional'], distractors:['reflect','reduced','block','less'] },
+  { topic:'climate', color:'#1a6b3c', label:'Climate & CO₂',
+    text:'Increased ocean CO₂ causes carbonate ions to [_], making it harder for marine organisms to build [_].',
+    blanks:['decrease','shells'], distractors:['increase','bones','stabilize','scales'] },
+  { topic:'climate', color:'#1a6b3c', label:'Climate & CO₂',
+    text:'A [_] axial tilt leads to milder seasons, allowing more [_] to accumulate at the poles.',
+    blanks:['smaller','ice'], distractors:['larger','water','steeper','sediment'] },
+
+  // EARTH HISTORY
+  { topic:'history', color:'#b34a00', label:'Earth History',
+    text:'The Great Oxidation Event was caused by [_] organisms releasing [_] into the ancient ocean and atmosphere.',
+    blanks:['photosynthetic','oxygen'], distractors:['volcanic','methane','heterotrophic','carbon dioxide'] },
+  { topic:'history', color:'#b34a00', label:'Earth History',
+    text:'As atmospheric oxygen increased during the GOE, [_] levels fell, causing Earth\'s climate to [_].',
+    blanks:['methane','cool'], distractors:['nitrogen','warm','CO₂','stay stable'] },
+  { topic:'history', color:'#b34a00', label:'Earth History',
+    text:'Hawaiian Islands get [_] in age moving northwest, indicating the Pacific Plate moves in that [_].',
+    blanks:['older','direction'], distractors:['younger','opposite direction','similar','rotation'] },
+  { topic:'history', color:'#b34a00', label:'Earth History',
+    text:'At [_] boundaries, tectonic plates move apart and new oceanic crust forms at mid-ocean [_].',
+    blanks:['divergent','ridges'], distractors:['convergent','trenches','transform','mountains'] },
+
+  // ORBITS
+  { topic:'orbits', color:'#4a1a7a', label:'Orbital Mechanics',
+    text:'Kepler\'s 3rd Law: objects [_] from the central body have [_] orbital periods.',
+    blanks:['farther','longer'], distractors:['closer','shorter','equidistant','equal'] },
+  { topic:'orbits', color:'#4a1a7a', label:'Orbital Mechanics',
+    text:'Tidal locking occurs when a moon\'s [_] period equals its [_] period, so one face always points toward the planet.',
+    blanks:['orbital','rotational'], distractors:['synodic','axial','elliptical','revolution'] },
+  { topic:'orbits', color:'#4a1a7a', label:'Orbital Mechanics',
+    text:'By Kepler\'s 2nd Law, a planet moves [_] at perihelion and [_] at aphelion, sweeping equal areas in equal times.',
+    blanks:['fastest','slowest'], distractors:['at constant speed','unpredictably','backwards'] },
+  { topic:'orbits', color:'#4a1a7a', label:'Orbital Mechanics',
+    text:'A satellite in [_] Earth orbit has a shorter period because it is [_] to Earth and experiences stronger gravity.',
+    blanks:['low','closer'], distractors:['high','farther','medium','geosynchronous'] },
+
+  // WATER & EROSION
+  { topic:'water', color:'#7a1a1a', label:'Water & Erosion',
+    text:'Water expands about [_]% when it freezes, widening cracks in rock and causing [_] weathering.',
+    blanks:['10','freeze-thaw'], distractors:['5','25','chemical','biological','1'] },
+  { topic:'water', color:'#7a1a1a', label:'Water & Erosion',
+    text:'A dam [_] sediment behind it, so [_] sediment reaches the coastline, increasing coastal erosion.',
+    blanks:['traps','less'], distractors:['releases','more','blocks','equal amounts of'] },
+  { topic:'water', color:'#7a1a1a', label:'Water & Erosion',
+    text:'Greater plant cover [_] runoff and [_] soil erosion by intercepting rain and stabilizing soil with roots.',
+    blanks:['reduces','prevents'], distractors:['increases','accelerates','worsens','blocks'] },
+  { topic:'water', color:'#7a1a1a', label:'Water & Erosion',
+    text:'Sea level rise pushes saltwater [_], contaminating [_] and threatening freshwater drinking supplies.',
+    blanks:['inland','aquifers'], distractors:['seaward','rivers only','outward','glaciers'] },
+
+  // HUMAN IMPACT
+  { topic:'human', color:'#1a6b3c', label:'Human Impact',
+    text:'Mining land clearing destroys [_], reducing [_] in the biosphere.',
+    blanks:['habitat','biodiversity'], distractors:['soil minerals','salinity','water flow','elevation'] },
+  { topic:'human', color:'#1a6b3c', label:'Human Impact',
+    text:'Mine [_] left on the surface can be dissolved by precipitation and carried into [_], polluting the hydrosphere.',
+    blanks:['tailings','groundwater'], distractors:['shafts','surface water only','pits','the atmosphere'] },
+  { topic:'human', color:'#1a6b3c', label:'Human Impact',
+    text:'Electric vehicles produce [_] direct emissions during use but still have environmental costs during [_].',
+    blanks:['zero','manufacturing'], distractors:['some','many','disposal','charging'] },
+];
+
+// ── TEMPORAL SORT DATA ───────────────────────────────────────────────────
+// Sources: ESSRT v1.3 page 6 (Phanerozoic life events) + page 7 (Precambrian).
+// order: 1 = oldest. Each round picks 5 at random from the full pool.
+const SORT_EVENTS = [
+  // Page 7 - Precambrian
+  { id:1,  label:'Earth and solar system form',                              period:'Hadean Eon',      age:'~4.6 Ga',  order:1  },
+  { id:2,  label:'Liquid oceans first appear on Earth',                      period:'Hadean/Archean',  age:'~4.2 Ga',  order:2  },
+  { id:3,  label:'First prokaryotic life (bacteria)',                        period:'Archean Eon',     age:'~3.8 Ga',  order:3  },
+  { id:4,  label:'Great Oxidation Event - cyanobacteria release O₂',        period:'Proterozoic Eon', age:'~2.4 Ga',  order:4  },
+  { id:5,  label:'First eukaryotic cells (nucleus-bearing cells)',           period:'Proterozoic Eon', age:'~1.5 Ga',  order:5  },
+  // Page 6 - Phanerozoic life events (from phanerozoic.html LIFE_BY_PERIOD)
+  { id:6,  label:'First life forms with hard shells',                        period:'Cambrian',        age:'~541 mya', order:6  },
+  { id:7,  label:'Earth\'s first reef-containing corals; first land plants', period:'Ordovician',     age:'~485 mya', order:7  },
+  { id:8,  label:'Earliest fish with jaws; first vascular plants',          period:'Silurian',        age:'~444 mya', order:8  },
+  { id:9,  label:'Earth\'s earliest forests - Gilboa and Cairo, NY',        period:'Devonian',        age:'~419 mya', order:9  },
+  { id:10, label:'Earliest reptiles appear',                                 period:'Mississippian',   age:'~359 mya', order:10 },
+  { id:11, label:'Extensive coal-forming vegetation in swamps',              period:'Pennsylvanian',   age:'~323 mya', order:11 },
+  { id:12, label:'Largest mass extinction of marine and land organisms',     period:'Permian',         age:'~299 mya', order:12 },
+  { id:13, label:'Earliest mammals appear',                                  period:'Triassic',        age:'~252 mya', order:13 },
+  { id:14, label:'Earliest birds; peak of sauropods and ammonoids',         period:'Jurassic',        age:'~201 mya', order:14 },
+  { id:15, label:'Earliest flowering plants',                                period:'Cretaceous',      age:'~145 mya', order:15 },
+  { id:16, label:'First horses and whales',                                  period:'Paleogene',       age:'~66 mya',  order:16 },
+  { id:17, label:'Large carnivorous mammals; diverse human ancestors',       period:'Neogene',         age:'~23 mya',  order:17 },
+  { id:18, label:'Humans, mammoths, giant beaver',                           period:'Quaternary',      age:'~2.6 mya', order:18 },
+];
+
+// ── MATCH-UP DATA ────────────────────────────────────────────────────────
+// Sourced directly from index.html study guide - concept ↔ rated-correct phrase pairs.
+const MATCH = [
+  // STARS & UNIVERSE
+  { topic:'stars', color:'#1a4a7a', label:'Stars & Universe',
+    term:'Red giant location on H-R diagram',          match:'Upper right - cool and bright' },
+  { topic:'stars', color:'#1a4a7a', label:'Stars & Universe',
+    term:'White dwarf location on H-R diagram',         match:'Lower left - hot and dim' },
+  { topic:'stars', color:'#1a4a7a', label:'Stars & Universe',
+    term:'What controls nucleosynthesis rate',           match:'Mass of the star - more massive = faster fusion' },
+  { topic:'stars', color:'#1a4a7a', label:'Stars & Universe',
+    term:'Where elements heavier than iron form',        match:'In a supernova explosion' },
+  { topic:'stars', color:'#1a4a7a', label:'Stars & Universe',
+    term:'What galaxy redshift proves',                  match:'The universe is expanding' },
+  { topic:'stars', color:'#1a4a7a', label:'Stars & Universe',
+    term:'What CMBR is evidence of',                    match:'The Big Bang - energy from early universe found in all directions' },
+  { topic:'stars', color:'#1a4a7a', label:'Stars & Universe',
+    term:'Sunspot cycle period',                         match:'Approximately 11 years' },
+  { topic:'stars', color:'#1a4a7a', label:'Stars & Universe',
+    term:'More sunspots = ',                             match:'Higher solar irradiance' },
+  { topic:'stars', color:'#1a4a7a', label:'Stars & Universe',
+    term:'Hubble\'s Law conclusion',                    match:'Galaxies farther from Earth have greater recessional velocities' },
+
+  // CLIMATE & CO₂
+  { topic:'climate', color:'#1a6b3c', label:'Climate & CO₂',
+    term:'CO₂ greenhouse mechanism',                    match:'Absorbs outgoing infrared; less energy escapes atmosphere' },
+  { topic:'climate', color:'#1a6b3c', label:'Climate & CO₂',
+    term:'Effect of decreased atmospheric CO₂',         match:'Earth\'s surface temperature decreases' },
+  { topic:'climate', color:'#1a6b3c', label:'Climate & CO₂',
+    term:'How photosynthesis affects atmospheric CO₂',  match:'Removes CO₂; stores carbon in plant biomass and soil' },
+  { topic:'climate', color:'#1a6b3c', label:'Climate & CO₂',
+    term:'Ocean acidification result',                  match:'Carbonate ions decrease; marine shells cannot form' },
+  { topic:'climate', color:'#1a6b3c', label:'Climate & CO₂',
+    term:'Ice-albedo positive feedback',                match:'Ice melts → darker surface → more energy absorbed → more melting' },
+  { topic:'climate', color:'#1a6b3c', label:'Climate & CO₂',
+    term:'Effect of smaller axial tilt (obliquity)',    match:'Milder seasons; more polar ice accumulates' },
+  { topic:'climate', color:'#1a6b3c', label:'Climate & CO₂',
+    term:'Fresh meltwater entering ocean causes',       match:'Ocean salinity decreases' },
+
+  // EARTH HISTORY
+  { topic:'history', color:'#b34a00', label:'Earth History',
+    term:'Cause of the Great Oxidation Event',          match:'Cyanobacteria photosynthesis in ocean released O₂' },
+  { topic:'history', color:'#b34a00', label:'Earth History',
+    term:'GOE effect on atmospheric methane',           match:'O₂ reacted with methane; methane levels decreased' },
+  { topic:'history', color:'#b34a00', label:'Earth History',
+    term:'Uranium-238 half-life',                       match:'4.5 billion years' },
+  { topic:'history', color:'#b34a00', label:'Earth History',
+    term:'Hawaiian Islands age pattern',                match:'Get progressively older moving northwest' },
+  { topic:'history', color:'#b34a00', label:'Earth History',
+    term:'What forms at divergent boundaries',          match:'Mid-ocean ridges; new oceanic crust' },
+  { topic:'history', color:'#b34a00', label:'Earth History',
+    term:'Approximate age of Earth',                    match:'~4.5–4.6 billion years' },
+  { topic:'history', color:'#b34a00', label:'Earth History',
+    term:'What banded iron formations indicate',        match:'Iron and oxygen were present in ancient oceans' },
+
+  // ORBITAL MECHANICS
+  { topic:'orbits', color:'#4a1a7a', label:'Orbital Mechanics',
+    term:'Kepler\'s 1st Law',                          match:'Orbits are ellipses; central body at one focus' },
+  { topic:'orbits', color:'#4a1a7a', label:'Orbital Mechanics',
+    term:'Kepler\'s 2nd Law',                          match:'Equal areas in equal time; object moves faster when closer' },
+  { topic:'orbits', color:'#4a1a7a', label:'Orbital Mechanics',
+    term:'Kepler\'s 3rd Law',                          match:'Greater orbital distance = longer period of revolution' },
+  { topic:'orbits', color:'#4a1a7a', label:'Orbital Mechanics',
+    term:'Tidal locking condition',                     match:'Orbital period equals rotational period' },
+  { topic:'orbits', color:'#4a1a7a', label:'Orbital Mechanics',
+    term:'Eccentricity of 0 means',                    match:'A perfectly circular orbit' },
+  { topic:'orbits', color:'#4a1a7a', label:'Orbital Mechanics',
+    term:'Why closer satellites have shorter periods',  match:'Stronger gravitational field requires faster orbital speed' },
+  { topic:'orbits', color:'#4a1a7a', label:'Orbital Mechanics',
+    term:'A planet\'s orbital speed depends on',       match:'Distance from the central body - not the planet\'s own mass' },
+
+  // WATER & EROSION
+  { topic:'water', color:'#7a1a1a', label:'Water & Erosion',
+    term:'Freeze-thaw weathering mechanism',            match:'Water expands ~10% when freezing; pressure widens cracks' },
+  { topic:'water', color:'#7a1a1a', label:'Water & Erosion',
+    term:'More resistant rock - sandstone or shale?',  match:'Sandstone - extends farther from cliff face' },
+  { topic:'water', color:'#7a1a1a', label:'Water & Erosion',
+    term:'Downstream effect of a dam',                  match:'Less sediment reaches coast; coastal erosion increases' },
+  { topic:'water', color:'#7a1a1a', label:'Water & Erosion',
+    term:'Effect of more plant cover on erosion',       match:'Less runoff; less soil erosion' },
+  { topic:'water', color:'#7a1a1a', label:'Water & Erosion',
+    term:'Saltwater intrusion threatens',               match:'Freshwater aquifers, wells, and drinking water supply' },
+  { topic:'water', color:'#7a1a1a', label:'Water & Erosion',
+    term:'Timescale of earthquake land subsidence',     match:'Seconds to hours - near-instantaneous' },
+
+  // HUMAN IMPACT
+  { topic:'human', color:'#1a6b3c', label:'Human Impact',
+    term:'Mining land clearing affects',                match:'Biosphere - biodiversity reduced by deforestation' },
+  { topic:'human', color:'#1a6b3c', label:'Human Impact',
+    term:'Mine tailings + precipitation affects',       match:'Hydrosphere - groundwater polluted by dissolved minerals' },
+  { topic:'human', color:'#1a6b3c', label:'Human Impact',
+    term:'Battery EV vs. gasoline vehicle lifecycle',   match:'EV has lower total carbon emissions' },
+  { topic:'human', color:'#1a6b3c', label:'Human Impact',
+    term:'Design solution answer must include',         match:'Specific data from the provided source - not general knowledge' },
+  { topic:'human', color:'#1a6b3c', label:'Human Impact',
+    term:'Planting willows along reclaimed mine river', match:'Stabilizes river banks; reduces flooding impact' },
+];
+
+// ── CRQ JUDGE DATA ───────────────────────────────────────────────────────
+const CRQ = [
+  // Climate
+  { topic:'climate', color:'#1a6b3c', label:'Climate',
+    stem:'Explain how an increase in atmospheric CO₂ concentration leads to an increase in global average temperature.',
+    answer:'CO₂ is a greenhouse gas that traps heat from the Sun.',
+    rating:'full',
+    feedback:'Full credit - identifying CO₂ as a greenhouse gas that traps heat is sufficient for HS-ESS. Students are not required to specify the direction of radiation or distinguish incoming solar from outgoing Earth radiation.' },
+  { topic:'climate', color:'#1a6b3c', label:'Climate',
+    stem:'Explain how an increase in atmospheric CO₂ concentration leads to an increase in global average temperature.',
+    answer:'CO₂ is a greenhouse gas. It absorbs infrared radiation emitted by Earth\'s surface and re-emits it back toward Earth, trapping heat and raising atmospheric temperature.',
+    rating:'full',
+    feedback:'Full credit - identifies CO₂ as a greenhouse gas AND explains the full mechanism: absorbs outgoing infrared radiation and re-emits it back, trapping heat. Both parts of the explanation are present.' },
+  { topic:'climate', color:'#1a6b3c', label:'Climate',
+    stem:'Explain how an increase in atmospheric CO₂ concentration leads to an increase in global average temperature.',
+    answer:'It gets hotter because there is more CO₂.',
+    rating:'none',
+    feedback:'No credit - this is circular: it restates "more CO₂ = higher temperature" without adding any scientific content. A creditworthy answer must identify something new, such as that CO₂ is a greenhouse gas that traps heat.' },
+  { topic:'climate', color:'#1a6b3c', label:'Climate',
+    stem:'Describe how the ice-albedo feedback loop amplifies warming in the Arctic.',
+    answer:'As ice melts, the darker ocean is exposed. Dark surfaces absorb more solar energy than white ice, causing more warming, which melts more ice.',
+    rating:'full',
+    feedback:'Full credit - all links in the feedback loop are present: ice melts → dark surface exposed → more solar energy absorbed → more warming → more melting.' },
+  { topic:'climate', color:'#1a6b3c', label:'Climate',
+    stem:'Describe how the ice-albedo feedback loop amplifies warming in the Arctic.',
+    answer:'Ice reflects sunlight but when it melts the ocean absorbs heat.',
+    rating:'full',
+    feedback:'Full credit - the student correctly identifies the core mechanism: ice reflects solar energy, and when it melts the darker ocean absorbs more heat, amplifying warming. HS-ESS does not require spelling out every link in the feedback cycle.' },
+  // Astronomy
+  { topic:'stars', color:'#1a4a7a', label:'Astronomy',
+    stem:'Explain why the Sun appears to rise and set each day.',
+    answer:'Earth rotates on its axis once every 24 hours. As Earth spins, different sides face the Sun, making the Sun appear to rise in the east and set in the west.',
+    rating:'full',
+    feedback:'Full credit - correctly identifies Earth\'s rotation as the cause and explains how the spin produces the apparent east-to-west movement of the Sun.' },
+  { topic:'stars', color:'#1a4a7a', label:'Astronomy',
+    stem:'Explain why the Sun appears to rise and set each day.',
+    answer:'The Sun moves around Earth once every 24 hours.',
+    rating:'none',
+    feedback:'No credit - factually incorrect. The Sun does not orbit Earth. Earth rotates on its axis, which causes the Sun\'s apparent daily motion. A scientifically incorrect explanation earns no credit regardless of how it is worded.' },
+  { topic:'stars', color:'#1a4a7a', label:'Astronomy',
+    stem:'State one reason why summer days in New York State are longer than winter days.',
+    answer:'In summer, New York is tilted toward the Sun, so the Sun is above the horizon for more hours each day.',
+    rating:'full',
+    feedback:'Full credit - correctly identifies Earth\'s axial tilt toward the Sun in summer as the reason for longer daylight hours. Directly addresses the "State one reason" command.' },
+  { topic:'stars', color:'#1a4a7a', label:'Astronomy',
+    stem:'State one reason why summer days in New York State are longer than winter days.',
+    answer:'Because it is warmer in summer.',
+    rating:'none',
+    feedback:'No credit - describes a result of longer days, not a reason for them. The question asks for a cause (Earth\'s axial tilt), not an effect.' },
+  { topic:'stars', color:'#1a4a7a', label:'Astronomy',
+    stem:'Explain why the same side of the Moon always faces Earth.',
+    answer:'The Moon rotates at the same rate as it revolves around Earth - both take about 27 days - so the same face is always toward us.',
+    rating:'full',
+    feedback:'Full credit - correctly explains synchronous rotation: the Moon\'s rotation period equals its revolution period, keeping the same hemisphere facing Earth at all times.' },
+  { topic:'stars', color:'#1a4a7a', label:'Astronomy',
+    stem:'Explain why the same side of the Moon always faces Earth.',
+    answer:'The Moon does not rotate.',
+    rating:'none',
+    feedback:'No credit - factually incorrect. The Moon does rotate; it completes one rotation per orbit (synchronous rotation). This is a common misconception and earns no credit.' },
+  // Geology
+  { topic:'history', color:'#b34a00', label:'Geology',
+    stem:'Describe two characteristics of P-waves that differ from S-waves.',
+    answer:'P-waves travel faster than S-waves and can travel through liquids, while S-waves can only travel through solids.',
+    rating:'full',
+    feedback:'Full credit - two distinct differences stated: (1) P-waves are faster, and (2) P-waves travel through liquids while S-waves cannot. Both characteristics are accurate and distinct.' },
+  { topic:'history', color:'#b34a00', label:'Geology',
+    stem:'Describe two characteristics of P-waves that differ from S-waves.',
+    answer:'P-waves travel faster than S-waves.',
+    rating:'none',
+    feedback:'No credit - the question asks for two characteristics. Stating only one earns no credit in HS-ESS. A complete answer would state that P-waves are faster AND that P-waves travel through liquids while S-waves cannot.' },
+  { topic:'history', color:'#b34a00', label:'Geology',
+    stem:'Explain how index fossils are used to determine the relative age of rock layers.',
+    answer:'Index fossils are from organisms that lived for a short time but were found worldwide. If the same index fossil appears in two rock layers, those layers are the same relative age.',
+    rating:'full',
+    feedback:'Full credit - identifies the key properties (short time span, wide geographic distribution) and explains how layer correlation works.' },
+  { topic:'history', color:'#b34a00', label:'Geology',
+    stem:'Explain how index fossils are used to determine the relative age of rock layers.',
+    answer:'Index fossils help scientists figure out how old rocks are.',
+    rating:'none',
+    feedback:'No credit - this restates the question without adding any information about how index fossils are actually used. A creditworthy answer must state something specific: for example, that index fossils lived during a short, well-defined time period, so rock layers containing the same index fossil can be matched as the same age.' },
+  { topic:'history', color:'#b34a00', label:'Geology',
+    stem:'State the principle of superposition and explain how it is used to determine the relative age of undisturbed rock layers.',
+    answer:'Superposition states that in undisturbed layers, the oldest rocks are on the bottom and youngest are on top. Scientists compare layers to determine which formed first.',
+    rating:'full',
+    feedback:'Full credit - correctly states the principle and explains how it is applied to determine relative age from layer position.' },
+  // Water & Erosion
+  { topic:'water', color:'#005a8e', label:'Water & Erosion',
+    stem:'Explain how the gradient of a stream affects its ability to erode sediment.',
+    answer:'A steeper gradient means the stream flows faster, giving it more energy to erode and carry sediment.',
+    rating:'full',
+    feedback:'Full credit - complete cause-and-effect chain: steeper gradient → faster velocity → more kinetic energy → greater erosion capacity.' },
+  { topic:'water', color:'#005a8e', label:'Water & Erosion',
+    stem:'Explain how the gradient of a stream affects its ability to erode sediment.',
+    answer:'A steeper gradient erodes more.',
+    rating:'none',
+    feedback:'No credit - this is circular: "steeper gradient erodes more" restates the question without adding information. A creditworthy answer must say something new, such as that a steeper gradient increases stream velocity, which increases erosion.' },
+  // Human Impact
+  { topic:'human', color:'#2e7d32', label:'Human Impact',
+    stem:'Explain one way that deforestation increases atmospheric CO₂ levels.',
+    answer:'Trees absorb CO₂ during photosynthesis. When forests are removed, fewer trees absorb CO₂, so it builds up in the atmosphere.',
+    rating:'full',
+    feedback:'Full credit - explains that trees act as a carbon sink via photosynthesis, and that removing them reduces CO₂ absorption, allowing it to accumulate. Complete cause-and-effect.' },
+  { topic:'human', color:'#2e7d32', label:'Human Impact',
+    stem:'Explain one way that deforestation increases atmospheric CO₂ levels.',
+    answer:'Cutting down trees releases CO₂.',
+    rating:'full',
+    feedback:'Full credit - trees store carbon, and cutting them down releases that carbon as CO₂. This directly and correctly answers "one way deforestation increases CO₂." Students are not required to distinguish combustion from decomposition.' },
+];
+
+// ── TOPIC COLORS ─────────────────────────────────────────────────────────
+const TOPIC_COLORS = {
+  stars:   '#1a4a7a',
+  climate: '#1a6b3c',
+  history: '#b34a00',
+  orbits:  '#4a1a7a',
+  water:   '#7a1a1a',
+  human:   '#1a6b3c',
+};
+
+// ── SHARED STATE ─────────────────────────────────────────────────────────
+let deck = [], idx = 0, flipped = false;
+let ratings = { know: 0, almost: 0, nope: 0 };
+
+// MCQ state
+let mcqPool = [], mcqIdx = 0, mcqScore = 0, mcqStreak = 0, mcqBestStreak = 0;
+let mcqCorrect = 0, mcqTimerInterval = null, mcqSecsLeft = 0, mcqAnswered = false;
+const MCQ_SECS = 20;
+
+// FIB state
+let fibPool = [], fibIdx = 0, fibCorrect = 0, fibTries = 0;
+let fibCurrent = null, fibSlotValues = [], fibSlotLocked = [], fibDragging = null;
+
+// Sort state
+let sortPick = [], sortCorrect = 0, sortTotal = 0, sortDragging = null;
+
+// Match state
+let matchPool = [], matchPick = [], matchSelected = null, matchMatched = new Set();
+let matchCorrect = 0, matchTotal = 0, matchErrors = 0;
+
+// Boss state
+const BOSS_MAX_HP = 15;
+let bossPool = [], bossIdx = 0, bossHp = 0, bossShields = 5, bossAnswered = false;
+let bossRegenInterval = null;
+
+// CRQ state
+let crqPool = [], crqIdx = 0, crqCorrect = 0, crqTotal = 0;
+
+// ── MODE / CHIP INTERACTION ───────────────────────────────────────────────
+const LIVE_MODES = {
+  flashcard: 'Start Flashcards',
+  mcq:       'Start Multiple Choice',
+  fillblank: 'Start Fill-in-Blank',
+  sort:      'Start Temporal Sort',
+  match:     'Start Match-Up',
+  boss:      '⚔ Fight the Blob Monster',
+  crq:       'Start CRQ Judge',
+};
+
+document.querySelectorAll('.mode-card').forEach(card => {
+  card.addEventListener('click', () => {
+    document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('active'));
+    card.classList.add('active');
+    const mode = card.dataset.mode;
+    const btn = document.getElementById('start-btn');
+    const pt = document.querySelector('.placeholder-text');
+    if (LIVE_MODES[mode]) {
+      btn.textContent = LIVE_MODES[mode];
+      btn.disabled = false;
+      if (pt) pt.innerHTML = `Choose topics above, then hit <strong>${LIVE_MODES[mode]}</strong>.`;
+    } else {
+      btn.textContent = 'Coming Soon';
+      btn.disabled = true;
+      if (pt) pt.innerHTML = `Choose topics above, then hit <strong>Start</strong>.`;
+    }
+  });
+});
+
+document.querySelectorAll('.chip').forEach(chip => {
+  chip.addEventListener('click', () => chip.classList.toggle('on'));
+});
+
+// ── HUD UPDATE ────────────────────────────────────────────────────────────
+function showHud() { document.getElementById('hud').style.display = ''; }
+function hideHud() { document.getElementById('hud').style.display = 'none'; }
+function setHudLabels(a, b, c, d) {
+  showHud();
+  const stats = document.querySelectorAll('.hud-stat');
+  const labels = [a, b, c, d];
+  stats.forEach((s, i) => { s.lastChild.textContent = labels[i]; });
+}
+function updateHud() {
+  document.getElementById('hud-know').textContent   = ratings.know;
+  document.getElementById('hud-almost').textContent = ratings.almost;
+  document.getElementById('hud-nope').textContent   = ratings.nope;
+  document.getElementById('hud-q').textContent      = deck.length ? (idx + 1) + '/' + deck.length : '-';
+}
+function updateMcqHud() {
+  document.getElementById('hud-know').textContent   = mcqScore;
+  document.getElementById('hud-almost').textContent = mcqStreak;
+  document.getElementById('hud-nope').textContent   = mcqCorrect + '/' + mcqPool.length;
+  document.getElementById('hud-q').textContent      = mcqSecsLeft + 's';
+}
+
+// ── FLASHCARD RENDER ──────────────────────────────────────────────────────
+function renderCard() {
+  if (!deck.length) return;
+  const card = deck[idx];
+  flipped = false;
+  const pct = (idx / deck.length) * 100;
+
+  document.getElementById('game-arena').innerHTML = `
+    <div class="fc-wrap">
+      <div class="fc-progress-bar"><div class="fc-progress-fill" style="width:${pct}%"></div></div>
+      <div class="fc-counter">Card ${idx + 1} of ${deck.length}</div>
+      <div class="fc-scene" id="fc-scene">
+        <div class="fc-card" id="fc-card">
+          <div class="fc-front">
+            <span class="fc-topic-badge" style="background:${card.color}">${card.label}</span>
+            <div class="fc-label">Question - tap to reveal answer</div>
+            <div class="fc-question">${card.q}</div>
+          </div>
+          <div class="fc-back">
+            <div class="fc-label">Answer</div>
+            <div class="fc-answer">${card.a}</div>
+          </div>
+        </div>
+      </div>
+      <div class="fc-nav">
+        <button class="btn-nope"   onclick="rate('nope')">&#x2717; Nope</button>
+        <button class="btn-almost" onclick="rate('almost')">&#x007E; Almost</button>
+        <button class="btn-know"   onclick="rate('know')">&#x2713; Know It</button>
+      </div>
+      <div class="fc-skip-nav">
+        <button onclick="prevCard()">&#8592; Prev</button>
+        <button onclick="flipCard()">Flip</button>
+        <button onclick="nextCard()">Next &#8594;</button>
+      </div>
+    </div>`;
+
+  document.getElementById('fc-scene').addEventListener('click', flipCard);
+  updateHud();
+}
+
+function flipCard() {
+  flipped = !flipped;
+  document.getElementById('fc-card').classList.toggle('flipped', flipped);
+}
+
+function rate(r) {
+  if (!flipped) { flipCard(); return; }
+  ratings[r]++;
+  nextCard();
+}
+
+function nextCard() {
+  if (idx < deck.length - 1) { idx++; renderCard(); }
+  else showSummary();
+}
+
+function prevCard() {
+  if (idx > 0) { idx--; renderCard(); }
+}
+
+function showSummary() {
+  const total = ratings.know + ratings.almost + ratings.nope;
+  document.getElementById('game-arena').innerHTML = `
+    <div class="fc-summary">
+      <h2>&#x1F3C6; Round Complete!</h2>
+      <div class="fc-score-row">
+        <div class="s-know"><strong>${ratings.know}</strong>Know It</div>
+        <div class="s-almost"><strong>${ratings.almost}</strong>Almost</div>
+        <div class="s-nope"><strong>${ratings.nope}</strong>Nope</div>
+      </div>
+      <p style="font-size:.85rem;color:var(--gray);margin-bottom:1rem">${total} cards reviewed</p>
+      ${ratings.nope > 0 ? `<button class="fc-restart" onclick="startNope()">Retry Missed Cards (${ratings.nope})</button>` : ''}
+      <button class="fc-restart" onclick="startGame()">Restart All</button>
+    </div>`;
+  updateHud();
+}
+
+function startNope() {
+  deck = deck.filter((_, i) => {
+    /* re-use nope deck - simpler: just reshuffle and restart with same deck */
+    return true;
+  });
+  /* restart with original deck filtered by nope - track was cleared, so just restart */
+  ratings = { know: 0, almost: 0, nope: 0 };
+  idx = 0;
+  shuffle(deck);
+  renderCard();
+}
+
+// ── MCQ ENGINE ────────────────────────────────────────────────────────────
+function startMcq() {
+  const activeTopics = [...document.querySelectorAll('.chip.on')].map(c => c.dataset.topic);
+  if (!activeTopics.length) { alert('Select at least one topic.'); return; }
+  mcqPool = MCQ.filter(q => activeTopics.includes(q.topic));
+  if (!mcqPool.length) { alert('No questions for selected topics.'); return; }
+  shuffle(mcqPool);
+  mcqIdx = 0; mcqScore = 0; mcqStreak = 0; mcqBestStreak = 0; mcqCorrect = 0;
+  setHudLabels('Score', 'Streak', 'Progress', 'Time');
+  renderMcq();
+}
+
+function renderMcq() {
+  clearInterval(mcqTimerInterval);
+  if (mcqIdx >= mcqPool.length) { showMcqSummary(); return; }
+  const q = mcqPool[mcqIdx];
+  mcqAnswered = false;
+  mcqSecsLeft = MCQ_SECS;
+  const pct = (mcqIdx / mcqPool.length) * 100;
+
+  // Shuffle choices while tracking the correct answer's new index
+  const order = [0,1,2,3].sort(() => Math.random() - .5);
+  const shuffledChoices = order.map(i => q.choices[i]);
+  const newCorrect = order.indexOf(q.correct);
+
+  document.getElementById('game-arena').innerHTML = `
+    <div class="mcq-wrap">
+      <div class="fc-progress-bar"><div class="fc-progress-fill" style="width:${pct}%"></div></div>
+      <div class="mcq-timer-track"><div class="mcq-timer-fill" id="mcq-tbar" style="width:100%"></div></div>
+      <div class="mcq-meta">
+        <span class="mcq-topic-badge" style="background:${q.color}">${q.label}</span>
+        <span>Question ${mcqIdx + 1} of ${mcqPool.length}</span>
+      </div>
+      <div class="mcq-question">${q.q}</div>
+      <div class="mcq-choices" id="mcq-choices">
+        ${shuffledChoices.map((c, i) => `<button class="mcq-choice" data-i="${i}" onclick="mcqAnswer(${i},${newCorrect})">${c}</button>`).join('')}
+      </div>
+      <div class="mcq-feedback" id="mcq-fb"></div>
+      <div class="mcq-streak-bonus" id="mcq-sb"></div>
+    </div>`;
+
+  updateMcqHud();
+
+  // Start timer
+  mcqTimerInterval = setInterval(() => {
+    mcqSecsLeft--;
+    const fill = document.getElementById('mcq-tbar');
+    if (fill) {
+      fill.style.width = (mcqSecsLeft / MCQ_SECS * 100) + '%';
+      if (mcqSecsLeft <= 6) fill.classList.add('urgent');
+    }
+    document.getElementById('hud-q').textContent = mcqSecsLeft + 's';
+    if (mcqSecsLeft <= 0 && !mcqAnswered) mcqTimeout(newCorrect);
+  }, 1000);
+}
+
+function mcqAnswer(chosen, correct) {
+  if (mcqAnswered) return;
+  mcqAnswered = true;
+  clearInterval(mcqTimerInterval);
+
+  const buttons = document.querySelectorAll('.mcq-choice');
+  buttons.forEach(b => b.disabled = true);
+
+  const isCorrect = chosen === correct;
+  buttons[chosen].classList.add(isCorrect ? 'correct' : 'wrong');
+  if (!isCorrect) buttons[correct].classList.add('reveal');
+
+  const fb = document.getElementById('mcq-fb');
+  const sb = document.getElementById('mcq-sb');
+
+  if (isCorrect) {
+    mcqCorrect++;
+    mcqStreak++;
+    if (mcqStreak > mcqBestStreak) mcqBestStreak = mcqStreak;
+    const bonus = mcqStreak >= 3 ? 5 : 0;
+    mcqScore += 10 + bonus;
+    fb.textContent = '✓ Correct!';
+    fb.className = 'mcq-feedback ok';
+    sb.textContent = mcqStreak >= 3 ? `🔥 ${mcqStreak} in a row! +5 bonus` : mcqStreak >= 2 ? `${mcqStreak} streak!` : '';
+  } else {
+    mcqStreak = 0;
+    fb.textContent = '✗ Incorrect';
+    fb.className = 'mcq-feedback bad';
+    sb.textContent = '';
+  }
+  updateMcqHud();
+  setTimeout(() => { mcqIdx++; renderMcq(); }, 1600);
+}
+
+function mcqTimeout(correct) {
+  mcqAnswered = true;
+  clearInterval(mcqTimerInterval);
+  mcqStreak = 0;
+  const buttons = document.querySelectorAll('.mcq-choice');
+  buttons.forEach(b => b.disabled = true);
+  if (buttons[correct]) buttons[correct].classList.add('reveal');
+  const fb = document.getElementById('mcq-fb');
+  if (fb) { fb.textContent = '⏱ Time\'s up!'; fb.className = 'mcq-feedback bad'; }
+  updateMcqHud();
+  setTimeout(() => { mcqIdx++; renderMcq(); }, 1600);
+}
+
+function showMcqSummary() {
+  clearInterval(mcqTimerInterval);
+  const pct = Math.round(mcqCorrect / mcqPool.length * 100);
+  const grade = pct >= 85 ? '🏆 Excellent!' : pct >= 65 ? '👍 Good work!' : '📖 Keep studying!';
+  document.getElementById('game-arena').innerHTML = `
+    <div class="mcq-summary">
+      <h2>${grade}</h2>
+      <div class="mcq-score-grid">
+        <div class="mscore-pts"><strong>${mcqScore}</strong>Points</div>
+        <div class="mscore-right"><strong>${mcqCorrect}/${mcqPool.length} (${pct}%)</strong>Correct</div>
+        <div class="mscore-streak"><strong>${mcqBestStreak}</strong>Best Streak</div>
+      </div>
+      <button class="mcq-restart" onclick="startMcq()">Play Again</button>
+      <button class="mcq-restart" onclick="startGame()">Switch to Flashcards</button>
+    </div>`;
+  setHudLabels('Score', 'Streak', 'Progress', 'Time');
+  document.getElementById('hud-know').textContent   = mcqScore;
+  document.getElementById('hud-almost').textContent = mcqBestStreak;
+  document.getElementById('hud-nope').textContent   = pct + '%';
+  document.getElementById('hud-q').textContent      = '--';
+}
+
+// ── FILL-IN-BLANK ENGINE ──────────────────────────────────────────────────
+function startFib() {
+  const activeTopics = [...document.querySelectorAll('.chip.on')].map(c => c.dataset.topic);
+  if (!activeTopics.length) { alert('Select at least one topic.'); return; }
+  fibPool = FILL.filter(q => activeTopics.includes(q.topic));
+  if (!fibPool.length) { alert('No questions for selected topics.'); return; }
+  shuffle(fibPool);
+  fibIdx = 0; fibCorrect = 0; fibTries = 0;
+  setHudLabels('Correct', 'Tries', 'Progress', 'Q#');
+  renderFib();
+}
+
+function renderFib() {
+  if (fibIdx >= fibPool.length) { showFibSummary(); return; }
+  fibCurrent = fibPool[fibIdx];
+  fibSlotValues = fibCurrent.blanks.map(() => null);
+  fibSlotLocked = fibCurrent.blanks.map(() => false);
+  fibDragging = null;
+
+  const pct = (fibIdx / fibPool.length) * 100;
+
+  // Build sentence HTML - split on [_] markers
+  const parts = fibCurrent.text.split('[_]');
+  const sentenceHtml = parts.map((part, i) =>
+    part + (i < parts.length - 1
+      ? `<span class="fib-slot empty" data-idx="${i}">drop here</span>`
+      : '')
+  ).join('');
+
+  // Build word bank: blanks + distractors, deduped, shuffled
+  const seen = new Set();
+  const allWords = [];
+  [...fibCurrent.blanks, ...fibCurrent.distractors].forEach(w => {
+    if (!seen.has(w)) { seen.add(w); allWords.push(w); }
+  });
+  shuffle(allWords);
+
+  const bankHtml = allWords.map(w =>
+    `<span class="fib-chip" draggable="true" data-word="${w.replace(/&/g,'&amp;').replace(/"/g,'&quot;')}">${w}</span>`
+  ).join('');
+
+  document.getElementById('game-arena').innerHTML = `
+    <div class="fib-wrap">
+      <div class="fc-progress-bar"><div class="fc-progress-fill" style="width:${pct}%"></div></div>
+      <div class="fib-meta">
+        <span class="fib-topic-badge" style="background:${fibCurrent.color}">${fibCurrent.label}</span>
+        <span>Question ${fibIdx + 1} of ${fibPool.length}</span>
+      </div>
+      <div class="fib-sentence">${sentenceHtml}</div>
+      <div class="fib-bank-label">Word Bank - drag or click a word to fill a blank; click a filled blank to return it</div>
+      <div class="fib-bank" id="fib-bank">${bankHtml}</div>
+      <div class="fib-feedback" id="fib-fb"></div>
+      <button class="fib-submit" onclick="checkFib()">Check Answers</button>
+    </div>`;
+
+  attachFibListeners();
+  updateFibHud();
+}
+
+function attachFibListeners() {
+  document.querySelectorAll('.fib-chip').forEach(chip => {
+    chip.addEventListener('dragstart', e => {
+      fibDragging = { word: chip.dataset.word, fromSlot: -1 };
+      e.dataTransfer.effectAllowed = 'move';
+      setTimeout(() => chip.classList.add('dragging'), 0);
+    });
+    chip.addEventListener('dragend', () => chip.classList.remove('dragging'));
+    chip.addEventListener('click', () => fibClickChip(chip.dataset.word));
+  });
+
+  document.querySelectorAll('.fib-slot').forEach(slot => {
+    const idx = +slot.dataset.idx;
+    slot.addEventListener('dragover', e => { e.preventDefault(); slot.classList.add('drag-over'); });
+    slot.addEventListener('dragleave', () => slot.classList.remove('drag-over'));
+    slot.addEventListener('drop', e => { e.preventDefault(); slot.classList.remove('drag-over'); fibDrop(idx); });
+    slot.addEventListener('click', () => fibClickSlot(idx));
+    slot.addEventListener('dragstart', e => {
+      if (!fibSlotValues[idx] || fibSlotLocked[idx]) { e.preventDefault(); return; }
+      fibDragging = { word: fibSlotValues[idx], fromSlot: idx };
+      e.dataTransfer.effectAllowed = 'move';
+    });
+  });
+
+  // Bank is also a drop target so you can drag a word from a slot back to the bank
+  const bank = document.getElementById('fib-bank');
+  bank.addEventListener('dragover', e => e.preventDefault());
+  bank.addEventListener('drop', e => {
+    e.preventDefault();
+    if (!fibDragging || fibDragging.fromSlot < 0) return;
+    const fromSlot = fibDragging.fromSlot;
+    fibShowChip(fibDragging.word);
+    fibSlotValues[fromSlot] = null;
+    fibUpdateSlot(fromSlot);
+    fibDragging = null;
+  });
+}
+
+function fibDrop(slotIdx) {
+  if (!fibDragging || fibSlotLocked[slotIdx]) return;
+  const { word, fromSlot } = fibDragging;
+
+  if (fromSlot >= 0) {
+    fibSlotValues[fromSlot] = null;
+    fibUpdateSlot(fromSlot);
+  } else {
+    fibHideChip(word);
+  }
+
+  if (fibSlotValues[slotIdx]) fibShowChip(fibSlotValues[slotIdx]);
+
+  fibSlotValues[slotIdx] = word;
+  fibUpdateSlot(slotIdx);
+  fibDragging = null;
+}
+
+function fibClickChip(word) {
+  const emptyIdx = fibSlotValues.findIndex((v, i) => v === null && !fibSlotLocked[i]);
+  if (emptyIdx === -1) return;
+  fibHideChip(word);
+  fibSlotValues[emptyIdx] = word;
+  fibUpdateSlot(emptyIdx);
+}
+
+function fibClickSlot(idx) {
+  if (!fibSlotValues[idx] || fibSlotLocked[idx]) return;
+  const word = fibSlotValues[idx];
+  fibSlotValues[idx] = null;
+  fibUpdateSlot(idx);
+  fibShowChip(word);
+}
+
+function fibUpdateSlot(idx) {
+  const slot = document.querySelector(`.fib-slot[data-idx="${idx}"]`);
+  if (!slot || fibSlotLocked[idx]) return;
+  const word = fibSlotValues[idx];
+  slot.draggable = !!word;
+  slot.classList.toggle('empty', !word);
+  slot.classList.toggle('filled', !!word);
+  slot.textContent = word || 'drop here';
+}
+
+function fibGetChip(word) {
+  return [...document.querySelectorAll('.fib-chip')].find(c => c.dataset.word === word) || null;
+}
+function fibHideChip(word) { const c = fibGetChip(word); if (c) c.classList.add('used'); }
+function fibShowChip(word) { const c = fibGetChip(word); if (c) c.classList.remove('used'); }
+
+function updateFibHud() {
+  document.getElementById('hud-know').textContent   = fibCorrect;
+  document.getElementById('hud-almost').textContent = fibTries;
+  document.getElementById('hud-nope').textContent   = fibCorrect + '/' + fibPool.length;
+  document.getElementById('hud-q').textContent      = fibIdx + 1;
+}
+
+function checkFib() {
+  const hasUnfilled = fibSlotValues.some((v, i) => !fibSlotLocked[i] && v === null);
+  if (hasUnfilled) {
+    const fb = document.getElementById('fib-fb');
+    fb.textContent = 'Fill in all blanks before checking.';
+    fb.className = 'fib-feedback bad';
+    return;
+  }
+
+  fibTries++;
+  let allCorrect = true;
+
+  fibSlotValues.forEach((val, i) => {
+    if (fibSlotLocked[i]) return;
+    const slot = document.querySelector(`.fib-slot[data-idx="${i}"]`);
+    const isCorrect = val.toLowerCase() === fibCurrent.blanks[i].toLowerCase();
+    slot.classList.remove('fib-correct', 'fib-wrong');
+    void slot.offsetWidth; // force reflow so animation re-triggers
+    if (isCorrect) {
+      fibSlotLocked[i] = true;
+      slot.draggable = false;
+      slot.classList.remove('filled', 'empty');
+      slot.classList.add('fib-correct', 'locked');
+    } else {
+      allCorrect = false;
+      slot.classList.add('fib-wrong');
+      setTimeout(() => {
+        if (!fibSlotLocked[i]) {
+          slot.classList.remove('fib-wrong');
+          fibShowChip(fibSlotValues[i]);
+          fibSlotValues[i] = null;
+          fibUpdateSlot(i);
+        }
+      }, 900);
+    }
+  });
+
+  const fb = document.getElementById('fib-fb');
+  if (allCorrect) {
+    fibCorrect++;
+    fb.textContent = 'All correct!';
+    fb.className = 'fib-feedback ok';
+    updateFibHud();
+    setTimeout(() => { fibIdx++; renderFib(); }, 1500);
+  } else {
+    fb.textContent = 'Some blanks are wrong - the red ones will clear so you can retry.';
+    fb.className = 'fib-feedback bad';
+    updateFibHud();
+  }
+}
+
+function showFibSummary() {
+  const pct = fibPool.length > 0 ? Math.round(fibCorrect / fibPool.length * 100) : 0;
+  const grade = pct >= 90 ? 'Excellent!' : pct >= 70 ? 'Good work!' : 'Keep studying!';
+  document.getElementById('game-arena').innerHTML = `
+    <div class="fib-summary">
+      <h2>${grade}</h2>
+      <div class="mcq-score-grid">
+        <div class="mscore-right"><strong>${fibCorrect}/${fibPool.length}</strong>Correct</div>
+        <div class="mscore-pts"><strong>${fibTries}</strong>Total Tries</div>
+        <div class="mscore-streak"><strong>${pct}%</strong>Accuracy</div>
+      </div>
+      <button class="mcq-restart" onclick="startFib()">Play Again</button>
+      <button class="mcq-restart" onclick="startGame()">Switch to Flashcards</button>
+    </div>`;
+  setHudLabels('Correct', 'Tries', 'Progress', 'Q#');
+  document.getElementById('hud-know').textContent   = fibCorrect;
+  document.getElementById('hud-almost').textContent = fibTries;
+  document.getElementById('hud-nope').textContent   = pct + '%';
+  document.getElementById('hud-q').textContent      = '--';
+}
+
+// ── TEMPORAL SORT ENGINE ──────────────────────────────────────────────────
+function startSort() {
+  sortCorrect = 0; sortTotal = 0;
+  setHudLabels('Correct', 'Rounds', 'Rate', 'Round');
+  newSortRound();
+}
+
+function newSortRound() {
+  sortTotal++;
+  const pool = [...SORT_EVENTS];
+  shuffle(pool);
+  sortPick = pool.slice(0, 5); // 5 random events already in shuffled display order
+  renderSort();
+}
+
+function renderSort() {
+  const rate = sortTotal > 1 ? Math.round(sortCorrect / (sortTotal - 1) * 100) + '%' : '--';
+
+  const cardsHtml = sortPick.map(ev => `
+    <div class="sort-card" draggable="true" data-order="${ev.order}">
+      <span class="sort-handle">⋮⋮</span>
+      <div class="sort-text">
+        <div class="sort-label">${ev.label}</div>
+        <div class="sort-hint">${ev.period} &mdash; ${ev.age}</div>
+      </div>
+      <div class="sort-btn-group">
+        <button class="sort-move-btn" data-dir="-1" title="Move up">▲</button>
+        <button class="sort-move-btn" data-dir="1"  title="Move down">▼</button>
+      </div>
+    </div>`).join('');
+
+  document.getElementById('game-arena').innerHTML = `
+    <div class="sort-wrap">
+      <div class="sort-header">
+        <span><span class="sort-topic-badge" style="background:#b34a00">Earth History</span></span>
+        <span style="font-size:.78rem;color:var(--gray)">Round ${sortTotal} &nbsp;|&nbsp; ${sortCorrect} correct &nbsp;|&nbsp; ${rate} rate</span>
+      </div>
+      <div class="sort-dir-edge">&#8593; OLDEST - place oldest event at top</div>
+      <div class="sort-list" id="sort-list">${cardsHtml}</div>
+      <div class="sort-dir-edge">&#8595; YOUNGEST - place most recent event at bottom</div>
+      <div class="sort-feedback" id="sort-fb"></div>
+      <div class="sort-actions">
+        <button class="sort-check-btn" id="sort-check" onclick="checkSortRound()">Check Order</button>
+        <button class="sort-next-btn"  id="sort-next"  onclick="newSortRound()">Next Round &#8594;</button>
+      </div>
+    </div>`;
+
+  attachSortListeners();
+  updateSortHud();
+}
+
+function attachSortListeners() {
+  const list = document.getElementById('sort-list');
+
+  // Drag-and-drop: real-time reorder on dragover (same approach as phanerozoic.html)
+  list.addEventListener('dragstart', e => {
+    const card = e.target.closest('.sort-card');
+    if (!card) return;
+    sortDragging = card;
+    e.dataTransfer.effectAllowed = 'move';
+    setTimeout(() => card.classList.add('dragging'), 0);
+  });
+
+  list.addEventListener('dragend', () => {
+    if (sortDragging) sortDragging.classList.remove('dragging');
+    list.querySelectorAll('.sort-card').forEach(c => c.classList.remove('drag-over-above'));
+    sortDragging = null;
+  });
+
+  list.addEventListener('dragover', e => {
+    e.preventDefault();
+    if (!sortDragging) return;
+    const target = e.target.closest('.sort-card');
+    list.querySelectorAll('.sort-card').forEach(c => c.classList.remove('drag-over-above'));
+    if (!target || target === sortDragging) return;
+    const box = target.getBoundingClientRect();
+    if (e.clientY < box.top + box.height / 2) {
+      list.insertBefore(sortDragging, target);
+    } else {
+      target.after(sortDragging);
+    }
+    target.classList.add('drag-over-above');
+  });
+
+  list.addEventListener('drop', e => e.preventDefault());
+
+  // ▲▼ button moves
+  list.addEventListener('click', e => {
+    const btn = e.target.closest('.sort-move-btn');
+    if (!btn) return;
+    e.preventDefault();
+    const card = btn.closest('.sort-card');
+    const dir = +btn.dataset.dir;
+    if (dir < 0) {
+      const prev = card.previousElementSibling;
+      if (prev) list.insertBefore(card, prev);
+    } else {
+      const next = card.nextElementSibling;
+      if (next) next.after(card);
+    }
+  });
+}
+
+function checkSortRound() {
+  const cards = [...document.querySelectorAll('#sort-list .sort-card')];
+  const orders = cards.map(c => +c.dataset.order);
+
+  // Overall correct = strictly ascending (oldest→youngest)
+  let allCorrect = true;
+  for (let i = 0; i < orders.length - 1; i++) {
+    if (orders[i] > orders[i + 1]) { allCorrect = false; break; }
+  }
+
+  // Per-card correctness: both neighbors must be on the right side
+  cards.forEach((card, i) => {
+    card.classList.remove('sort-correct', 'sort-wrong');
+    void card.offsetWidth; // force reflow for re-animation
+    const prevOk = i === 0                  || orders[i] > orders[i - 1];
+    const nextOk = i === orders.length - 1  || orders[i] < orders[i + 1];
+    card.classList.add(prevOk && nextOk ? 'sort-correct' : 'sort-wrong');
+  });
+
+  const fb = document.getElementById('sort-fb');
+  if (allCorrect) {
+    sortCorrect++;
+    fb.textContent = 'Perfect order! All events in the right place.';
+    fb.className = 'sort-feedback ok';
+    document.getElementById('sort-check').disabled = true;
+    document.getElementById('sort-next').classList.add('show');
+    updateSortHud();
+  } else {
+    fb.textContent = 'Not quite - red cards are out of place. Adjust and try again.';
+    fb.className = 'sort-feedback bad';
+    setTimeout(() => {
+      document.querySelectorAll('.sort-card').forEach(c => {
+        c.classList.remove('sort-correct', 'sort-wrong');
+      });
+      if (fb) fb.textContent = '';
+    }, 1600);
+  }
+}
+
+function updateSortHud() {
+  const rate = sortTotal > 0 ? Math.round(sortCorrect / sortTotal * 100) + '%' : '--';
+  document.getElementById('hud-know').textContent   = sortCorrect;
+  document.getElementById('hud-almost').textContent = sortTotal;
+  document.getElementById('hud-nope').textContent   = rate;
+  document.getElementById('hud-q').textContent      = sortTotal;
+}
+
+// ── MATCH-UP ENGINE ───────────────────────────────────────────────────────
+function startMatch() {
+  const activeTopics = [...document.querySelectorAll('.chip.on')].map(c => c.dataset.topic);
+  if (!activeTopics.length) { alert('Select at least one topic.'); return; }
+  matchPool = MATCH.filter(m => activeTopics.includes(m.topic));
+  if (!matchPool.length) { alert('No items for selected topics.'); return; }
+  matchCorrect = 0; matchTotal = 0; matchErrors = 0;
+  setHudLabels('Rounds', 'Errors', 'Pairs Left', 'Round');
+  newMatchRound();
+}
+
+function newMatchRound() {
+  matchTotal++;
+  matchMatched = new Set();
+  matchSelected = null;
+  const pool = [...matchPool];
+  shuffle(pool);
+  matchPick = pool.slice(0, Math.min(5, pool.length));
+  renderMatch();
+}
+
+function renderMatch() {
+  const rate = matchTotal > 1 ? Math.round(matchCorrect / (matchTotal - 1) * 100) + '%' : '--';
+
+  // Definitions displayed in a different (shuffled) order than terms
+  const defOrder = matchPick.map((_, i) => i).sort(() => Math.random() - .5);
+
+  const termsHtml = matchPick.map((pair, i) => `
+    <div class="match-card" data-pair="${i}" data-side="term" onclick="matchClick(this)">
+      <span class="match-badge" style="background:${pair.color}">${pair.label}</span>
+      ${pair.term}
+    </div>`).join('');
+
+  const defsHtml = defOrder.map(i => `
+    <div class="match-card" data-pair="${i}" data-side="def" onclick="matchClick(this)">
+      ${matchPick[i].match}
+    </div>`).join('');
+
+  document.getElementById('game-arena').innerHTML = `
+    <div class="match-wrap">
+      <div class="match-header">
+        <span>Round ${matchTotal}</span>
+        <span style="font-size:.74rem;color:var(--gray)">${matchCorrect} complete &nbsp;|&nbsp; ${rate} rate &nbsp;|&nbsp; ${matchErrors} errors</span>
+      </div>
+      <div class="match-hint">Click a concept (left), then its matching phrase (right)</div>
+      <div class="match-grid">
+        <div class="match-col" id="match-terms">${termsHtml}</div>
+        <div class="match-col" id="match-defs">${defsHtml}</div>
+      </div>
+      <div class="match-feedback" id="match-fb"></div>
+      <button class="match-next-btn" id="match-next" onclick="newMatchRound()" style="display:none">Next Round &#8594;</button>
+    </div>`;
+
+  updateMatchHud();
+}
+
+function matchClick(el) {
+  if (el.classList.contains('matched') || el.classList.contains('wrong')) return;
+
+  const pairIdx = +el.dataset.pair;
+  const side = el.dataset.side;
+  const fb = document.getElementById('match-fb');
+
+  if (side === 'term') {
+    // Select or toggle off
+    document.querySelectorAll('#match-terms .match-card.selected').forEach(c => c.classList.remove('selected'));
+    if (matchSelected === pairIdx) {
+      matchSelected = null;
+    } else {
+      matchSelected = pairIdx;
+      el.classList.add('selected');
+    }
+    return;
+  }
+
+  // Clicking a definition
+  if (matchSelected === null) {
+    fb.textContent = 'Select a concept on the left first.';
+    fb.className = 'match-feedback bad';
+    return;
+  }
+
+  const termEl = document.querySelector(`#match-terms .match-card[data-pair="${matchSelected}"]`);
+
+  if (matchSelected === pairIdx) {
+    // Correct!
+    termEl.classList.remove('selected');
+    termEl.classList.add('matched');
+    el.classList.add('matched');
+    matchMatched.add(pairIdx);
+    matchSelected = null;
+
+    if (matchMatched.size === matchPick.length) {
+      matchCorrect++;
+      fb.textContent = 'All pairs matched!';
+      fb.className = 'match-feedback ok';
+      document.getElementById('match-next').style.display = 'block';
+    } else {
+      fb.textContent = `✓ Matched! ${matchMatched.size} of ${matchPick.length} done.`;
+      fb.className = 'match-feedback ok';
+    }
+    updateMatchHud();
+  } else {
+    // Wrong
+    matchErrors++;
+    if (termEl) termEl.classList.add('wrong');
+    el.classList.add('wrong');
+    fb.textContent = '✗ Not a match - try again.';
+    fb.className = 'match-feedback bad';
+    updateMatchHud();
+    setTimeout(() => {
+      if (termEl) termEl.classList.remove('wrong', 'selected');
+      el.classList.remove('wrong');
+      matchSelected = null;
+    }, 700);
+  }
+}
+
+function updateMatchHud() {
+  document.getElementById('hud-know').textContent   = matchCorrect;
+  document.getElementById('hud-almost').textContent = matchErrors;
+  document.getElementById('hud-nope').textContent   = (matchPick.length - matchMatched.size) + ' left';
+  document.getElementById('hud-q').textContent      = matchTotal;
+}
+
+// ── START ─────────────────────────────────────────────────────────────────
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+}
+
+function startGame() {
+  const activeTopics = [...document.querySelectorAll('.chip.on')].map(c => c.dataset.topic);
+  if (!activeTopics.length) { alert('Select at least one topic.'); return; }
+  deck = CARDS.filter(c => activeTopics.includes(c.topic));
+  if (!deck.length) { alert('No cards for selected topics.'); return; }
+  shuffle(deck);
+  idx = 0;
+  ratings = { know: 0, almost: 0, nope: 0 };
+  showHud();
+  renderCard();
+}
+
+// ── BOSS ROUND ────────────────────────────────────────────────────────────
+
+function startBoss() {
+  const activeTopic = document.querySelector('.topic-chip.active')?.dataset.topic || 'all';
+  let pool = activeTopic === 'all' ? [...MCQ] : MCQ.filter(q => q.topic === activeTopic);
+  if (!pool.length) pool = [...MCQ];
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  clearInterval(bossRegenInterval);
+  bossRegenInterval = null;
+  bossPool = pool;
+  bossIdx = 0;
+  bossHp = BOSS_MAX_HP;
+  bossShields = 5;
+  bossAnswered = false;
+  hideHud();
+  renderBossRound();
+}
+
+function renderBossRound() {
+  if (bossIdx >= bossPool.length) {
+    // Loop pool so boss fight continues until HP=0
+    for (let i = bossPool.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [bossPool[i], bossPool[j]] = [bossPool[j], bossPool[i]];
+    }
+    bossIdx = 0;
+  }
+  bossAnswered = false;
+  const q = bossPool[bossIdx];
+
+  // Shuffle choices while tracking correct answer
+  const order = [0,1,2,3].sort(() => Math.random() - .5);
+  const choicesHtml = order.map(oi =>
+    `<button class="boss-choice" data-correct="${oi === q.correct}" onclick="bossAnswer(this)">${q.choices[oi]}</button>`
+  ).join('');
+
+  const hpPct = bossHp / BOSS_MAX_HP * 100;
+  const isAngry = hpPct < 40;
+  const shieldsHtml = Array.from({length: 5}, (_, i) =>
+    `<span class="boss-shield${i < bossShields ? '' : ' broken'}">🛡</span>`
+  ).join('');
+
+  document.getElementById('game-arena').innerHTML = `
+    <div class="boss-wrap" id="boss-wrap">
+      <div class="boss-header">
+        <span class="boss-title">👾 Blob Monster</span>
+        <div class="boss-shields">${shieldsHtml}</div>
+      </div>
+      <div class="boss-hp-row">
+        <span class="boss-hp-label">HP</span>
+        <div class="boss-hp-track">
+          <div class="boss-hp-fill" id="boss-hp-fill"
+               style="width:${hpPct}%;background:${bossHpBarColor(hpPct)}"></div>
+        </div>
+        <span class="boss-hp-num" id="boss-hp-num">${bossHp}/${BOSS_MAX_HP}</span>
+      </div>
+      <div class="boss-scene" id="boss-scene">
+        <div class="boss-blob-wrap">
+          <div class="boss-blob" id="boss-blob" style="background:${bossColorForHp(hpPct)}">
+            <div class="boss-eye left"><div class="boss-pupil"></div></div>
+            <div class="boss-eye right"><div class="boss-pupil"></div></div>
+            <div class="boss-mouth${isAngry ? ' angry' : ''}" id="boss-mouth"></div>
+          </div>
+        </div>
+        <div class="boss-laser" id="boss-laser"></div>
+      </div>
+      <span class="boss-q-label" style="background:${q.color}">${q.label}</span>
+      <div class="boss-question">${q.q}</div>
+      <div class="boss-choices">${choicesHtml}</div>
+    </div>`;
+
+  // Start regen - blob recovers 1 HP every 7 seconds while user stalls
+  clearInterval(bossRegenInterval);
+  bossRegenInterval = setInterval(() => {
+    if (bossAnswered || bossHp >= BOSS_MAX_HP) return;
+    bossHp++;
+    const pct = bossHp / BOSS_MAX_HP * 100;
+    const fill = document.getElementById('boss-hp-fill');
+    if (fill) { fill.style.width = pct + '%'; fill.style.background = bossHpBarColor(pct); }
+    const num = document.getElementById('boss-hp-num');
+    if (num) num.textContent = `${bossHp}/${BOSS_MAX_HP}`;
+    const blob = document.getElementById('boss-blob');
+    if (blob) blob.style.background = bossColorForHp(pct);
+    const mouth = document.getElementById('boss-mouth');
+    if (mouth) { if (pct >= 40) mouth.classList.remove('angry'); else mouth.classList.add('angry'); }
+    const scene = document.getElementById('boss-scene');
+    if (scene) {
+      const el = document.createElement('div');
+      el.className = 'boss-regen-num';
+      el.textContent = '+1 HP';
+      el.style.left = (32 + Math.random() * 36) + '%';
+      scene.appendChild(el);
+      setTimeout(() => el.remove(), 950);
+    }
+  }, 20000);
+}
+
+function bossColorForHp(pct) {
+  if (pct > 70) return 'radial-gradient(ellipse at 40% 35%, #80ff80, #1e9e1e)';
+  if (pct > 40) return 'radial-gradient(ellipse at 40% 35%, #ffff80, #9e8a0a)';
+  if (pct > 15) return 'radial-gradient(ellipse at 40% 35%, #ffcc80, #bf5e10)';
+  return 'radial-gradient(ellipse at 40% 35%, #ff9090, #cc1e1e)';
+}
+
+function bossHpBarColor(pct) {
+  if (pct > 70) return 'linear-gradient(90deg, #22c755, #7fff00)';
+  if (pct > 40) return 'linear-gradient(90deg, #c8b800, #ffe000)';
+  if (pct > 15) return 'linear-gradient(90deg, #cc5500, #ff8800)';
+  return 'linear-gradient(90deg, #cc1515, #ff3333)';
+}
+
+function bossAnswer(btn) {
+  if (bossAnswered) return;
+  bossAnswered = true;
+  clearInterval(bossRegenInterval);
+  bossRegenInterval = null;
+  const isCorrect = btn.dataset.correct === 'true';
+  document.querySelectorAll('.boss-choice').forEach(b => {
+    b.disabled = true;
+    if (b.dataset.correct === 'true') b.classList.add('boss-correct');
+    else if (b === btn) b.classList.add('boss-wrong');
+  });
+  if (isCorrect) fireLaser();
+  else bossWrongAnswer();
+}
+
+function fireLaser() {
+  const laser = document.getElementById('boss-laser');
+  const blob  = document.getElementById('boss-blob');
+  if (!laser || !blob) return;
+
+  laser.classList.remove('firing');
+  void laser.offsetWidth;
+  laser.classList.add('firing');
+
+  setTimeout(() => {
+    // Impact
+    blob.classList.remove('hit');
+    void blob.offsetWidth;
+    blob.classList.add('hit');
+
+    bossHp--;
+
+    // Floating damage number
+    const scene = document.getElementById('boss-scene');
+    if (scene) {
+      const dmg = document.createElement('div');
+      dmg.className = 'boss-damage-num';
+      dmg.textContent = '−1 HP';
+      dmg.style.left = (32 + Math.random() * 36) + '%';
+      scene.appendChild(dmg);
+      setTimeout(() => dmg.remove(), 950);
+    }
+
+    if (bossHp <= 0) {
+      setTimeout(bossExplode, 180);
+      return;
+    }
+
+    // Update HP bar + blob color + mouth
+    const pct = bossHp / BOSS_MAX_HP * 100;
+    const fill = document.getElementById('boss-hp-fill');
+    if (fill) { fill.style.width = pct + '%'; fill.style.background = bossHpBarColor(pct); }
+    document.getElementById('boss-hp-num').textContent = `${bossHp}/${BOSS_MAX_HP}`;
+    blob.style.background = bossColorForHp(pct);
+    const mouth = document.getElementById('boss-mouth');
+    if (mouth && pct < 40) mouth.classList.add('angry');
+
+    setTimeout(() => {
+      laser.classList.remove('firing');
+      bossIdx++;
+      setTimeout(renderBossRound, 180);
+    }, 480);
+  }, 330);
+}
+
+function bossWrongAnswer() {
+  const blob = document.getElementById('boss-blob');
+  const wrap = document.getElementById('boss-wrap');
+  if (blob) { blob.classList.remove('boss-attack'); void blob.offsetWidth; blob.classList.add('boss-attack'); }
+  if (wrap) { wrap.classList.remove('shaking');     void wrap.offsetWidth; wrap.classList.add('shaking'); }
+
+  bossShields--;
+  document.querySelectorAll('.boss-shield').forEach((el, i) => {
+    if (i >= bossShields) el.classList.add('broken');
+  });
+
+  if (bossShields <= 0) {
+    clearInterval(bossRegenInterval);
+    bossRegenInterval = null;
+    setTimeout(() => {
+      document.getElementById('game-arena').innerHTML = `
+        <div class="boss-gameover">
+          <div class="boss-gameover-blob">💀</div>
+          <h2>DEFEATED!</h2>
+          <p>The Blob Monster absorbed your knowledge and grew stronger...</p>
+          <p style="font-size:.78rem;color:var(--gray);margin-top:.4rem">Review your weakest topics, then try again.</p>
+          <button class="boss-retry-btn" onclick="startBoss()">Try Again</button>
+        </div>`;
+    }, 900);
+    return;
+  }
+
+  setTimeout(() => { bossIdx++; renderBossRound(); }, 820);
+}
+
+function bossExplode() {
+  clearInterval(bossRegenInterval);
+  bossRegenInterval = null;
+  const blob = document.getElementById('boss-blob');
+  if (blob) { blob.classList.remove('exploding'); void blob.offsetWidth; blob.classList.add('exploding'); }
+  setTimeout(() => {
+    document.getElementById('game-arena').innerHTML = `
+      <div class="boss-victory">
+        <div class="boss-victory-boom">💥</div>
+        <h2>BLOB DESTROYED!</h2>
+        <p>You fired <strong>${BOSS_MAX_HP}</strong> correct lasers and annihilated the Blob Monster!</p>
+        <p style="font-size:.8rem;color:var(--gray);margin-top:.4rem">Shields remaining: ${bossShields > 0 ? '🛡'.repeat(bossShields) : 'none - barely survived!'}</p>
+        <button class="boss-retry-btn" onclick="startBoss()">⚔ Boss Again</button>
+      </div>`;
+  }, 980);
+}
+
+// ── CRQ JUDGE ────────────────────────────────────────────────────────────
+
+function startCrq() {
+  const activeTopics = [...document.querySelectorAll('.chip.on')].map(c => c.dataset.topic);
+  let pool = activeTopics.length ? CRQ.filter(q => activeTopics.includes(q.topic)) : [...CRQ];
+  if (!pool.length) pool = [...CRQ];
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  crqPool = pool;
+  crqIdx = 0;
+  crqCorrect = 0;
+  crqTotal = 0;
+  setHudLabels('Correct', 'Judged', 'Accuracy', 'Q#');
+  renderCrq();
+}
+
+function renderCrq() {
+  if (crqIdx >= crqPool.length) {
+    for (let i = crqPool.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [crqPool[i], crqPool[j]] = [crqPool[j], crqPool[i]];
+    }
+    crqIdx = 0;
+  }
+  updateCrqHud();
+  const q = crqPool[crqIdx];
+  document.getElementById('game-arena').innerHTML = `
+    <div class="crq-wrap">
+      <div class="crq-header">
+        <span class="crq-title">📝 CRQ Judge</span>
+        <span>Q ${crqIdx + 1} of ${crqPool.length}</span>
+      </div>
+      <div class="crq-stem">
+        <span class="crq-box-label">Question Stem</span>
+        ${q.stem}
+      </div>
+      <div class="crq-answer">
+        <span class="crq-box-label">Student Answer</span>
+        <span class="crq-answer-text">${q.answer}</span>
+      </div>
+      <div style="font-size:.62rem;font-weight:bold;letter-spacing:.08em;text-transform:uppercase;color:var(--gray);margin-bottom:.22rem">Your Ruling</div>
+      <div class="crq-btns">
+        <button class="crq-btn full" onclick="crqJudge(this,'full')">✅ Full Credit</button>
+        <button class="crq-btn none" onclick="crqJudge(this,'none')">❌ No Credit</button>
+      </div>
+      <div id="crq-reveal"></div>
+    </div>`;
+}
+
+function crqJudge(btn, chosen) {
+  document.querySelectorAll('.crq-btn').forEach(b => { b.disabled = true; });
+  btn.classList.add('selected');
+
+  const q = crqPool[crqIdx];
+  const isCorrect = chosen === q.rating;
+  crqTotal++;
+  if (isCorrect) crqCorrect++;
+  updateCrqHud();
+
+  const ratingLabel = { full: 'Full Credit', none: 'No Credit' };
+  const verdict = isCorrect
+    ? `✅ Correct - this answer earns <strong>${ratingLabel[q.rating]}</strong>.`
+    : `❌ Not quite - this answer earns <strong>${ratingLabel[q.rating]}</strong>, not ${ratingLabel[chosen]}.`;
+
+  const reveal = document.getElementById('crq-reveal');
+  reveal.className = 'crq-reveal ' + (isCorrect ? 'correct' : 'wrong');
+  reveal.innerHTML = `
+    <div class="crq-reveal-verdict">${verdict}</div>
+    <div>${q.feedback}</div>
+    <button class="crq-next-btn" style="margin-top:.65rem" onclick="crqNext()">Next &rarr;</button>`;
+}
+
+function crqNext() {
+  crqIdx++;
+  renderCrq();
+}
+
+function updateCrqHud() {
+  const acc = crqTotal ? Math.round(crqCorrect / crqTotal * 100) + '%' : '-';
+  document.getElementById('hud-know').textContent   = crqCorrect;
+  document.getElementById('hud-almost').textContent = crqTotal;
+  document.getElementById('hud-nope').textContent   = acc;
+  document.getElementById('hud-q').textContent      = crqIdx + 1;
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+
+document.getElementById('start-btn').addEventListener('click', () => {
+  const mode = document.querySelector('.mode-card.active')?.dataset.mode;
+  if (mode === 'flashcard') startGame();
+  else if (mode === 'mcq') startMcq();
+  else if (mode === 'fillblank') startFib();
+  else if (mode === 'sort') startSort();
+  else if (mode === 'match') startMatch();
+  else if (mode === 'boss') startBoss();
+  else if (mode === 'crq') startCrq();
+});
+</script>
+
+</body>
+</html>

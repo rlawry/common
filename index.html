@@ -1,0 +1,1460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NY Earth &amp; Space Sciences Regents - Study Guide</title>
+<style>
+  :root {
+    --blue:   #1a4a7a;
+    --sky:    #e8f2fc;
+    --green:  #1a6b3c;
+    --mint:   #e8f7ee;
+    --orange: #b34a00;
+    --peach:  #fef0e8;
+    --red:    #7a1a1a;
+    --pink:   #fde8e8;
+    --purple: #4a1a7a;
+    --lavender: #f0e8fd;
+    --gray:   #4a4a4a;
+    --light:  #f8f9fa;
+    --border: #dde3ea;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 16px;
+    line-height: 1.7;
+    color: #222;
+    background: #fff;
+  }
+  /* ── HEADER ── */
+  header {
+    background: var(--blue);
+    color: #fff;
+    padding: 2.5rem 2rem 2rem;
+    text-align: center;
+  }
+  header h1 { font-size: 2rem; margin-bottom: .4rem; }
+  header p  { font-size: 1rem; opacity: .85; }
+  header .badge {
+    display: inline-block;
+    background: rgba(255,255,255,.2);
+
+    padding: .2rem .9rem;
+    font-size: .85rem;
+    margin-top: .6rem;
+  }
+
+  /* ── NAV ── */
+  nav {
+    background: #fff;
+    border-bottom: 2px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: .5rem 1.5rem;
+  }
+  nav ul {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: .3rem .8rem;
+    justify-content: center;
+  }
+  nav a {
+    color: var(--blue);
+    text-decoration: none;
+    font-family: Arial, sans-serif;
+    font-size: .82rem;
+    font-weight: bold;
+  }
+  nav a:hover { text-decoration: underline; }
+
+  /* ── LAYOUT ── */
+  main { max-width: 960px; margin: 0 auto; padding: 1.5rem 1.5rem 4rem; }
+
+  /* ── SECTION HEADINGS ── */
+  .section-head {
+    margin: 2.5rem 0 1rem;
+    padding: .6rem 1.2rem;
+    border-left: 6px solid var(--blue);
+    background: var(--sky);
+
+  }
+  .section-head h2 {
+    font-size: 1.3rem;
+    color: var(--blue);
+    font-family: Arial, sans-serif;
+  }
+  .section-head .sub { font-size: .85rem; color: var(--gray); font-family: Arial, sans-serif; }
+
+  /* ── TOPIC CARDS ── */
+  .card {
+    border: 1px solid var(--border);
+
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,.07);
+  }
+  .card-head {
+    padding: .7rem 1.1rem;
+    font-family: Arial, sans-serif;
+    font-size: 1rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    cursor: pointer;
+    user-select: none;
+  }
+  .card-head .freq {
+    margin-left: auto;
+    font-size: .75rem;
+    font-weight: normal;
+    background: rgba(255,255,255,.4);
+    padding: .1rem .6rem;
+  }
+  .card-head .toggle-icon {
+    margin-left: .5rem;
+    font-size: .85rem;
+    opacity: .75;
+    transition: transform .3s ease;
+    flex-shrink: 0;
+  }
+  .card.open .card-head .toggle-icon { transform: rotate(180deg); }
+  .card-body {
+    padding: 0 1.2rem;
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height .4s ease, padding .4s ease;
+  }
+  .card.open .card-body {
+    max-height: 4000px;
+    padding: 1rem 1.2rem;
+  }
+
+  .blue-card   .card-head { background: var(--blue);   color: #fff; }
+  .green-card  .card-head { background: var(--green);  color: #fff; }
+  .orange-card .card-head { background: var(--orange); color: #fff; }
+  .purple-card .card-head { background: var(--purple); color: #fff; }
+  .red-card    .card-head { background: var(--red);    color: #fff; }
+
+  /* ── PHRASE BOXES ── */
+  .phrase-box {
+    background: #fffbe6;
+    border-left: 4px solid #e6c200;
+
+    padding: .6rem .9rem;
+    margin: .6rem 0;
+    font-style: italic;
+    font-size: .95rem;
+  }
+  .phrase-box strong { font-style: normal; color: #7a5800; }
+
+  /* ── DO / DON'T ── */
+  .do-dont {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: .8rem;
+    margin: .7rem 0;
+  }
+  .do {
+    background: var(--mint);
+    border-left: 4px solid var(--green);
+
+    padding: .5rem .8rem;
+    font-size: .9rem;
+  }
+  .dont {
+    background: var(--pink);
+    border-left: 4px solid var(--red);
+
+    padding: .5rem .8rem;
+    font-size: .9rem;
+  }
+  .do strong   { color: var(--green); }
+  .dont strong { color: var(--red); }
+
+  /* ── TABLES ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .9rem;
+    margin: .6rem 0;
+  }
+  th {
+    background: var(--blue);
+    color: #fff;
+    padding: .45rem .7rem;
+    text-align: left;
+    font-family: Arial, sans-serif;
+  }
+  td { padding: .4rem .7rem; border-bottom: 1px solid var(--border); }
+  tr:nth-child(even) td { background: var(--sky); }
+  tr:hover td { background: #fff8e1; }
+
+  /* ── STEM PATTERNS ── */
+  .stem-card {
+    background: var(--light);
+    border: 1px solid var(--border);
+    padding: .75rem 1rem;
+    margin: .7rem 0;
+  }
+  .stem-card .stem-q {
+    font-weight: bold;
+    color: var(--blue);
+    font-family: Arial, sans-serif;
+    font-size: .95rem;
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .5rem;
+  }
+  .stem-toggle {
+    font-size: .75rem;
+    opacity: .55;
+    transition: transform .3s ease;
+    flex-shrink: 0;
+  }
+  .stem-card.open .stem-toggle { transform: rotate(180deg); }
+  .stem-body {
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height .35s ease, margin-top .35s ease;
+    margin-top: 0;
+  }
+  .stem-card.open .stem-body {
+    max-height: 800px;
+    margin-top: .45rem;
+  }
+  .stem-formula {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: .3rem;
+    margin: .35rem 0 .45rem;
+  }
+  .sf-step {
+    background: var(--blue);
+    color: #fff;
+    font-family: Arial, sans-serif;
+    font-size: .8rem;
+    font-weight: bold;
+    padding: .2rem .55rem;
+  }
+  .sf-arrow {
+    display: inline-block;
+    width: 26px;
+    height: 14px;
+    flex-shrink: 0;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 14'%3E%3Cline x1='2' y1='7' x2='20' y2='7' stroke='%231a4a7a' stroke-width='2.2' stroke-linecap='round'/%3E%3Cpolyline points='14,2 21,7 14,12' stroke='%231a4a7a' stroke-width='2.2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat;
+    font-size: 0;
+    color: transparent;
+  }
+  .sf-plus {
+    color: var(--blue);
+    font-weight: bold;
+    font-size: 1rem;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+  .stem-ex {
+    font-size: .85rem;
+    padding: .3rem .65rem;
+    background: #fffbe6;
+    border-left: 3px solid #e6c200;
+    margin: .25rem 0 .1rem;
+  }
+  .stem-ex strong { color: #7a5800; }
+  .stem-warn {
+    font-size: .8rem;
+    color: var(--red);
+    font-family: Arial, sans-serif;
+    margin-top: .3rem;
+  }
+  .stem-tip {
+    font-size: .82rem;
+    color: var(--green);
+    font-family: Arial, sans-serif;
+    margin-top: .3rem;
+  }
+  .stem-dates {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .3rem;
+    margin: .4rem 0;
+  }
+  .stem-date-item {
+    font-family: Arial, sans-serif;
+    font-size: .78rem;
+    background: var(--sky);
+    border: 1px solid var(--border);
+    padding: .2rem .5rem;
+    text-align: center;
+  }
+  .stem-date-item span { display: block; font-weight: bold; color: var(--blue); }
+
+  /* ── CALLOUT ── */
+  .callout {
+
+    padding: .7rem 1rem;
+    margin: .8rem 0;
+    font-size: .93rem;
+  }
+  .callout-warn  { background: #fff8e0; border-left: 4px solid #d4a000; }
+  .callout-info  { background: var(--sky); border-left: 4px solid var(--blue); }
+  .callout-rules { background: var(--mint); border-left: 4px solid var(--green); }
+
+  /* ── LISTS ── */
+  ul.bullets { padding-left: 1.4rem; }
+  ul.bullets li { margin: .25rem 0; }
+  ol.numbered { padding-left: 1.4rem; }
+  ol.numbered li { margin: .3rem 0; }
+
+  /* ── EXAM BADGE ── */
+  .exam-tag {
+    display: inline-block;
+
+    font-size: .7rem;
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    padding: .05rem .35rem;
+    vertical-align: middle;
+  }
+  .tag-j26 { background: var(--blue); color: #fff; }
+  .tag-j25 { background: var(--green); color: #fff; }
+  .tag-a25 { background: var(--orange); color: #fff; }
+
+  /* ── TOPIC SECTIONS ── */
+  .topic-section {
+    margin: 2rem 0;
+    border-left: 6px solid var(--border);
+    overflow: hidden;
+  }
+  .topic-blue   { border-left-color: var(--blue); }
+  .topic-green  { border-left-color: var(--green); }
+  .topic-orange { border-left-color: var(--orange); }
+  .topic-purple { border-left-color: var(--purple); }
+  .topic-red    { border-left-color: var(--red); }
+
+  .topic-section .section-head {
+    margin: 0;
+    padding: .9rem 1.4rem;
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .topic-blue   .section-head { background: var(--sky);      border-left: none; }
+  .topic-green  .section-head { background: var(--mint);     border-left: none; }
+  .topic-orange .section-head { background: var(--peach);    border-left: none; }
+  .topic-purple .section-head { background: var(--lavender); border-left: none; }
+  .topic-red    .section-head { background: var(--pink);     border-left: none; }
+
+  .topic-blue   .section-head h2 { color: var(--blue); }
+  .topic-green  .section-head h2 { color: var(--green); }
+  .topic-orange .section-head h2 { color: var(--orange); }
+  .topic-purple .section-head h2 { color: var(--purple); }
+  .topic-red    .section-head h2 { color: var(--red); }
+
+  .topic-toggle {
+    font-size: .95rem;
+    opacity: .65;
+    transition: transform .3s ease;
+    flex-shrink: 0;
+  }
+  .topic-section.open .topic-toggle { transform: rotate(180deg); }
+
+  .topic-body {
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height .5s ease, padding .5s ease;
+    padding: 0 1.2rem;
+  }
+  .topic-section.open .topic-body {
+    max-height: 30000px;
+    padding: 1.2rem;
+  }
+  #quick-reference-table td.cr-yes { color: var(--green); }
+
+  .gamify-btn {
+    display: inline-block;
+    background: var(--green);
+    color: #fff;
+    font-family: Arial, sans-serif;
+    font-size: 1rem;
+    font-weight: bold;
+    padding: .6rem 1.8rem;
+    text-decoration: none;
+    letter-spacing: .04em;
+  }
+  .gamify-btn:hover { background: #145230; }
+
+  footer {
+    text-align: center;
+    padding: 2rem;
+    font-size: .8rem;
+    color: #999;
+    border-top: 1px solid var(--border);
+  }
+
+  @media(max-width:600px){
+    .do-dont { grid-template-columns: 1fr; }
+    header h1 { font-size: 1.4rem; }
+  }
+
+  abbr[title] {
+    text-decoration: underline dotted var(--blue);
+    text-underline-offset: 2px;
+    cursor: help;
+    position: relative;
+  }
+  abbr[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: calc(100% + 5px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1a2a3a;
+    color: #fff;
+    font-size: .72rem;
+    font-style: normal;
+    font-weight: normal;
+    font-family: Arial, sans-serif;
+    padding: .28rem .6rem;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 999;
+    border: 1px solid rgba(255,255,255,.15);
+    box-shadow: 0 3px 10px rgba(0,0,0,.25);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>NY Regents: Earth &amp; Space Sciences</h1>
+  <p>Study Guide for Students</p>
+</header>
+
+<nav>
+  <ul>
+    <li><a href="#how-to-use">How To Use</a></li>
+    <li><a href="#stems">CR Question Stems</a></li>
+    <li><a href="#stars">Stars &amp; Universe</a></li>
+    <li><a href="#climate">Climate &amp; Atmosphere</a></li>
+    <li><a href="#earth-history">Earth History</a></li>
+    <li><a href="#orbits">Orbits &amp; Kepler</a></li>
+    <li><a href="#water">Water &amp; Erosion</a></li>
+    <li><a href="#human">Human Impact</a></li>
+    <li><a href="#phrase-bank">Phrase Bank</a></li>
+    <li><a href="#quick-reference">Quick Reference</a></li>
+  </ul>
+</nav>
+
+<main>
+
+<div style="text-align:center;margin:1.5rem 0 .5rem">
+  <a href="game.html" class="gamify-btn">&#9654; Gamify This</a>
+</div>
+
+<!-- ═══════════════════════════════════════════ HOW TO USE -->
+<div class="section-head" id="how-to-use">
+  <h2>How to Use This Guide</h2>
+  <div class="sub">Read this section first - it explains the strategy</div>
+</div>
+
+<div class="callout callout-info">
+  This guide was built by analyzing three real NYS Earth &amp; Space Sciences Regents exams (June 2025, August 2025, January 2026) alongside their official rating guides. The goal is simple: tell you <em>exactly what scorers are looking for</em> so you earn credit every time.
+</div>
+
+<div class="card blue-card">
+  <div class="card-head">The Scoring Rules That Change Everything</div>
+  <div class="card-body">
+    <p>The rating guide says scorers <strong>must</strong> accept any response that is <em>"scientifically accurate and demonstrates adequate knowledge."</em> This means:</p>
+    <ul class="bullets" style="margin-top:.5rem">
+      <li>You don't have to memorize exact wording - but you <strong>must</strong> include the scientific mechanism.</li>
+      <li>If a question says to use numerical evidence, a response without numbers gets <strong>zero credit</strong> - always cite data from graphs.</li>
+      <li>Only the <strong>first</strong> answer is scored. If you write two answers, the scorer reads only the first one.</li>
+      <li>You need the complete idea - partial answers (like "CO₂ increased") without explaining the <em>effect</em> do not earn credit.</li>
+    </ul>
+  </div>
+</div>
+
+<div class="card green-card">
+  <div class="card-head">The Four Earth Systems - Name Them Correctly</div>
+  <div class="card-body">
+    <p>Questions constantly ask you to identify which Earth system is affected. Use these exact names:</p>
+    <table>
+      <tr><th>System</th><th>What It Includes</th><th>Examples on Exam</th></tr>
+      <tr><td><strong>Atmosphere</strong></td><td>All gases surrounding Earth</td><td>CO₂ levels, climate, greenhouse effect</td></tr>
+      <tr><td><strong>Hydrosphere</strong></td><td>All water (oceans, rivers, ice, groundwater)</td><td>Sea level rise, aquifers, ocean currents</td></tr>
+      <tr><td><strong>Geosphere</strong></td><td>Solid Earth - rocks, soil, plate tectonics</td><td>Erosion, mines, rock layers, volcanoes</td></tr>
+      <tr><td><strong>Biosphere</strong></td><td>All living things</td><td>Biodiversity, species extinction, habitats</td></tr>
+    </table>
+    <div class="callout callout-warn" style="margin-top:.6rem">
+      When a question says "identify one Earth system and describe how it changes" - name a specific system AND describe a specific change to it. Both parts are required for credit.
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════ CR QUESTION STEMS -->
+<div class="section-head" id="stems">
+  <h2>Constructed-Response Question Stems</h2>
+  <div class="sub">These patterns appear on every single exam - learn the formula for each</div>
+</div>
+
+<div class="callout callout-rules">
+  <strong>Golden Rule:</strong> Always write <strong>Cause → Mechanism → Effect</strong>. Stating what happened without explaining <em>how</em> = no credit.
+</div>
+
+<div class="stem-card">
+  <div class="stem-q">"Explain how [X] caused [Y]" &nbsp;/&nbsp; "Describe why..."<span class="stem-toggle">▼</span></div>
+  <div class="stem-body">
+    <div class="stem-formula">
+      <span class="sf-step">What X is</span>
+      <span class="sf-arrow">→</span>
+      <span class="sf-step">Scientific mechanism</span>
+      <span class="sf-arrow">→</span>
+      <span class="sf-step">Effect on Y</span>
+    </div>
+    <div class="stem-ex"><strong>Ex:</strong> "CO₂ increased → less energy escaped the atmosphere → surface temps rose ~1°C"</div>
+    <div class="stem-warn">✗ "CO₂ increased temperatures" - no mechanism named = 0 credit</div>
+  </div>
+</div>
+
+<div class="stem-card">
+  <div class="stem-q">"Using numerical evidence..." &nbsp;/&nbsp; "Using evidence from the graph..."<span class="stem-toggle">▼</span></div>
+  <div class="stem-body">
+    <div class="stem-formula">
+      <span class="sf-step">Specific number from graph</span>
+      <span class="sf-arrow">→</span>
+      <span class="sf-step">Conclusion</span>
+    </div>
+    <div class="stem-ex"><strong>Ex:</strong> "Eurostar: 6 g/km vs. ferry: 19 g/km → Eurostar has lower atmospheric impact"</div>
+    <div class="stem-warn">✗ "The Eurostar is better" - no numbers = 0 credit</div>
+  </div>
+</div>
+
+<div class="stem-card">
+  <div class="stem-q">"Place a check mark to Support or Refute. Justify your response."<span class="stem-toggle">▼</span></div>
+  <div class="stem-body">
+    <div class="stem-formula">
+      <span class="sf-step">Check the box</span>
+      <span class="sf-plus">+</span>
+      <span class="sf-step">Quote specific data that proves it</span>
+    </div>
+    <div class="stem-ex"><strong>Ex:</strong> "Support - Charon's orbital period (6.4 days) equals its rotational period (6.4 days)"</div>
+    <div class="stem-warn">✗ Checking the box without justification = 0 credit</div>
+  </div>
+</div>
+
+<div class="stem-card">
+  <div class="stem-q">"Forecast / Predict what will happen..."<span class="stem-toggle">▼</span></div>
+  <div class="stem-body">
+    <div class="stem-formula">
+      <span class="sf-step">Trend from graph</span>
+      <span class="sf-arrow">→</span>
+      <span class="sf-step">Predicted value</span>
+      <span class="sf-arrow">→</span>
+      <span class="sf-step">Earth system impact</span>
+    </div>
+    <div class="stem-ex"><strong>Ex:</strong> "Temp trend rising → ~X°C by [date] → glaciers melt → sea level rises"</div>
+  </div>
+</div>
+
+<div class="stem-card">
+  <div class="stem-q">"Identify the Earth system impacted most/least. Use numerical evidence."<span class="stem-toggle">▼</span></div>
+  <div class="stem-body">
+    <div class="stem-formula">
+      <span class="sf-step">Name the system</span>
+      <span class="sf-plus">+</span>
+      <span class="sf-step">Cite the specific number</span>
+    </div>
+    <div class="stem-ex"><strong>Ex:</strong> "Atmosphere impacted least - Eurostar: 6 g/km vs. flight: 255 g/km"</div>
+  </div>
+</div>
+
+<div class="stem-card">
+  <div class="stem-q">"Complete the sequence / Place events in temporal order"<span class="stem-toggle">▼</span></div>
+  <div class="stem-body">
+    <div class="stem-dates">
+      <div class="stem-date-item"><span>4.6 Ga</span>Earth forms</div>
+      <div class="stem-date-item"><span>4.2 Ga</span>Oceans form</div>
+      <div class="stem-date-item"><span>3.8 Ga</span>First life</div>
+      <div class="stem-date-item"><span>2.4 Ga</span>Great Oxidation</div>
+      <div class="stem-date-item"><span>560 mya</span>Cambrian explosion</div>
+    </div>
+    <div class="stem-tip">✓ Use the ESRT geologic time scale - Earth formation is always first</div>
+  </div>
+</div>
+
+<div class="stem-card">
+  <div class="stem-q">"How did a human activity affect an Earth system?"<span class="stem-toggle">▼</span></div>
+  <div class="stem-body">
+    <div class="stem-formula">
+      <span class="sf-step">Human activity</span>
+      <span class="sf-arrow">→</span>
+      <span class="sf-step">Mechanism</span>
+      <span class="sf-arrow">→</span>
+      <span class="sf-step">Earth system change</span>
+    </div>
+    <div class="stem-ex"><strong>Ex:</strong> "Mining → land cleared/deforested → biosphere loses biodiversity"</div>
+  </div>
+</div>
+
+<div class="stem-card">
+  <div class="stem-q">"Complete the passage / Fill in the word bank"<span class="stem-toggle">▼</span></div>
+  <div class="stem-body">
+    <div class="stem-tip">✓ Read ALL options before filling any blank - wrong pairings elsewhere cost you the whole question</div>
+    <div class="stem-warn">✗ One wrong blank = 0 points for the entire question</div>
+  </div>
+</div>
+
+<div class="stem-card">
+  <div class="stem-q">"Describe the relative amount / Compare X to Y"<span class="stem-toggle">▼</span></div>
+  <div class="stem-body">
+    <div class="stem-formula">
+      <span class="sf-step">X is greater / less / same as Y</span>
+      <span class="sf-plus">+</span>
+      <span class="sf-step">Reason from the data</span>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════ STARS & UNIVERSE -->
+<div class="topic-section topic-blue">
+<div class="section-head" id="stars">
+  <div><h2>Topic 1: Stars, Stellar Evolution &amp; the Big Bang</h2>
+  <div class="sub">Appears on ALL THREE exams - highest priority topic</div></div>
+  <span class="topic-toggle">▼</span>
+</div>
+<div class="topic-body">
+
+<div class="card blue-card">
+  <div class="card-head">H-R Diagram - What You Must Know</div>
+  <div class="card-body">
+    <ul class="bullets">
+      <li>Main sequence stars run from hot/bright (upper left) to cool/dim (lower right)</li>
+      <li>As the Sun becomes a <strong>red giant</strong>: temperature <strong>decreases</strong>, absolute magnitude <strong>decreases</strong> (it gets brighter - remember: lower number = brighter)</li>
+      <li>Red giants are large, cool, bright - upper right of H-R diagram</li>
+      <li>White dwarfs are small, hot, dim - lower left of H-R diagram</li>
+    </ul>
+    <div class="phrase-box">
+      <strong>June 2025 Q1 answer language (rated correct):</strong><br>
+      Change in relative temperature: "cooler" / "lower temperature"<br>
+      Change in relative absolute magnitude: "decreased" / "lower magnitude value"
+    </div>
+  </div>
+</div>
+
+<div class="card blue-card">
+  <div class="card-head">Nucleosynthesis - Mass Determines Everything</div>
+  <div class="card-body">
+    <ul class="bullets">
+      <li>The <strong>mass</strong> of a star determines its lifespan AND the rate of nucleosynthesis</li>
+      <li>More massive stars burn fuel faster → shorter lifespan → produce heavier elements</li>
+      <li>Heavier elements form at <strong>higher temperatures</strong>, later in a star's life</li>
+      <li>The Sun fuses hydrogen → helium (main sequence)</li>
+      <li>More massive stars fuse helium → carbon → oxygen → neon → iron (in sequence)</li>
+      <li>Elements heavier than iron only form during a <strong>supernova</strong></li>
+      <li>Betelgeuse has helium, carbon, oxygen, neon, etc. already → it is older/more evolved</li>
+    </ul>
+    <div class="phrase-box">
+      <strong>Jan 2026 Q5 (rated correct):</strong> "The greater mass of Betelgeuse causes nucleosynthesis to occur at a faster rate than the Sun." / "The more massive a star, the greater the rate of fusion."
+    </div>
+    <div class="do-dont">
+      <div class="do"><strong>DO write:</strong> "The greater mass of [star] causes a faster rate of fusion/nucleosynthesis."</div>
+      <div class="dont"><strong>DON'T write:</strong> "Betelgeuse is bigger." (no mechanism = no credit)</div>
+    </div>
+  </div>
+</div>
+
+<div class="card blue-card">
+  <div class="card-head">Big Bang Theory - Three Lines of Evidence</div>
+  <div class="card-body">
+    <table>
+      <tr><th>Evidence</th><th>What It Shows</th><th>Key Phrase</th></tr>
+      <tr>
+        <td>Cosmic Microwave Background Radiation (CMBR)</td>
+        <td>Energy left over from Big Bang, found in all directions</td>
+        <td>"Energy distributed throughout the universe"; "universe cooled and became transparent"</td>
+      </tr>
+      <tr>
+        <td>Hubble's Law / Galaxy Recessional Velocity</td>
+        <td>Galaxies farther away move faster = universe expanding</td>
+        <td>"Galaxies farther from Earth have greater recessional velocities, indicating an expanding universe"</td>
+      </tr>
+      <tr>
+        <td>Redshift</td>
+        <td>Wavelengths of light from distant galaxies are stretched longer</td>
+        <td>"Greater wavelengths / red shift is evidence for the expansion of the universe"</td>
+      </tr>
+    </table>
+
+    <div class="phrase-box" style="margin-top:.7rem">
+      <strong>CMBR statements the rating guide accepts (Jan 2026 Q1):</strong><br>
+      Statement 1: CMBR is "energy, predicted by scientists, that is distributed throughout the universe"<br>
+      Statement 2: CMBR is detectable because the universe "cooled and then became transparent"<br>
+      Statement 3: Density variations indicate "galaxies formed in areas of higher density"
+    </div>
+
+    <div class="phrase-box">
+      <strong>Aug 2025 Q12 - Redshift answer (rated correct):</strong><br>
+      Difference in wavelength: "The wavelengths have become greater / longer" or "The wavelengths show a red shift."<br>
+      How universe changed: "The change to greater wavelengths is evidence for the expansion of the universe."<br>
+      <strong>Note:</strong> Your answer MUST include that the universe is "expanding/getting bigger" - just saying "wavelengths increased" is not enough.
+    </div>
+  </div>
+</div>
+
+<div class="card blue-card">
+  <div class="card-head">Sunspots &amp; Solar Irradiance</div>
+  <div class="card-body">
+    <ul class="bullets">
+      <li>Sunspot cycle: approximately <strong>11 years</strong></li>
+      <li>More sunspots = <strong>higher solar irradiance</strong> (more total energy output)</li>
+      <li>More sunspots = higher frequency radiation emitted</li>
+      <li>Sunspots are regions of <strong>cooler</strong> temperatures on the Sun's surface</li>
+      <li>Fewer sunspots → less solar energy → inferred decrease in Earth's temperatures</li>
+    </ul>
+    <div class="phrase-box">
+      <strong>Aug 2025 Q3 (rated correct):</strong> "Higher frequency radiation is emitted at times near maxima in the solar cycle" / "Solar irradiance is higher when the number of sunspots is higher."
+    </div>
+    <div class="callout callout-warn">
+      The June 2025 exam had a trick: "An increase in solar output is associated with a <em>decrease</em> in sunspots" - this statement is <strong>FALSE</strong> and should NOT be checked. More sunspots = more output.
+    </div>
+  </div>
+</div>
+
+
+</div></div>
+
+<!-- ═══════════════════════════════════════════ CLIMATE & ATMOSPHERE -->
+<div class="topic-section topic-green">
+<div class="section-head" id="climate">
+  <div><h2>Topic 2: Climate Change, CO₂ &amp; the Atmosphere</h2>
+  <div class="sub">Appears on ALL THREE exams - multiple CR questions each time</div></div>
+  <span class="topic-toggle">▼</span>
+</div>
+<div class="topic-body">
+
+<div class="card green-card">
+  <div class="card-head">The CO₂ → Temperature Mechanism - Most Important Phrase</div>
+  <div class="card-body">
+    <p>Every time CO₂ and temperature appear together, you must describe <em>energy flow</em>:</p>
+    <div class="phrase-box">
+      <strong>The rated-correct formula (Aug 2025 Q46):</strong><br>
+      "An increase in CO₂ caused <strong>less energy to flow out of the atmosphere</strong>, which raised temperatures."<br><br>
+      <strong>The reverse (Jan 2026 Q47):</strong><br>
+      "Decreased CO₂ / lower levels of greenhouse gas CO₂" → "Earth's surface temperature decreased / the temperature was lower/cooler."
+    </div>
+    <div class="do-dont">
+      <div class="do"><strong>DO write:</strong> "CO₂ traps heat / less energy escapes the atmosphere → temperatures rise."</div>
+      <div class="dont"><strong>DON'T write:</strong> "CO₂ causes global warming." (too vague - no mechanism)</div>
+    </div>
+  </div>
+</div>
+
+<div class="card green-card">
+  <div class="card-head">Photosynthesis &amp; the Carbon Cycle</div>
+  <div class="card-body">
+    <ul class="bullets">
+      <li>Trees/plants use <strong>photosynthesis</strong> to take in CO₂ and store carbon → reduces atmospheric CO₂</li>
+      <li>When forests burn: carbon stored in biomass is released as CO₂ back to atmosphere</li>
+      <li>Decomposition also releases CO₂ back to atmosphere</li>
+      <li>Ocean absorbs CO₂ from atmosphere (air-sea gas exchange)</li>
+    </ul>
+    <div class="phrase-box">
+      <strong>Jun 2025 Q11 (rated correct):</strong> "Trees are growing, so they take in carbon dioxide during <strong>photosynthesis</strong>, which stores carbon in trees and soil, preventing it from entering the atmosphere as CO₂."
+    </div>
+    <div class="callout callout-warn">
+      Always name the process as <strong>photosynthesis</strong> - not just "trees absorb CO₂."
+    </div>
+  </div>
+</div>
+
+<div class="card green-card">
+  <div class="card-head">Ocean Acidification - CO₂ Entering the Ocean</div>
+  <div class="card-body">
+    <ul class="bullets">
+      <li>More atmospheric CO₂ → more CO₂ absorbed by ocean</li>
+      <li>CO₂ in ocean → carbonate ions (<strong>decrease</strong>)</li>
+      <li>Less carbonate ions → marine calcifiers (coral, shellfish) cannot build shells → populations decline</li>
+    </ul>
+    <div class="phrase-box">
+      <strong>Aug 2025 Q48–Q49 (rated correct):</strong><br>
+      "Atmospheric CO₂ entering ocean: <strong>increase</strong>; Ocean carbonate ions: <strong>decrease</strong>."<br>
+      "With less carbonate ions, marine organisms that need carbonate ions will have a harder time surviving because they need carbonate ions to make their shells."
+    </div>
+  </div>
+</div>
+
+<div class="card green-card">
+  <div class="card-head">Ice → Sea Level Feedback</div>
+  <div class="card-body">
+    <ul class="bullets">
+      <li>Ice mass decreases → ice melts → <strong>sea level rises</strong></li>
+      <li>Meltwater entering ocean → salinity <strong>decreases</strong></li>
+      <li>Darker surface exposed when ice melts → more energy absorbed → positive feedback loop → more melting</li>
+    </ul>
+    <div class="phrase-box">
+      <strong>Jan 2026 Q29 (rated correct):</strong> "As the ice mass decreased, it caused the hydrosphere (ocean) sea level to increase because the ice melted due to an increase in temperature." / "When ice melted, fresh water entered the ocean, causing the salinity to drop."
+    </div>
+  </div>
+</div>
+
+<div class="card green-card">
+  <div class="card-head">Obliquity (Earth's Axial Tilt) and Climate</div>
+  <div class="card-body">
+    <ul class="bullets">
+      <li>Greater tilt (obliquity) → more extreme seasons → more energy to poles in summer</li>
+      <li>Smaller tilt → milder seasons → less energy to poles in winter → <strong>more ice forms</strong></li>
+      <li>Current obliquity is 23.5°; minimum is 22.1° (decreasing over ~9,800 years)</li>
+    </ul>
+    <div class="callout callout-info">
+      At 22.1° obliquity in winter: northern hemisphere receives <strong>less</strong> energy → <strong>more</strong> ice forms in polar regions (Jun 2025 Q6 answer: choice 2).
+    </div>
+  </div>
+</div>
+
+
+</div></div>
+
+<!-- ═══════════════════════════════════════════ EARTH HISTORY -->
+<div class="topic-section topic-orange">
+<div class="section-head" id="earth-history">
+  <div><h2>Topic 3: Earth's History - Early Atmosphere &amp; Life</h2>
+  <div class="sub">Appears on ALL THREE exams</div></div>
+  <span class="topic-toggle">▼</span>
+</div>
+<div class="topic-body">
+
+<div class="card orange-card">
+  <div class="card-head">The Great Oxidation Event - Master These Facts</div>
+  <div class="card-body">
+    <ul class="bullets">
+      <li>~2.4–2.1 billion years ago (Ga)</li>
+      <li>Cyanobacteria/stromatolites performed <strong>photosynthesis</strong> in the ocean</li>
+      <li>Oxygen released into ocean → eventually escaped to atmosphere</li>
+      <li>Oxygen reacted with <strong>methane</strong> → methane levels <strong>decreased</strong></li>
+      <li>Oxygen levels <strong>increased</strong> in atmosphere</li>
+      <li>Result: less energy absorbed by atmosphere → Earth cooled → led to earliest ice ages (Huronian)</li>
+    </ul>
+    <div class="phrase-box">
+      <strong>Jun 2025 Q30 (rated correct):</strong> "Microorganisms in the ocean produced oxygen through <strong>photosynthesis</strong> that then entered the atmosphere, causing increased weathering rates and allowing for the evolution of animal life."<br><br>
+      <strong>Aug 2025 Q23 (rated correct):</strong> "Stromatolites carried out photosynthesis, which <strong>removed CO₂ from the ocean and atmosphere</strong>, and increased oxygen levels into the atmosphere."
+    </div>
+    <div class="callout callout-warn">
+      Rating guide note: Responses <strong>must</strong> include the release of oxygen from the ocean by <strong>photosynthetic ocean organisms</strong> to the atmosphere. Simply saying "stromatolites made oxygen" is not enough.
+    </div>
+  </div>
+</div>
+
+<div class="card orange-card">
+  <div class="card-head">Temporal Sequence of Earth Events - Know This Order</div>
+  <div class="card-body">
+    <p>This exact sequence appeared as a question (Jan 2026 Q13). Memorize it:</p>
+    <ol class="numbered">
+      <li><strong>Formation of Earth</strong> (~4.6 Ga) - oldest</li>
+      <li><strong>First oceans form</strong> (~4.2 Ga)</li>
+      <li><strong>Iron enters ocean from black smokers</strong> (~4.0 Ga)</li>
+      <li><strong>First appearance of banded iron formations</strong> (~3.8 Ga)</li>
+      <li><strong>The Great Oxidation Event</strong> (~2.4–2.1 Ga) - youngest in this set</li>
+    </ol>
+    <div class="callout callout-info" style="margin-top:.5rem">
+      Additional markers: First evidence of life ~3.8 Ga; Cambrian explosion ~560 mya; Permian mass extinction ~250 mya.
+    </div>
+  </div>
+</div>
+
+<div class="card orange-card">
+  <div class="card-head">Radioactive Dating - Half-Life and Age of Earth</div>
+  <div class="card-body">
+    <ul class="bullets">
+      <li>Earth is approximately <strong>4.5–4.6 billion years old</strong></li>
+      <li>Uranium-238 half-life = <strong>4.5 billion years</strong></li>
+      <li>If ~50% of U-238 remains → sample is ~4.5 billion years old</li>
+      <li>Moon formed at approximately the same time as Earth (~4.5 Ga)</li>
+    </ul>
+    <div class="phrase-box">
+      <strong>Jun 2025 Q28 (rated correct):</strong> "Based on the graph, the age of the meteorite is 4.5 billion years old, so Earth must also be almost 4.5 billion years old since they formed at about the same time."<br><br>
+      <strong>Aug 2025 Q35 (rated correct):</strong> "Uranium-238 has a half-life of 4.5 billion years and Sample A has approximately half of its original uranium-238 remaining, which indicates the Moon is approximately 4.5 billion years old."
+    </div>
+    <div class="do-dont">
+      <div class="do"><strong>DO include:</strong> The half-life value AND the percentage remaining AND the conclusion about age.</div>
+      <div class="dont"><strong>DON'T:</strong> Just write the age without connecting it to the data.</div>
+    </div>
+  </div>
+</div>
+
+<div class="card orange-card">
+  <div class="card-head">Plate Tectonics &amp; Rock Cycle - Cycling of Matter</div>
+  <div class="card-body">
+    <ul class="bullets">
+      <li>Divergent boundaries → mid-ocean ridges → new ocean crust formed, magma rises</li>
+      <li>Convergent boundaries → subduction → oceanic plate sinks → magma forms → rises back to surface</li>
+      <li>Banded iron formations = evidence that iron + oxygen existed in ancient oceans → formed on ocean floor</li>
+      <li>Hotspots: plate moves over fixed hotspot → islands get <strong>older to the northwest</strong> in the Pacific</li>
+    </ul>
+    <div class="phrase-box">
+      <strong>Jun 2025 Q47 - Hawaiian Islands (rated correct):</strong><br>
+      Pattern of ages: "The islands get older to the northwest" / "Islands get older with increasing distance from the hotspot."<br>
+      Plate movement: "The Pacific Plate moves to the northwest."
+    </div>
+  </div>
+</div>
+
+
+</div></div>
+
+<!-- ═══════════════════════════════════════════ ORBITS & KEPLER -->
+<div class="topic-section topic-purple">
+<div class="section-head" id="orbits">
+  <div><h2>Topic 4: Orbital Mechanics &amp; Kepler's Laws</h2>
+  <div class="sub">Appears on ALL THREE exams</div></div>
+  <span class="topic-toggle">▼</span>
+</div>
+<div class="topic-body">
+
+<div class="card purple-card">
+  <div class="card-head">The Three Laws You Must Know Cold</div>
+  <div class="card-body">
+    <table>
+      <tr><th>Law</th><th>What It Says</th><th>How It Appears on Exams</th></tr>
+      <tr>
+        <td><strong>Kepler's 1st</strong></td>
+        <td>Orbits are ellipses, with the Sun at one focus</td>
+        <td>Eccentricity questions; eccentricity of 0 = perfect circle</td>
+      </tr>
+      <tr>
+        <td><strong>Kepler's 2nd</strong><br>(Equal Areas)</td>
+        <td>An object sweeps equal areas in equal times → moves <em>faster</em> when <em>closer</em></td>
+        <td>"Mercury travels faster when closer to the Sun" ; tidal locking justification</td>
+      </tr>
+      <tr>
+        <td><strong>Kepler's 3rd</strong><br>(Orbital Period)</td>
+        <td>Objects farther from the central body have <em>longer</em> orbital periods</td>
+        <td>Ranking moons by period; comparing HST vs Moon orbital period</td>
+      </tr>
+    </table>
+
+    <div class="phrase-box" style="margin-top:.7rem">
+      <strong>Jan 2026 Q19 justification (rated correct):</strong> "According to one of Kepler's laws, objects orbiting at a greater distance have a longer period of revolution." / "In order to sweep out equal area in equal time, moons travel faster when closer to a planet, causing a shorter orbital period for moons that are closer."
+    </div>
+
+    <div class="callout callout-warn">
+      <strong>Common trap:</strong> "The orbital speeds of both planets are affected by their masses" - this is <strong>FALSE</strong> by Kepler's Laws. Speed depends on distance from the Sun, not the planet's own mass.
+    </div>
+  </div>
+</div>
+
+<div class="card purple-card">
+  <div class="card-head">Tidal Locking - "Same Side Always Faces"</div>
+  <div class="card-body">
+    <p>Tidal locking occurs when a moon's <strong>orbital period = its rotational period</strong>.</p>
+    <ul class="bullets">
+      <li>Earth's Moon: orbital period = 27.3 days, rotation = 27.3 days → same side always faces Earth </li>
+      <li>Charon (Pluto's moon): orbital period = 6.4 days, rotation = 6.4 days → same side always faces Pluto </li>
+    </ul>
+    <div class="phrase-box">
+      <strong>Jan 2026 Q22 (rated correct - Support):</strong> "Charon's orbital period is 6.4 Earth days and its rotational period is also 6.4 Earth days."
+    </div>
+  </div>
+</div>
+
+<div class="card purple-card">
+  <div class="card-head">Gravity &amp; Orbital Speed</div>
+  <div class="card-body">
+    <ul class="bullets">
+      <li>Closer to central body → stronger gravitational field → must orbit faster to stay in orbit</li>
+      <li>HST (540 km up) is much closer to Earth than the Moon → HST has a shorter orbital period</li>
+      <li>Gravitational field strength: g = GmE / r² → increases as distance (r) decreases</li>
+    </ul>
+    <div class="phrase-box">
+      <strong>Aug 2025 Q14 passage completion (rated correct):</strong><br>
+      A: "less" (HST is less far than Moon)<br>
+      B: "greater" (Earth's gravity at HST's location is greater)<br>
+      C: "less" (HST has a shorter orbital period)
+    </div>
+  </div>
+</div>
+
+
+</div></div>
+
+<!-- ═══════════════════════════════════════════ WATER & EROSION -->
+<div class="topic-section topic-red">
+<div class="section-head" id="water">
+  <div><h2>Topic 5: Water, Weathering &amp; Erosion</h2>
+  <div class="sub">Appears on ALL THREE exams</div></div>
+  <span class="topic-toggle">▼</span>
+</div>
+<div class="topic-body">
+
+<div class="card red-card">
+  <div class="card-head">Freeze-Thaw Weathering (Aug 2025)</div>
+  <div class="card-body">
+    <ul class="bullets">
+      <li>Water <strong>expands by ~10%</strong> when it freezes</li>
+      <li>This expansion increases pressure in cracks → causes deformation/weathering of rock or concrete</li>
+      <li>Adding rebar to concrete reduces deformation (less cracking)</li>
+    </ul>
+    <div class="phrase-box">
+      <strong>Aug 2025 Q6 (rated correct):</strong><br>
+      Property of water: "When water freezes, it <strong>expands</strong> by about 10%."<br>
+      Relative amount: "Concrete samples with rebar have a <strong>lower</strong> deformation with fewer freeze-thaw cycles than concrete without rebar."
+    </div>
+  </div>
+</div>
+
+<div class="card red-card">
+  <div class="card-head">Erosion Rate - Sediment Size &amp; Rock Resistance</div>
+  <div class="card-body">
+    <ul class="bullets">
+      <li><strong>Sandstone</strong> is more resistant to weathering/erosion than <strong>shale</strong></li>
+      <li>Rock layers that extend farther out = more resistant (less eroded)</li>
+      <li>Shale shows more erosional cutback than sandstone</li>
+    </ul>
+    <div class="phrase-box">
+      <strong>Jan 2026 Q38 (rated correct - Sandstone):</strong> "A sandstone layer is at the top of each waterfall, so it must be more resistant to weathering and erosion." / "The shale shows more erosional cutback than the sandstone."
+    </div>
+  </div>
+</div>
+
+<div class="card red-card">
+  <div class="card-head">Dams, Erosion &amp; Sediment</div>
+  <div class="card-body">
+    <ul class="bullets">
+      <li>Dams <strong>trap sediment</strong> behind them → <strong>less sediment</strong> reaches the coast</li>
+      <li>Less sediment at coast → coastline erosion / loss of beaches / loss of deltas</li>
+      <li>Diverting water away from falls → <strong>less water</strong> flowing over falls → <strong>slower erosion rate</strong></li>
+    </ul>
+    <div class="phrase-box">
+      <strong>Aug 2025 Q38 (rated correct):</strong> "Prior to the dam's construction, more sediment would have been deposited along the coast. After construction, more sediment is trapped behind the dam, reducing coastal deposition."<br><br>
+      <strong>Aug 2025 Q9 (rated correct):</strong> "Less water flowing over Horseshoe Falls due to diversion above the falls resulted in a slower rate of erosion at the falls."
+    </div>
+  </div>
+</div>
+
+<div class="card red-card">
+  <div class="card-head">Plant Cover, Runoff &amp; Soil Erosion</div>
+  <div class="card-body">
+    <ul class="bullets">
+      <li>More plant cover → less runoff → less soil erosion</li>
+      <li>Less plant cover → more runoff → more soil erosion</li>
+    </ul>
+    <div class="phrase-box">
+      <strong>Aug 2025 Q24 claim format:</strong> "As the percent of plant cover <strong>increases</strong>, runoff will <strong>decrease/become less</strong>." / "As the percent of plant cover <strong>decreases</strong>, the amount of soil eroded during a rain event will <strong>increase/become greater</strong>."
+    </div>
+  </div>
+</div>
+
+<div class="card red-card">
+  <div class="card-head">Temporal Scale of Geologic Processes</div>
+  <div class="card-body">
+    <p>A favorite question type: comparing how <em>fast</em> different processes happen.</p>
+    <table>
+      <tr><th>Process</th><th>Timescale</th></tr>
+      <tr><td>Earthquake land subsidence</td><td>Seconds / minutes / hours (less than one day)</td></tr>
+      <tr><td>Ghost forest development (salt intrusion killing trees)</td><td>Years / decades / centuries</td></tr>
+      <tr><td>Erosion at a waterfall</td><td>Years to centuries</td></tr>
+      <tr><td>Plate movement</td><td>Millions of years</td></tr>
+    </table>
+    <div class="phrase-box">
+      <strong>Jun 2025 Q39 (rated correct):</strong> Earthquake land subsidence: "happens over seconds/minutes/hours." Ghost forest development: "happens over years/decades/centuries" / "occurs over much longer periods of time than earthquake sinking."
+    </div>
+  </div>
+</div>
+
+<div class="card red-card">
+  <div class="card-head">Saltwater Intrusion - What Gets Affected</div>
+  <div class="card-body">
+    <ul class="bullets">
+      <li>Sea level rise → saltwater moves inland → contaminates freshwater aquifers and wells</li>
+      <li>Kills freshwater trees → loss of lumber (biosphere/geosphere impact)</li>
+      <li>Contaminates drinking water wells (hydrosphere impact)</li>
+    </ul>
+    <div class="phrase-box">
+      <strong>Jun 2025 Q37 (rated correct - fresh water):</strong> "Salt water will intrude into the freshwater well, which would negatively impact the quality of drinking water and cause the resident to move their well."<br><br>
+      <strong>(wood/timber):</strong> "The salt water intrusion would kill the trees in the freshwater forested wetland over time, which would reduce the supply of available lumber for building and heating."
+    </div>
+  </div>
+</div>
+
+
+</div></div>
+
+<!-- ═══════════════════════════════════════════ HUMAN IMPACT -->
+<div class="topic-section topic-green">
+<div class="section-head" id="human">
+  <div><h2>Topic 6: Human Impact &amp; Environmental Solutions</h2>
+  <div class="sub">Appears on ALL THREE exams - usually involves comparing two design solutions</div></div>
+  <span class="topic-toggle">▼</span>
+</div>
+<div class="topic-body">
+
+<div class="card green-card">
+  <div class="card-head">Mining Impacts on Earth Systems</div>
+  <div class="card-body">
+    <ul class="bullets">
+      <li>Mining requires <strong>land clearing/deforestation</strong> → more erosion of the geosphere</li>
+      <li>Deforestation → biodiversity of the <strong>biosphere</strong> reduced</li>
+      <li>Mine waste (tailings) stored on surface → precipitation dissolves materials → <strong>groundwater pollution</strong> (hydrosphere)</li>
+      <li>Airborne particles from tailings → <strong>air pollution</strong> (atmosphere)</li>
+    </ul>
+    <div class="phrase-box">
+      <strong>Jan 2026 Q42 - two-part answer required (rated correct):</strong><br>
+      Negative effect: "Land must be cleared/deforested to dig a mine."<br>
+      Earth system change: "When land is deforested, the biodiversity of the biosphere is reduced/eliminated."<br><br>
+      OR: "Mine wastes (tailings) are stored on the surface" → "Precipitation dissolves materials in the mine waste, which infiltrates to groundwater, polluting it [hydrosphere]."
+    </div>
+  </div>
+</div>
+
+<div class="card green-card">
+  <div class="card-head">Carbon Emissions - Comparing Transportation / Energy Sources</div>
+  <div class="card-body">
+    <ul class="bullets">
+      <li>Always use specific numbers when comparing carbon emissions</li>
+      <li>Battery Electric Vehicle: lowest total emissions (41 tCO₂e)</li>
+      <li>Hybrid Electric: 48 tCO₂e</li>
+      <li>Internal Combustion: 57 tCO₂e (highest)</li>
+      <li>Eurostar train: 6 g/km per passenger (lowest)</li>
+      <li>Ferry: 19 g/km; Short-haul flight: 255 g/km (highest)</li>
+    </ul>
+    <div class="phrase-box">
+      <strong>Jun 2025 Q31 (rated correct - Battery Electric Vehicle):</strong> "Carbon dioxide is a greenhouse gas, and the total emissions for electric vehicles are 16 tCO₂e less than that of internal combustion engine vehicles."
+    </div>
+    <div class="do-dont">
+      <div class="do"><strong>DO:</strong> State the specific numbers. "The Eurostar uses 6 g/km vs 255 g/km for flights."</div>
+      <div class="dont"><strong>DON'T:</strong> Just say "electric vehicles pollute less." No numbers = no credit on numerical evidence questions.</div>
+    </div>
+  </div>
+</div>
+
+<div class="card green-card">
+  <div class="card-head">Design Solution Questions - What Scorers Want</div>
+  <div class="card-body">
+    <p>When comparing two solutions (e.g., river vs. ocean plastic removal; natural paving vs. recycled asphalt), the question usually asks for a <em>benefit</em> and a <em>drawback</em> or asks you to pick the better solution with evidence.</p>
+    <ul class="bullets">
+      <li>Read <em>all</em> the pros and cons in the provided table before answering</li>
+      <li>Your evidence must come from the provided data, not general knowledge</li>
+      <li>If asked about society's wants/needs: address both <em>economic</em> AND <em>environmental</em> aspects if the data shows both</li>
+    </ul>
+    <div class="phrase-box">
+      <strong>Jun 2025 Q32 - Economic benefit + Society (rated correct):</strong><br>
+      Economic: "Class 1 and class 7 drivers that drive during off-peak hours with a Green Pass will save $3.50."<br>
+      Society: "Class 1 and class 7 vehicles driven during off-peak hours with a Green Pass will emit less air pollution."
+    </div>
+  </div>
+</div>
+
+<div class="card green-card">
+  <div class="card-head">Mine Reclamation - What Each Action Achieves</div>
+  <div class="card-body">
+    <p>Jan 2026 Q16 asked about reclaiming the Woodbourne Flats Mine. These are the rated-correct answers:</p>
+    <table>
+      <tr><th>Action</th><th>Purpose (Rated-Correct Answer)</th></tr>
+      <tr><td>Planting black willow trees along river</td><td>Stabilize river banks <strong>and reduce the impact of flooding events</strong> (Choice B)</td></tr>
+      <tr><td>Creating a 35-acre pond</td><td>Capture runoff from surrounding area and <strong>reduce the amount of sediment released into the nearby river</strong> (Choice D)</td></tr>
+      <tr><td>Planting vegetation around pond</td><td>Stabilize slopes and <strong>restore habitat of the original ecosystem</strong> (Choice E)</td></tr>
+    </table>
+  </div>
+</div>
+
+
+</div></div>
+
+<!-- ═══════════════════════════════════════════ PHRASE BANK -->
+<div class="section-head" id="phrase-bank">
+  <h2>Master Phrase Bank</h2>
+  <div class="sub">Words and phrases that appear in the rating guide - use them in your answers</div>
+</div>
+
+<div class="callout callout-rules">
+  These are phrases taken directly from the rating guides across all three exams. Using language like this signals to scorers that you understand the science correctly. You don't need to memorize them word-for-word, but your answer should include these <strong>key terms and relationships</strong>.
+</div>
+
+<div class="card blue-card">
+  <div class="card-head">Stars &amp; Universe Phrases</div>
+  <div class="card-body">
+    <table>
+      <tr><th>Concept</th><th>Use This Language</th></tr>
+      <tr><td>Why massive stars have shorter lives</td><td>"The more massive a star, the greater the rate of fusion/nucleosynthesis"</td></tr>
+      <tr><td>Sun → Red Giant change</td><td>"Temperature decreases; absolute magnitude decreases [becomes brighter]"</td></tr>
+      <tr><td>Redshift meaning</td><td>"Greater wavelengths / red shift = evidence that the universe has expanded"</td></tr>
+      <tr><td>Hubble's data conclusion</td><td>"Galaxies farther from Earth have greater recessional velocities, indicating an expanding universe"</td></tr>
+      <tr><td>CMBR evidence</td><td>"Energy distributed throughout the universe; universe cooled and became transparent; galaxies formed in areas of higher density"</td></tr>
+      <tr><td>Sunspot cycle</td><td>"Approximately 11-year cycle; more sunspots = higher solar irradiance"</td></tr>
+      <tr><td>Nucleosynthesis sequence</td><td>"Heavier elements are produced at higher temperatures later in a star's life cycle"</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="card green-card">
+  <div class="card-head">Climate &amp; Atmosphere Phrases</div>
+  <div class="card-body">
+    <table>
+      <tr><th>Concept</th><th>Use This Language</th></tr>
+      <tr><td>CO₂ and temperature</td><td>"Increased CO₂ caused less energy to flow out of the atmosphere, raising temperatures"</td></tr>
+      <tr><td>Decreased CO₂ effect</td><td>"Decreased CO₂ levels → Earth's surface temperature decreased"</td></tr>
+      <tr><td>Photosynthesis and CO₂</td><td>"Trees take in carbon dioxide during photosynthesis, storing carbon and preventing it from entering the atmosphere"</td></tr>
+      <tr><td>Ocean acidification</td><td>"Atmospheric CO₂ entering ocean: increase; ocean carbonate ions: decrease"</td></tr>
+      <tr><td>Marine calcifiers</td><td>"Less carbonate ions → marine organisms cannot make their shells → populations decrease"</td></tr>
+      <tr><td>Ice melt → sea level</td><td>"Ice melted → sea level increased; fresh water entered ocean → salinity decreased"</td></tr>
+      <tr><td>Positive feedback (albedo)</td><td>"Dark surface exposed → more energy absorbed → more melting → more dark surface"</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="card orange-card">
+  <div class="card-head">Earth History Phrases</div>
+  <div class="card-body">
+    <table>
+      <tr><th>Concept</th><th>Use This Language</th></tr>
+      <tr><td>Great Oxidation Event</td><td>"Stromatolites performed photosynthesis in the ocean, releasing oxygen that entered the atmosphere; methane decreased"</td></tr>
+      <tr><td>GOE climate effect</td><td>"Less energy absorbed by atmosphere → Earth cooled → earliest ice ages"</td></tr>
+      <tr><td>Age of Earth</td><td>"Earth is approximately 4.5 billion years old; meteorites formed at the same time"</td></tr>
+      <tr><td>Uranium-238 dating</td><td>"U-238 half-life = 4.5 billion years; if ~50% remains, sample is ~4.5 billion years old"</td></tr>
+      <tr><td>Hawaiian Islands / hotspot</td><td>"Islands get older to the northwest; the Pacific Plate moves to the northwest"</td></tr>
+      <tr><td>Banded iron formations</td><td>"Presence of iron and oxygen in oceans led to formation of banded iron rock layers on ocean floor"</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="card purple-card">
+  <div class="card-head">Orbits &amp; Kepler Phrases</div>
+  <div class="card-body">
+    <table>
+      <tr><th>Concept</th><th>Use This Language</th></tr>
+      <tr><td>Kepler's 3rd Law</td><td>"Objects orbiting at a greater distance have a longer period of revolution"</td></tr>
+      <tr><td>Kepler's 2nd Law</td><td>"Objects sweep equal areas in equal time; they travel faster when closer, causing a shorter orbital period"</td></tr>
+      <tr><td>Tidal locking</td><td>"Orbital period = rotational period → same side always faces [central body]"</td></tr>
+      <tr><td>Gravity at different distances</td><td>"Greater distance → weaker gravitational field → slower orbital speed / longer period"</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="card red-card">
+  <div class="card-head">Water, Erosion &amp; Human Impact Phrases</div>
+  <div class="card-body">
+    <table>
+      <tr><th>Concept</th><th>Use This Language</th></tr>
+      <tr><td>Freeze-thaw weathering</td><td>"Water expands by ~10% when it freezes → increased deformation"</td></tr>
+      <tr><td>Dam trapping sediment</td><td>"Sediment is trapped behind the dam, reducing coastal deposition"</td></tr>
+      <tr><td>Waterfall erosion rate</td><td>"Less water flowing over falls → slower rate of erosion"</td></tr>
+      <tr><td>Rock resistance</td><td>"Sandstone is more resistant to weathering/erosion than shale; sandstone extends farther out"</td></tr>
+      <tr><td>Plant cover and erosion</td><td>"More plant cover → less runoff → less soil erosion" (and reverse)</td></tr>
+      <tr><td>Mining impacts</td><td>"Land cleared for mining → more erosion of geosphere; deforestation reduces biodiversity of biosphere"</td></tr>
+      <tr><td>Saltwater intrusion</td><td>"Sea level rise → saltwater intrudes into freshwater aquifer → contaminates drinking water"</td></tr>
+    </table>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════ QUICK REFERENCE -->
+<div class="section-head" id="quick-reference">
+  <h2>Quick-Reference: Which Topics Hit Every Exam</h2>
+</div>
+
+<table id="quick-reference-table">
+  <tr>
+    <th>Topic</th>
+    <th>Jun '25</th>
+    <th>Aug '25</th>
+    <th>Jan '26</th>
+    <th>CR Questions?</th>
+  </tr>
+  <tr>
+    <td>Stars, H-R Diagram, Nucleosynthesis</td>
+    <td>Q1, Q16, Q17</td>
+    <td>Q1, Q3, Q5</td>
+    <td>Q4, Q5</td>
+    <td class="cr-yes"><strong>Yes</strong></td>
+  </tr>
+  <tr>
+    <td>Big Bang / CMBR / Hubble's Law</td>
+    <td>Q19, Q20</td>
+    <td>Q11, Q12</td>
+    <td>Q1, Q2, Q3</td>
+    <td class="cr-yes"><strong>Yes</strong></td>
+  </tr>
+  <tr>
+    <td>Climate Change / CO₂ / Atmosphere</td>
+    <td>Q10, Q11, Q14, Q15</td>
+    <td>Q46, Q47, Q48, Q49</td>
+    <td>Q27, Q29, Q47, Q48</td>
+    <td class="cr-yes"><strong>Yes</strong></td>
+  </tr>
+  <tr>
+    <td>Great Oxidation / Early Atmosphere</td>
+    <td>Q30</td>
+    <td>Q23</td>
+    <td>Q10, Q13, Q47</td>
+    <td class="cr-yes"><strong>Yes</strong></td>
+  </tr>
+  <tr>
+    <td>Kepler's Laws / Orbital Mechanics</td>
+    <td>Q3, Q4, Q5</td>
+    <td>Q14, Q15, Q32</td>
+    <td>Q19, Q20, Q22</td>
+    <td class="cr-yes"><strong>Yes</strong></td>
+  </tr>
+  <tr>
+    <td>Radioactive Dating</td>
+    <td>Q28</td>
+    <td>Q35</td>
+    <td>Q11</td>
+    <td class="cr-yes"><strong>Yes</strong></td>
+  </tr>
+  <tr>
+    <td>Weathering / Erosion / Sediment</td>
+    <td>Q39, Q50</td>
+    <td>Q6, Q9, Q38</td>
+    <td>Q38</td>
+    <td class="cr-yes"><strong>Yes</strong></td>
+  </tr>
+  <tr>
+    <td>Human Impact / Energy / Carbon</td>
+    <td>Q31, Q32, Q37</td>
+    <td>Q8, Q38, Q40</td>
+    <td>Q15, Q27, Q42</td>
+    <td class="cr-yes"><strong>Yes</strong></td>
+  </tr>
+  <tr>
+    <td>Ocean Currents / Water Cycle</td>
+    <td>Q6, Q7, Q21</td>
+    <td>Q16-Q20, Q26</td>
+    <td>Q6, Q29</td>
+    <td class="cr-yes"><strong>Yes</strong></td>
+  </tr>
+  <tr>
+    <td>Plate Tectonics / Rock Cycle</td>
+    <td>Q47</td>
+    <td>Q27, Q28</td>
+    <td>Q13</td>
+    <td class="cr-yes"><strong>Yes</strong></td>
+  </tr>
+</table>
+
+<div class="callout callout-warn" style="margin-top:1rem">
+  <strong>Every topic in this table is near-certain to appear on your next exam.</strong> Prioritize the CR questions - those are the ones where knowing the right <em>language</em> separates a 0 from a 1.
+</div>
+
+</main>
+
+<script>
+  (function replaceArrows() {
+    const svgArrow = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 26 14" width="22" height="12" style="vertical-align:middle;display:inline-block;margin:0 2px;flex-shrink:0"><line x1="2" y1="7" x2="20" y2="7" stroke="#1a4a7a" stroke-width="2.2" stroke-linecap="round"/><polyline points="14,2 21,7 14,12" stroke="#1a4a7a" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    const nodes = [];
+    while (walker.nextNode()) {
+      if (walker.currentNode.textContent.includes('→')) nodes.push(walker.currentNode);
+    }
+    nodes.forEach(node => {
+      const parts = node.textContent.split('→');
+      const frag = document.createDocumentFragment();
+      parts.forEach((part, i) => {
+        frag.appendChild(document.createTextNode(part));
+        if (i < parts.length - 1) {
+          const tmp = document.createElement('span');
+          tmp.innerHTML = svgArrow;
+          frag.appendChild(tmp.firstChild);
+        }
+      });
+      node.parentNode.replaceChild(frag, node);
+    });
+  })();
+
+  document.querySelectorAll('.freq-bar').forEach(el => el.remove());
+
+  document.querySelectorAll('.stem-card .stem-q').forEach(q => {
+    q.addEventListener('click', () => q.closest('.stem-card').classList.toggle('open'));
+  });
+
+  document.querySelectorAll('.topic-section .section-head').forEach(head => {
+    head.addEventListener('click', () => {
+      head.closest('.topic-section').classList.toggle('open');
+    });
+  });
+
+  document.querySelectorAll('.card-head').forEach(head => {
+    const icon = document.createElement('span');
+    icon.className = 'toggle-icon';
+    icon.textContent = '▼';
+    head.appendChild(icon);
+
+    head.addEventListener('click', () => {
+      head.closest('.card').classList.toggle('open');
+    });
+  });
+
+  // ── ACRONYM TOOLTIPS ───────────────────────────────────────────────────
+  (function() {
+    const ACRONYMS = [
+      ['tCO₂e', 'Metric tons of CO₂ equivalent'],
+      ['CMBR',  'Cosmic Microwave Background Radiation'],
+      ['ESRT',  'Earth Science Reference Tables'],
+      ['U-238', 'Uranium-238'],
+      ['GOE',   'Great Oxidation Event'],
+      ['CRQ',   'Constructed-Response Question'],
+      ['NYS',   'New York State'],
+      ['HST',   'Hubble Space Telescope'],
+      ['H-R',   'Hertzsprung-Russell diagram'],
+      ['CO₂',   'Carbon Dioxide'],
+      ['mya',   'million years ago'],
+      ['Ga',    'giga-annum — billion years ago'],
+      ['CR',    'Constructed Response'],
+    ];
+
+    // Build a single regex — longer entries first so CRQ matches before CR
+    const pattern = new RegExp(
+      ACRONYMS.map(([a]) => {
+        const esc = a.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const start = /\w/.test(a[0])           ? '\\b' : '';
+        const end   = /\w/.test(a[a.length - 1]) ? '\\b' : '';
+        return start + esc + end;
+      }).join('|'),
+      'g'
+    );
+    const lookup = Object.fromEntries(ACRONYMS);
+
+    function walk(node) {
+      if (node.nodeType === 3) {
+        const text = node.nodeValue;
+        pattern.lastIndex = 0;
+        if (!pattern.test(text)) return;
+        pattern.lastIndex = 0;
+
+        const frag = document.createDocumentFragment();
+        let last = 0, m;
+        while ((m = pattern.exec(text)) !== null) {
+          if (m.index > last) frag.appendChild(document.createTextNode(text.slice(last, m.index)));
+          const el = document.createElement('abbr');
+          el.title = lookup[m[0]];
+          el.textContent = m[0];
+          frag.appendChild(el);
+          last = m.index + m[0].length;
+        }
+        if (last < text.length) frag.appendChild(document.createTextNode(text.slice(last)));
+        node.parentNode.replaceChild(frag, node);
+        return;
+      }
+      if (node.nodeType !== 1) return;
+      if (['SCRIPT','STYLE','ABBR','CODE','A','BUTTON'].includes(node.tagName)) return;
+      [...node.childNodes].forEach(walk);
+    }
+
+    walk(document.body);
+  })();
+</script>
+</body>
+</html>
