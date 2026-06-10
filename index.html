@@ -297,6 +297,66 @@
   }
   .stem-date-item span { display: block; font-weight: bold; color: var(--blue); }
 
+  /* ── STEM GROUPS ── */
+  .stem-group {
+    background: #fff;
+    border: 1px solid var(--border);
+    margin: .5rem 0;
+  }
+  .stem-group-head {
+    padding: .65rem 1rem;
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    align-items: baseline;
+    gap: .55rem;
+  }
+  .stem-group-label {
+    font-weight: bold;
+    font-family: Arial, sans-serif;
+    font-size: .93rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .stem-group-tagline {
+    font-size: .76rem;
+    color: var(--gray);
+    font-family: Arial, sans-serif;
+    flex: 1;
+    line-height: 1.3;
+  }
+  .stem-group .stem-toggle { margin-left: auto; flex-shrink: 0; }
+  .stem-group-body {
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height .45s ease, padding .45s ease;
+    padding: 0 1rem;
+  }
+  .stem-group.open .stem-group-body { max-height: 5000px; padding: .7rem 1rem 1rem; }
+  .stem-group.open .stem-toggle     { transform: rotate(180deg); }
+
+  .sv-q {
+    font-size: .84rem;
+    font-weight: bold;
+    font-family: Arial, sans-serif;
+    color: var(--blue);
+    margin: .5rem 0 .3rem;
+  }
+  .sv-sep {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: .6rem 0 .45rem;
+  }
+
+  .sg-blue   .stem-group-head { border-left: 5px solid var(--blue); }
+  .sg-blue   .stem-group-label { color: var(--blue); }
+  .sg-green  .stem-group-head { border-left: 5px solid var(--green); }
+  .sg-green  .stem-group-label { color: var(--green); }
+  .sg-orange .stem-group-head { border-left: 5px solid var(--orange); }
+  .sg-orange .stem-group-label { color: var(--orange); }
+  .sg-red    .stem-group-head { border-left: 5px solid var(--red); }
+  .sg-red    .stem-group-label { color: var(--red); }
+
   /* ── CALLOUT ── */
   .callout {
 
@@ -412,14 +472,9 @@
     text-decoration: underline dotted var(--blue);
     text-underline-offset: 2px;
     cursor: help;
-    position: relative;
   }
-  abbr[title]:hover::after {
-    content: attr(title);
-    position: absolute;
-    bottom: calc(100% + 5px);
-    left: 50%;
-    transform: translateX(-50%);
+  #abbr-tooltip {
+    position: fixed;
     background: #1a2a3a;
     color: #fff;
     font-size: .72rem;
@@ -429,9 +484,10 @@
     padding: .28rem .6rem;
     white-space: nowrap;
     pointer-events: none;
-    z-index: 999;
+    z-index: 9999;
     border: 1px solid rgba(255,255,255,.15);
     box-shadow: 0 3px 10px rgba(0,0,0,.25);
+    display: none;
   }
 </style>
 </head>
@@ -507,83 +563,185 @@
 <!-- ═══════════════════════════════════════════ CR QUESTION STEMS -->
 <div class="section-head" id="stems">
   <h2>Constructed-Response Question Stems</h2>
-  <div class="sub">These patterns appear on every single exam - learn the formula for each</div>
+  <div class="sub">The exact task wording the NY HS-ESS Regents uses - and how to earn the 1 point</div>
 </div>
 
 <div class="callout callout-rules">
-  <strong>Golden Rule:</strong> Always write <strong>Cause → Mechanism → Effect</strong>. Stating what happened without explaining <em>how</em> = no credit.
+  <strong>How CR questions are scored:</strong> On the HS-ESS exam, every constructed-response question is worth <strong>1 credit, all-or-nothing</strong> - the rating guide states <em>"Fractional credit is not allowed."</em> Most stems pack <strong>two or more tasks</strong> into one sentence, joined by words like <em>"and," "also," "explain,"</em> or <em>"justify."</em> You get the point only if you complete <strong>every</strong> part. Example (Jan '26 Q27): <em>"Identify the Earth system being impacted least... <strong>and</strong> use numerical evidence to explain how this solution reduces the impact."</em> Naming the system without the numbers - or numbers without naming the system - scores 0.
 </div>
 
-<div class="stem-card">
-  <div class="stem-q">"Explain how [X] caused [Y]" &nbsp;/&nbsp; "Describe why..."<span class="stem-toggle">▼</span></div>
-  <div class="stem-body">
+<!-- ── GROUP 1: Explain & Describe ── -->
+<div class="stem-group sg-blue">
+  <div class="stem-group-head">
+    <span class="stem-group-label">Explain &amp; Describe</span>
+    <span class="stem-group-tagline">Give the mechanism - what changed, and the effect it caused</span>
+    <span class="stem-toggle">▼</span>
+  </div>
+  <div class="stem-group-body">
+
+    <div class="sv-q">"Explain how [X] is a factor in [Y]." &nbsp;/&nbsp; "Explain the process that [causes Y]."</div>
     <div class="stem-formula">
-      <span class="sf-step">What X is</span>
+      <span class="sf-step">Cause</span>
       <span class="sf-arrow">→</span>
-      <span class="sf-step">Scientific mechanism</span>
+      <span class="sf-step">The actual process / mechanism</span>
       <span class="sf-arrow">→</span>
+      <span class="sf-step">Effect</span>
+    </div>
+    <div class="stem-ex"><strong>Jan '26 Q5:</strong> "The greater mass of Betelgeuse causes nucleosynthesis (fusion) to occur at a faster rate than in the Sun."</div>
+    <div class="stem-warn">✗ "Betelgeuse is bigger" - restates the data with no mechanism = 0 credit</div>
+
+    <div class="sv-sep"></div>
+
+    <div class="sv-q">"Describe how [X] affects [Y]. <u>Also</u> describe how this change affects [Z]." &nbsp;/&nbsp; "...<u>and</u> describe how this process is responsible for [effect]."</div>
+    <div class="stem-formula">
       <span class="sf-step">Effect on Y</span>
+      <span class="sf-plus">+</span>
+      <span class="sf-step">Second effect (on Z)</span>
     </div>
-    <div class="stem-ex"><strong>Ex:</strong> "CO₂ increased → less energy escaped the atmosphere → surface temps rose ~1°C"</div>
-    <div class="stem-warn">✗ "CO₂ increased temperatures" - no mechanism named = 0 credit</div>
-  </div>
-</div>
+    <div class="stem-ex"><strong>June '25 Q11:</strong> "Trees use photosynthesis to make food; this removes CO₂ from the air, which lowers atmospheric carbon dioxide levels."</div>
+    <div class="stem-tip">✓ Watch for "Also..." or "and describe..." - that is a <strong>second required task</strong>, not a restatement</div>
 
-<div class="stem-card">
-  <div class="stem-q">"Using numerical evidence..." &nbsp;/&nbsp; "Using evidence from the graph..."<span class="stem-toggle">▼</span></div>
-  <div class="stem-body">
+    <div class="sv-sep"></div>
+
+    <div class="sv-q">"Describe the conditions necessary for [event]."</div>
     <div class="stem-formula">
-      <span class="sf-step">Specific number from graph</span>
-      <span class="sf-arrow">→</span>
-      <span class="sf-step">Conclusion</span>
+      <span class="sf-step">Condition 1</span>
+      <span class="sf-plus">+</span>
+      <span class="sf-step">Condition 2</span>
     </div>
-    <div class="stem-ex"><strong>Ex:</strong> "Eurostar: 6 g/km vs. ferry: 19 g/km → Eurostar has lower atmospheric impact"</div>
-    <div class="stem-warn">✗ "The Eurostar is better" - no numbers = 0 credit</div>
+    <div class="stem-ex"><strong>Jan '26 Q35:</strong> "Bennu and Earth must reach the point where their orbits cross at the same time."</div>
+
   </div>
 </div>
 
-<div class="stem-card">
-  <div class="stem-q">"Place a check mark to Support or Refute. Justify your response."<span class="stem-toggle">▼</span></div>
-  <div class="stem-body">
+<!-- ── GROUP 2: Use the Source ── -->
+<div class="stem-group sg-green">
+  <div class="stem-group-head">
+    <span class="stem-group-label">Use the Source</span>
+    <span class="stem-group-tagline">Pull real data, numbers, or terms from the graph / model / table - never from memory</span>
+    <span class="stem-toggle">▼</span>
+  </div>
+  <div class="stem-group-body">
+
+    <div class="sv-q">"Use evidence from the [graph/model/table] to describe..." &nbsp;/&nbsp; "Using evidence from the [source], construct an explanation that describes..."</div>
+    <div class="stem-formula">
+      <span class="sf-step">State what the source shows (with data)</span>
+      <span class="sf-arrow">→</span>
+      <span class="sf-step">Connect it to the science</span>
+    </div>
+    <div class="stem-ex"><strong>Jan '26 Q15:</strong> "Limestone and dolostone mines on the map line up with the major highways, so the availability of this rock shaped where roads and construction occurred."</div>
+    <div class="stem-warn">✗ Answering from memory without referencing the source = 0 credit</div>
+
+    <div class="sv-sep"></div>
+
+    <div class="sv-q">"Identify the numerical value(s) of [X] from the graph." &nbsp;/&nbsp; "Determine, in [units], how much..."</div>
+    <div class="stem-formula">
+      <span class="sf-step">Read the source</span>
+      <span class="sf-arrow">→</span>
+      <span class="sf-step">Report the number <em>with its unit</em></span>
+    </div>
+    <div class="stem-ex"><strong>Aug '25 Q32:</strong> "The Moon will be ≈ 3.8 cm farther away - too small a change to noticeably affect its period of revolution."</div>
+
+    <div class="sv-sep"></div>
+
+    <div class="sv-q">"Use the model to compare the [temporal/spatial] scale of X to Y." &nbsp;/&nbsp; "Compare X to Y."</div>
+    <div class="stem-formula">
+      <span class="sf-step">X is greater / less / about equal to Y</span>
+      <span class="sf-plus">+</span>
+      <span class="sf-step">Cite the source</span>
+    </div>
+    <div class="stem-ex"><strong>June '25 Q39:</strong> "Earthquake subsidence happens in seconds, while ghost-forest subsidence takes years to decades."</div>
+
+  </div>
+</div>
+
+<!-- ── GROUP 3: Claim, Argument & Justify ── -->
+<div class="stem-group sg-orange">
+  <div class="stem-group-head">
+    <span class="stem-group-label">Claim, Argument &amp; Justify</span>
+    <span class="stem-group-tagline">State a position, then back it with evidence - a bare claim or checkmark scores 0</span>
+    <span class="stem-toggle">▼</span>
+  </div>
+  <div class="stem-group-body">
+
+    <div class="sv-q">"Place a check mark in the <u>Support</u> or <u>Refute</u> box. Justify your response using evidence from the information provided."</div>
     <div class="stem-formula">
       <span class="sf-step">Check the box</span>
       <span class="sf-plus">+</span>
-      <span class="sf-step">Quote specific data that proves it</span>
+      <span class="sf-step">Justify with evidence</span>
     </div>
-    <div class="stem-ex"><strong>Ex:</strong> "Support - Charon's orbital period (6.4 days) equals its rotational period (6.4 days)"</div>
-    <div class="stem-warn">✗ Checking the box without justification = 0 credit</div>
-  </div>
-</div>
+    <div class="stem-ex"><strong>Jan '26 Q22:</strong> "Support - Charon's rotational period (6.4 days) equals its orbital period (6.4 days), so the same side always faces Pluto."</div>
+    <div class="stem-warn">✗ Checking the box with no justification = 0 credit</div>
 
-<div class="stem-card">
-  <div class="stem-q">"Forecast / Predict what will happen..."<span class="stem-toggle">▼</span></div>
-  <div class="stem-body">
-    <div class="stem-formula">
-      <span class="sf-step">Trend from graph</span>
-      <span class="sf-arrow">→</span>
-      <span class="sf-step">Predicted value</span>
-      <span class="sf-arrow">→</span>
-      <span class="sf-step">Earth system impact</span>
-    </div>
-    <div class="stem-ex"><strong>Ex:</strong> "Temp trend rising → ~X°C by [date] → glaciers melt → sea level rises"</div>
-  </div>
-</div>
+    <div class="sv-sep"></div>
 
-<div class="stem-card">
-  <div class="stem-q">"Identify the Earth system impacted most/least. Use numerical evidence."<span class="stem-toggle">▼</span></div>
-  <div class="stem-body">
+    <div class="sv-q">"Make a claim that describes [X]." &nbsp;/&nbsp; "Construct an explanation to support the claim that [X]."</div>
     <div class="stem-formula">
-      <span class="sf-step">Name the system</span>
+      <span class="sf-step">State the claim</span>
       <span class="sf-plus">+</span>
-      <span class="sf-step">Cite the specific number</span>
+      <span class="sf-step">Support it with evidence from the source</span>
     </div>
-    <div class="stem-ex"><strong>Ex:</strong> "Atmosphere impacted least - Eurostar: 6 g/km vs. flight: 255 g/km"</div>
+    <div class="stem-ex"><strong>Aug '25 Q33:</strong> "Claim: a total solar eclipse will become impossible. Evidence: the Moon is slowly moving away from Earth, so it will appear too small to fully cover the Sun."</div>
+    <div class="stem-warn">✗ Claim with no supporting evidence = 0 credit</div>
+
+    <div class="sv-sep"></div>
+
+    <div class="sv-q">"Construct an argument, based on evidence in the model, about how [X] caused [Y]."</div>
+    <div class="stem-formula">
+      <span class="sf-step">Claim</span>
+      <span class="sf-plus">+</span>
+      <span class="sf-step">Evidence</span>
+      <span class="sf-plus">+</span>
+      <span class="sf-step">Reasoning</span>
+    </div>
+    <div class="stem-ex"><strong>Aug '25 Q23:</strong> "Claim: stromatolites changed Earth's early atmosphere. Evidence: they carried out photosynthesis and released O₂. Reasoning: that O₂ built up over time, creating Earth's first oxygen-rich atmosphere."</div>
+    <div class="stem-tip">✓ All 3 parts required: claim, evidence, and reasoning</div>
+
+    <div class="sv-sep"></div>
+
+    <div class="sv-q">"Identify the [Earth system / vehicle / option] impacted most/least. Justify your response using numerical evidence."</div>
+    <div class="stem-formula">
+      <span class="sf-step">Name it</span>
+      <span class="sf-plus">+</span>
+      <span class="sf-step">Numerical support from the source</span>
+    </div>
+    <div class="stem-ex"><strong>Jan '26 Q27:</strong> "Atmosphere - the Eurostar releases only 6 g CO₂/km versus 255 g/km for a flight, so it adds far less CO₂ to the atmosphere."</div>
+
   </div>
 </div>
 
-<div class="stem-card">
-  <div class="stem-q">"Complete the sequence / Place events in temporal order"<span class="stem-toggle">▼</span></div>
-  <div class="stem-body">
+<!-- ── GROUP 4: Complete the Format ── -->
+<div class="stem-group sg-red">
+  <div class="stem-group-head">
+    <span class="stem-group-label">Complete the Format</span>
+    <span class="stem-group-tagline">Fill in every box, blank, or row correctly - one wrong entry = 0 for the whole question</span>
+    <span class="stem-toggle">▼</span>
+  </div>
+  <div class="stem-group-body">
+
+    <div class="sv-q">"Complete each statement by placing an <u>X in the box</u> / writing the <u>correct letter on the line</u> to indicate which phrase correctly completes it."</div>
+    <div class="stem-tip">✓ Read <strong>both</strong> choices for <strong>every</strong> statement before marking any one - they are designed to look similar</div>
+    <div class="stem-ex"><strong>Common format</strong> (Jan '26 Q1, Q16, Q31; June '25 Q5): two phrases offered per statement; you choose the one that is scientifically correct.</div>
+
+    <div class="sv-sep"></div>
+
+    <div class="sv-q">"Place a check mark in <u>three boxes</u> / in <u>each row</u> to identify..."</div>
+    <div class="stem-tip">✓ Mark <strong>exactly</strong> the number of boxes the question asks for</div>
+    <div class="stem-warn">✗ Marking too many or too few boxes = 0 credit (Aug '25 Q18; Jan '26 Q37)</div>
+
+    <div class="sv-sep"></div>
+
+    <div class="sv-q">"Rank [items] in order of increasing/decreasing [X]. Justify your response using [one of Kepler's laws]."</div>
+    <div class="stem-formula">
+      <span class="sf-step">Order the items correctly</span>
+      <span class="sf-plus">+</span>
+      <span class="sf-step">Justify with the law/rule</span>
+    </div>
+    <div class="stem-ex"><strong>Jan '26 Q19:</strong> Rank Pluto's moons by orbital period (closest = shortest), then justify: "By Kepler's third law, a smaller orbit means a shorter period."</div>
+
+    <div class="sv-sep"></div>
+
+    <div class="sv-q">"Place the events in the correct temporal sequence." &nbsp;/&nbsp; "Complete the model by placing the letter in the correct position."</div>
     <div class="stem-dates">
       <div class="stem-date-item"><span>4.6 Ga</span>Earth forms</div>
       <div class="stem-date-item"><span>4.2 Ga</span>Oceans form</div>
@@ -591,40 +749,9 @@
       <div class="stem-date-item"><span>2.4 Ga</span>Great Oxidation</div>
       <div class="stem-date-item"><span>560 mya</span>Cambrian explosion</div>
     </div>
-    <div class="stem-tip">✓ Use the ESRT geologic time scale - Earth formation is always first</div>
-  </div>
-</div>
+    <div class="stem-tip">✓ Use the ESRT geologic time scale - Earth's formation is always first (Jan '26 Q13)</div>
+    <div class="stem-warn">✗ One item out of order = 0 credit for the entire question</div>
 
-<div class="stem-card">
-  <div class="stem-q">"How did a human activity affect an Earth system?"<span class="stem-toggle">▼</span></div>
-  <div class="stem-body">
-    <div class="stem-formula">
-      <span class="sf-step">Human activity</span>
-      <span class="sf-arrow">→</span>
-      <span class="sf-step">Mechanism</span>
-      <span class="sf-arrow">→</span>
-      <span class="sf-step">Earth system change</span>
-    </div>
-    <div class="stem-ex"><strong>Ex:</strong> "Mining → land cleared/deforested → biosphere loses biodiversity"</div>
-  </div>
-</div>
-
-<div class="stem-card">
-  <div class="stem-q">"Complete the passage / Fill in the word bank"<span class="stem-toggle">▼</span></div>
-  <div class="stem-body">
-    <div class="stem-tip">✓ Read ALL options before filling any blank - wrong pairings elsewhere cost you the whole question</div>
-    <div class="stem-warn">✗ One wrong blank = 0 points for the entire question</div>
-  </div>
-</div>
-
-<div class="stem-card">
-  <div class="stem-q">"Describe the relative amount / Compare X to Y"<span class="stem-toggle">▼</span></div>
-  <div class="stem-body">
-    <div class="stem-formula">
-      <span class="sf-step">X is greater / less / same as Y</span>
-      <span class="sf-plus">+</span>
-      <span class="sf-step">Reason from the data</span>
-    </div>
   </div>
 </div>
 
@@ -1353,7 +1480,7 @@
 
 <script>
   (function replaceArrows() {
-    const svgArrow = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 26 14" width="22" height="12" style="vertical-align:middle;display:inline-block;margin:0 2px;flex-shrink:0"><line x1="2" y1="7" x2="20" y2="7" stroke="#1a4a7a" stroke-width="2.2" stroke-linecap="round"/><polyline points="14,2 21,7 14,12" stroke="#1a4a7a" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    const svgArrow = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 26 14" width="22" height="12" style="vertical-align:middle;display:inline-block;margin:0 2px;flex-shrink:0"><path d="M2,7 H20 M14,2 L21,7 L14,12" stroke="#1a4a7a" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>`;
     const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
     const nodes = [];
     while (walker.nextNode()) {
@@ -1380,6 +1507,10 @@
     q.addEventListener('click', () => q.closest('.stem-card').classList.toggle('open'));
   });
 
+  document.querySelectorAll('.stem-group .stem-group-head').forEach(head => {
+    head.addEventListener('click', () => head.closest('.stem-group').classList.toggle('open'));
+  });
+
   document.querySelectorAll('.topic-section .section-head').forEach(head => {
     head.addEventListener('click', () => {
       head.closest('.topic-section').classList.toggle('open');
@@ -1399,6 +1530,32 @@
 
   // ── ACRONYM TOOLTIPS ───────────────────────────────────────────────────
   (function() {
+    // Single floating tooltip div - lives on body, never clipped
+    const tip = document.createElement('div');
+    tip.id = 'abbr-tooltip';
+    document.body.appendChild(tip);
+
+    document.body.addEventListener('mouseenter', e => {
+      if (e.target.tagName !== 'ABBR' || !e.target.title) return;
+      tip.textContent = e.target.title;
+      tip.style.display = 'block';
+    }, true);
+
+    document.body.addEventListener('mousemove', e => {
+      if (tip.style.display === 'none') return;
+      const pad = 12;
+      let x = e.clientX + pad;
+      let y = e.clientY - tip.offsetHeight - pad;
+      if (x + tip.offsetWidth > window.innerWidth - pad) x = e.clientX - tip.offsetWidth - pad;
+      if (y < pad) y = e.clientY + pad;
+      tip.style.left = x + 'px';
+      tip.style.top  = y + 'px';
+    }, true);
+
+    document.body.addEventListener('mouseleave', e => {
+      if (e.target.tagName !== 'ABBR') return;
+      tip.style.display = 'none';
+    }, true);
     const ACRONYMS = [
       ['tCO₂e', 'Metric tons of CO₂ equivalent'],
       ['CMBR',  'Cosmic Microwave Background Radiation'],
@@ -1411,11 +1568,11 @@
       ['H-R',   'Hertzsprung-Russell diagram'],
       ['CO₂',   'Carbon Dioxide'],
       ['mya',   'million years ago'],
-      ['Ga',    'giga-annum — billion years ago'],
+      ['Ga',    'giga-annum - billion years ago'],
       ['CR',    'Constructed Response'],
     ];
 
-    // Build a single regex — longer entries first so CRQ matches before CR
+    // Build a single regex - longer entries first so CRQ matches before CR
     const pattern = new RegExp(
       ACRONYMS.map(([a]) => {
         const esc = a.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');

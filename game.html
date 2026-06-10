@@ -25,10 +25,11 @@
   body {
     font-family: Arial, sans-serif;
     font-size: 16px;
-    line-height: 1.6;
     color: #222;
     background: #f4f6f9;
     min-height: 100vh;
+    transition: background 1.8s ease;
+    overflow-y: scroll;   /* keep the vertical scrollbar constant; no appear/disappear shift */
   }
 
   /* ── HEADER ── */
@@ -56,35 +57,149 @@
     white-space: nowrap;
   }
   .back-btn:hover { background: rgba(255,255,255,.25); }
+  .header-btns { display: flex; flex-direction: column; gap: .4rem; align-items: stretch; }
+  .reset-btn {
+    display: inline-block;
+    background: rgba(0,0,0,.22);
+    color: #ffd5d5;
+    text-align: center;
+    font-size: .72rem;
+    font-weight: bold;
+    padding: .32rem .9rem;
+    border: 1px solid rgba(255,120,120,.55);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .reset-btn:hover { background: rgba(180,0,0,.55); color: #fff; }
+
+  /* ── RESET CONFIRMATION OVERLAY ── */
+  #reset-overlay {
+    position: fixed; inset: 0; z-index: 9999;
+    background: #000;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 1.5rem; text-align: center;
+  }
+  #reset-overlay.hidden { display: none; }
+  .scary-face {
+    font-size: 7.5rem; line-height: 1;
+    filter: grayscale(1) contrast(1.35) brightness(1.15);
+    animation: scaryFlicker 1.5s infinite steps(1);
+    margin-bottom: 1rem;
+  }
+  @keyframes scaryFlicker {
+    0%,100% { opacity: 1; transform: scale(1) rotate(0deg); }
+    44%     { opacity: .9; }
+    48%     { opacity: .12; transform: scale(1.07) rotate(-2deg); }
+    52%     { opacity: .95; }
+    72%     { transform: scale(1.03) rotate(2deg); }
+  }
+  .reset-title {
+    color: #fff; font-family: 'Courier New', monospace; font-weight: bold;
+    font-size: 1.55rem; letter-spacing: .07em; margin-bottom: .55rem;
+    text-shadow: 0 0 14px rgba(255,255,255,.4);
+  }
+  .reset-sub {
+    color: #bdbdbd; font-size: .98rem; max-width: 430px;
+    margin-bottom: 1.7rem; line-height: 1.55;
+  }
+  .reset-actions { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+  .reset-yes, .reset-no {
+    padding: .7rem 1.7rem; font-size: 1rem; font-weight: bold; cursor: pointer;
+    border-radius: 8px; border: 2px solid #fff;
+  }
+  .reset-yes { background: transparent; border-color: #b30000; color: #ff6b6b; }
+  .reset-yes:hover { background: #b30000; color: #fff; }
+  .reset-no { background: #fff; color: #000; }
+  .reset-no:hover { background: #cfcfcf; }
 
   /* ── MAIN LAYOUT ── */
-  main { max-width: 860px; margin: 1.5rem auto; padding: 0 1.5rem 4rem; }
+  main { max-width: 1140px; margin: 1.5rem auto; padding: 0 1.5rem 4rem; }
+  .layout { display: flex; gap: 0.2rem; align-items: flex-start; }
+  .game-nav { flex: 0 0 200px; width: 200px; display: flex; flex-direction: column; gap: .6rem; }
+  .game-pane {
+    flex: 1 1 auto;
+    min-width: 0;
+    align-self: stretch;            /* fill width when stacked, fill height when side-by-side */
+    display: flex;
+    flex-direction: column;
+  }
 
-  /* ── GAME MODES ── */
+  /* ── GAME MODES (narrow left-hand vertical stack) ── */
   .mode-grid {
     display: flex;
-    flex-direction: row;
-    gap: .5rem;
-    margin-bottom: 1.5rem;
-    overflow-x: auto;
-    scrollbar-width: none;
+    flex-direction: column;
+    gap: .45rem;
   }
-  .mode-grid::-webkit-scrollbar { display: none; }
   .mode-card {
-    flex: 1 0 0;
-    min-width: 88px;
     background: #fff;
     border: 2px solid var(--border);
-    padding: .65rem .5rem;
+    padding: .5rem .6rem;
     cursor: pointer;
     transition: border-color .2s, box-shadow .2s;
-    text-align: center;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: .55rem;
   }
   .mode-card:hover { border-color: var(--blue); box-shadow: 0 2px 10px rgba(26,74,122,.1); }
   .mode-card.active { border-color: var(--blue); background: var(--sky); }
-  .mode-icon { font-size: 1.4rem; margin-bottom: .2rem; }
-  .mode-card h3 { font-size: .78rem; color: var(--blue); margin-bottom: .1rem; }
-  .mode-card p { font-size: .66rem; color: var(--gray); line-height: 1.3; }
+  .mode-icon { font-size: 1.35rem; flex: 0 0 auto; line-height: 1; }
+  .mode-text { min-width: 0; }
+  .mode-card h3 { font-size: .76rem; color: var(--blue); margin-bottom: .05rem; }
+  .mode-card p { font-size: .62rem; color: var(--gray); line-height: 1.25; }
+
+  /* Compact mode: when the window is narrow OR short, so the game-nav never runs off the bottom */
+  @media (max-width: 900px), (max-height: 760px) {
+    /* shorter, thinner header with side-by-side buttons */
+    header { padding: .45rem .9rem; gap: .55rem; flex-wrap: nowrap; }
+    header > div:first-child { min-width: 0; }
+    header h1 { font-size: 1rem; line-height: 1.15; }
+    header p { display: none; }                       /* hide "Study Game" subtitle */
+    .header-btns { flex-direction: row; gap: .4rem; align-items: center; flex: 0 0 auto; }
+    .back-btn, .reset-btn, .start-btn { font-size: .66rem; padding: .3rem .55rem; }
+
+    /* stack the layout and turn the game list into a short, wrapping top row */
+    main { margin-top: .9rem; }
+    .layout { flex-direction: column; }
+    .game-nav { flex-basis: auto; width: 100%; }
+    .overall-progress { margin-bottom: .7rem; }
+    .mode-grid { flex-direction: row; flex-wrap: wrap; gap: .4rem; justify-content: center; }
+    .mode-card {
+      flex: 1 1 96px;
+      max-width: 170px;            /* never let one card stretch across a whole row */
+      text-align: center;
+      gap: .15rem;
+      padding: .4rem .45rem;
+      position: relative;          /* anchor the description popover */
+    }
+    .mode-icon { font-size: 1.25rem; }
+    .mode-card h3 { font-size: .68rem; }
+    .mode-card:hover, .mode-card:focus, .mode-card:focus-within { z-index: 20; }
+    /* Description is hidden until the card is hovered/focused, then shown as a popover
+       that floats OVER what is beneath it - no reflow, no shoving, scrollbar stays put. */
+    .mode-card p { display: none; }
+    .mode-card:hover p,
+    .mode-card:focus p,
+    .mode-card:focus-within p {
+      display: block;
+      position: absolute;
+      top: calc(100% + 2px);
+      left: 50%;
+      transform: translateX(-50%);
+      width: max-content;
+      max-width: 160px;
+      z-index: 20;
+      background: #fff;
+      color: var(--gray);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      padding: .35rem .5rem;
+      font-size: .6rem;
+      line-height: 1.25;
+      box-shadow: 0 5px 14px rgba(0,0,0,.2);
+      pointer-events: none;
+    }
+  }
 
   /* ── TOPIC FILTER ── */
   .topic-filter {
@@ -125,11 +240,11 @@
     align-items: center;
     background: var(--blue);
     color: #fff;
-    padding: .5rem 1.2rem;
-    font-size: .78rem;
+    padding: .5rem 1.0rem;
+    font-size: .68rem;
   }
   .hud-stat { text-align: center; min-width: 48px; }
-  .hud-stat strong { display: block; font-size: 1.15rem; }
+  .hud-stat strong { display: block; font-size: 1.05rem; }
 
   /* ── GAME ARENA ── */
   #game-arena {
@@ -137,6 +252,7 @@
     border: 1px solid var(--border);
     border-top: none;
     min-height: 320px;
+    flex: 1 1 auto;                 /* grow to fill the game-pane */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -149,17 +265,22 @@
 
   /* ── START BTN ── */
   .start-btn {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 100%;
+    height: 2rem;             /* fixed height so the ⚔ emoji can't change the button size */
     background: var(--green);
     color: #fff;
     font-size: 1rem;
     font-weight: bold;
-    padding: .8rem;
-    border: none;
+    border: 1px solid rgba(255, 255, 255, .35);
     cursor: pointer;
     letter-spacing: .04em;
-    margin-top: 1rem;
+    margin-top: 0;
+    white-space: nowrap;
+    line-height: 1;
+    overflow: hidden;
   }
   .start-btn:hover { background: #145230; }
   .start-btn:disabled { background: var(--border); color: #999; cursor: not-allowed; }
@@ -1141,92 +1262,236 @@
     border-top: 1px solid var(--border);
   }
 
+  /* ── GAME COMPLETION & PROGRESS ── */
+  .mode-card.completed {
+    border-color: #FFD700 !important;
+    animation: goldGlow 2s ease-in-out infinite;
+  }
+  @keyframes goldGlow {
+    0%,100% { box-shadow: 0 0 8px 3px rgba(255,215,0,.55), 0 0 18px 6px rgba(255,180,0,.3); }
+    50%     { box-shadow: 0 0 18px 7px rgba(255,215,0,.9), 0 0 34px 12px rgba(255,180,0,.55); }
+  }
+  .mode-progress {
+    font-size: .58rem;
+    margin-top: .2rem;
+    color: var(--gray);
+    min-height: .9rem;
+  }
+  .mode-done { color: #c8920a; font-weight: bold; }
+
+  .overall-progress {
+    display: flex;
+    align-items: center;
+    gap: .7rem;
+    background: #fff;
+    border: 1px solid var(--border);
+    padding: .5rem 1rem;
+    margin-bottom: 1rem;
+  }
+  .op-label { font-size: .72rem; font-weight: bold; color: var(--gray); white-space: nowrap; }
+  .op-bar   { flex: 1; height: 7px; background: var(--border); border-radius: 3px; overflow: hidden; }
+  .op-fill  { height: 100%; background: linear-gradient(90deg, #c8920a, #FFD700); transition: width .6s ease; border-radius: 3px; }
+  .op-count { font-size: .72rem; font-weight: bold; color: #b38a00; white-space: nowrap; }
+
+  /* ── GOLD RAIN ── */
+  #gold-rain-overlay {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9997;
+    overflow: hidden;
+  }
+  .gold-coin-el, .gold-name-el {
+    position: absolute;
+    top: -70px;
+    pointer-events: none;
+    animation: coinFall linear infinite;
+    will-change: transform, opacity;
+    line-height: 1;
+  }
+  .gold-name-el {
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    color: #FFD700;
+    text-shadow: 0 0 10px rgba(255,215,0,.75), 0 0 22px rgba(255,165,0,.45);
+    white-space: nowrap;
+  }
+  @keyframes coinFall {
+    0%   { transform: translateY(0) rotate(0deg);    opacity: 0; }
+    5%   { opacity: 1; }
+    92%  { opacity: .85; }
+    100% { transform: translateY(calc(100vh + 90px)) rotate(800deg); opacity: 0; }
+  }
+
   @media(max-width:600px){
-    .mode-card { min-width: 72px; padding: .55rem .35rem; }
-    header { padding: .9rem 1rem; }
+    header h1 { font-size: .92rem; }
     .fc-scene { height: 200px; }
   }
+
+  /* ── INTRO / RULES OVERLAY ── */
+  #intro-overlay {
+    position: fixed; inset: 0; z-index: 9998;
+    background: rgba(10,15,25,.74);
+    display: flex; align-items: center; justify-content: center; padding: 1rem;
+  }
+  #intro-overlay.hidden { display: none; }
+  .intro-modal {
+    background: #fff; max-width: 460px; width: 100%;
+    border-radius: 14px; border: 2px solid #FFD700;
+    box-shadow: 0 14px 44px rgba(0,0,0,.45);
+    padding: 1.4rem 1.5rem; color: #1c2433; animation: introPop .25s ease;
+  }
+  @keyframes introPop { from { transform: scale(.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .intro-modal h2 { margin: 0 0 .7rem; font-size: 1.15rem; color: #0d2b50; }
+  .intro-modal ul { margin: .4rem 0 1.1rem; padding-left: 1.15rem; line-height: 1.5; font-size: .9rem; }
+  .intro-modal li { margin-bottom: .6rem; }
+  .intro-star { color: #c8920a; }
+  .intro-btn {
+    display: block; width: 100%; padding: .72rem; border: none; border-radius: 9px;
+    background: linear-gradient(90deg,#c8920a,#FFD700); color: #3a2a00;
+    font-weight: bold; font-size: .95rem; cursor: pointer;
+  }
+  .intro-btn:hover { filter: brightness(1.06); }
+  .mcq-star-note { font-size: .8rem; color: var(--gray); margin: .6rem 0 1rem; line-height: 1.45; }
+
+  /* ── READING GAME ── */
+  .read-wrap { width: 100%; }
+  .read-meta { display: flex; justify-content: space-between; align-items: center; gap: .5rem; font-size: .72rem; color: var(--gray); margin: .6rem 0 .8rem; }
+  .read-badge { color: #fff; font-weight: bold; padding: .15rem .55rem; font-size: .66rem; white-space: nowrap; }
+  .read-passage {
+    background: var(--sky); border-left: 4px solid var(--blue);
+    padding: .9rem 1rem; font-size: 1.02rem; line-height: 1.6; color: #1c2433;
+    margin-bottom: 1rem; text-align: left;
+  }
+  .read-prompt { font-weight: bold; font-size: .95rem; margin-bottom: .85rem; text-align: left; color: var(--blue); }
+  .read-choices { display: flex; flex-direction: column; gap: .5rem; }
+  .read-choice {
+    text-align: left; padding: .7rem .9rem; font-size: .92rem; cursor: pointer;
+    background: #fff; border: 2px solid var(--border); border-radius: 6px; transition: border-color .15s, background .15s;
+  }
+  .read-choice:hover:not(:disabled) { border-color: var(--blue); background: var(--sky); }
+  .read-choice:disabled { cursor: default; }
+  .read-choice.correct { border-color: var(--green); background: var(--mint); color: var(--green); font-weight: bold; }
+  .read-choice.wrong   { border-color: var(--red);   background: var(--pink); color: var(--red); }
+  .read-text-row { display: flex; gap: .5rem; }
+  .read-input {
+    flex: 1 1 auto; min-width: 0; padding: .7rem .8rem; font-size: .95rem;
+    border: 2px solid var(--border); border-radius: 6px;
+  }
+  .read-input:focus { outline: none; border-color: var(--blue); }
+  .read-input:disabled { background: #f3f3f3; }
+  .read-submit { padding: .7rem 1.1rem; background: var(--blue); color: #fff; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; white-space: nowrap; }
+  .read-feedback { margin-top: .9rem; font-size: .92rem; text-align: left; min-height: 1.2rem; }
+  .read-feedback.ok  { color: var(--green); }
+  .read-feedback.bad { color: var(--red); }
+  .read-next { margin-left: .5rem; padding: .35rem .9rem; background: var(--blue); color: #fff; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: .85rem; }
+
+  /* ── READING TWIST: invert the whole screen + flip the game-nav upside down ── */
+  html.screen-invert { filter: invert(1); }
+  .game-nav.flipped { transform: rotate(180deg); transition: transform .4s ease; }
 </style>
 </head>
 <body>
+
+<!-- INTRO / RULES OVERLAY (shown on every load) -->
+<div id="intro-overlay">
+  <div class="intro-modal">
+    <h2>📋 How to earn your <span class="intro-star">★</span> gold stars</h2>
+    <ul>
+      <li><strong>Finish 100% to get credit.</strong> A game counts as complete - and earns its gold star - only when you finish the <em>entire</em> assignment. Leaving early earns nothing.</li>
+      <li><strong>Every question must be answered correctly.</strong> Each question is tracked. If you miss one, it comes back later and keeps returning until you finally get it right.</li>
+      <li><strong>Some games need a minimum accuracy.</strong> <em>Multiple Choice</em> and <em>CRQ Judge</em> also require at least <strong>80% first-try accuracy</strong> before the gold star is awarded - so answer carefully the first time you see a question.</li>
+    </ul>
+    <button class="intro-btn" onclick="dismissIntro()">Got it - let's study!</button>
+  </div>
+</div>
+
+<!-- RESET CONFIRMATION OVERLAY -->
+<div id="reset-overlay" class="hidden">
+  <div class="scary-face">&#x1F480;</div>
+  <div class="reset-title">ARE YOU SURE?</div>
+  <div class="reset-sub">You will lose all progress&hellip; every gold star, every completed game&hellip; gone forever.</div>
+  <div class="reset-actions">
+    <button class="reset-yes" onclick="confirmReset()">Yes, erase it all</button>
+    <button class="reset-no" onclick="cancelReset()">No - go back</button>
+  </div>
+</div>
 
 <header>
   <div>
     <h1>NY Regents: Earth &amp; Space Sciences</h1>
     <p>Study Game</p>
   </div>
-  <a href="index.html" class="back-btn">&#8592; Back to Guide</a>
+  <div class="header-btns">
+    <button class="start-btn" id="start-btn">Start Reading</button>
+    <a href="index.html" class="back-btn">&#8592; Back to Guide</a>
+    <button class="reset-btn" onclick="showResetConfirm()">&#x21BA; Reset All Progress</button>
+  </div>
 </header>
 
 <main>
 
-  <!-- GAME MODE SELECTOR -->
-  <div class="mode-grid">
-    <div class="mode-card active" data-mode="flashcard">
-      <div class="mode-icon">&#x1F4D6;</div>
-      <h3>Flashcards</h3>
-      <p>Flip and rate your confidence</p>
-    </div>
-    <div class="mode-card" data-mode="mcq">
-      <div class="mode-icon">&#x2753;</div>
-      <h3>Multiple Choice</h3>
-      <p>Timed questions from real stems</p>
-    </div>
-    <div class="mode-card" data-mode="fillblank">
-      <div class="mode-icon">&#x270F;&#xFE0F;</div>
-      <h3>Fill in the Blank</h3>
-      <p>Complete the cause-effect chain</p>
-    </div>
-    <div class="mode-card" data-mode="sort">
-      <div class="mode-icon">&#x1F522;</div>
-      <h3>Temporal Sort</h3>
-      <p>Drag events into geologic order</p>
-    </div>
-    <div class="mode-card" data-mode="match">
-      <div class="mode-icon">&#x1F9E9;</div>
-      <h3>Match-Up</h3>
-      <p>Pair concepts with rated phrases</p>
-    </div>
-    <div class="mode-card" data-mode="boss">
-      <div class="mode-icon">&#x1F47E;</div>
-      <h3>Boss Round</h3>
-      <p>Fire lasers at the Blob Monster</p>
-    </div>
-    <div class="mode-card" data-mode="crq">
-      <div class="mode-icon">&#x1F4DD;</div>
-      <h3>CRQ Judge</h3>
-      <p>Rate sample constructed responses</p>
-    </div>
+  <!-- OVERALL PROGRESS -->
+  <div class="overall-progress" id="overall-progress">
+    <span class="op-label">Games Complete</span>
+    <div class="op-bar"><div class="op-fill" id="op-fill" style="width:0%"></div></div>
+    <span class="op-count" id="op-count">0/7</span>
   </div>
 
-  <!-- TOPIC FILTER -->
-  <div class="topic-filter">
-    <h3>Topics to include</h3>
-    <div class="filter-chips">
-      <span class="chip chip-blue on"   data-topic="stars">Stars &amp; Universe</span>
-      <span class="chip chip-green on"  data-topic="climate">Climate &amp; CO&#x2082;</span>
-      <span class="chip chip-orange on" data-topic="history">Earth History</span>
-      <span class="chip chip-purple on" data-topic="orbits">Orbital Mechanics</span>
-      <span class="chip chip-red on"    data-topic="water">Water &amp; Erosion</span>
-      <span class="chip chip-green on"  data-topic="human">Human Impact</span>
-    </div>
-  </div>
+  <div class="layout">
 
-  <!-- HUD -->
-  <div class="hud" id="hud" style="display:none">
-    <div class="hud-stat"><strong id="hud-know">-</strong>Know It</div>
-    <div class="hud-stat"><strong id="hud-almost">-</strong>Almost</div>
-    <div class="hud-stat"><strong id="hud-nope">-</strong>Nope</div>
-    <div class="hud-stat"><strong id="hud-q">-</strong>Card</div>
-  </div>
+    <!-- LEFT: GAME SELECTOR (narrow vertical stack) -->
+    <aside class="game-nav">
+      <div class="mode-grid">
+        <div class="mode-card active" data-mode="flashcard">
+          <div class="mode-icon">&#x1F4D6;</div>
+          <div class="mode-text"><h3>Reading</h3><p>Read a passage, then identify the answer</p></div>
+        </div>
+        <div class="mode-card" data-mode="mcq">
+          <div class="mode-icon">&#x2753;</div>
+          <div class="mode-text"><h3>Multiple Choice</h3><p>Timed questions from real stems</p></div>
+        </div>
+        <div class="mode-card" data-mode="fillblank">
+          <div class="mode-icon">&#x270F;&#xFE0F;</div>
+          <div class="mode-text"><h3>Fill in the Blank</h3><p>Complete the cause-effect chain</p></div>
+        </div>
+        <div class="mode-card" data-mode="sort">
+          <div class="mode-icon">&#x1F522;</div>
+          <div class="mode-text"><h3>Temporal Sort</h3><p>Drag events into geologic order</p></div>
+        </div>
+        <div class="mode-card" data-mode="match">
+          <div class="mode-icon">&#x1F9E9;</div>
+          <div class="mode-text"><h3>Match-Up</h3><p>Pair concepts with rated phrases</p></div>
+        </div>
+        <div class="mode-card" data-mode="boss">
+          <div class="mode-icon">&#x1F47E;</div>
+          <div class="mode-text"><h3>Boss Round</h3><p>Fire lasers at the Blob Monster</p></div>
+        </div>
+        <div class="mode-card" data-mode="crq">
+          <div class="mode-icon">&#x1F4DD;</div>
+          <div class="mode-text"><h3>CRQ Judge</h3><p>Rate sample constructed responses</p></div>
+        </div>
+      </div>
+    </aside>
 
-  <!-- GAME ARENA -->
-  <div id="game-arena">
-    <div class="placeholder-icon">&#x1F4D6;</div>
-    <div class="placeholder-text">Choose topics above, then hit <strong>Start Flashcards</strong>.</div>
-  </div>
+    <!-- RIGHT: GAME PANE -->
+    <section class="game-pane">
+      <!-- HUD -->
+      <div class="hud" id="hud" style="display:none">
+        <div class="hud-stat"><strong id="hud-know">-</strong>Know It</div>
+        <div class="hud-stat"><strong id="hud-almost">-</strong>Almost</div>
+        <div class="hud-stat"><strong id="hud-nope">-</strong>Nope</div>
+        <div class="hud-stat"><strong id="hud-q">-</strong>Card</div>
+      </div>
 
-  <button class="start-btn" id="start-btn">Start Flashcards</button>
+      <!-- GAME ARENA -->
+      <div id="game-arena">
+        <div class="placeholder-icon">&#x1F4D6;</div>
+        <div class="placeholder-text">Pick a game, then hit <strong>Start Reading</strong> in the header.</div>
+      </div>
+    </section>
+
+  </div>
 
 </main>
 
@@ -1277,7 +1542,7 @@ const CARDS = [
     a:'Ice mass decreases &rarr; ice melts &rarr; <strong>sea level rises</strong>. Fresh meltwater enters ocean &rarr; <strong>salinity decreases</strong>. Darker surface exposed &rarr; more energy absorbed &rarr; more melting (positive feedback / albedo effect).' },
   { topic:'climate', color:'#1a6b3c', label:'Climate & CO₂',
     q:'How does Earth\'s axial tilt (obliquity) affect seasonal energy distribution and ice formation?',
-    a:'<strong>Greater tilt &rarr; more extreme seasons &rarr; more energy reaches poles in summer.</strong><br><strong>Smaller tilt &rarr; milder seasons &rarr; less energy reaches poles in winter &rarr; more ice forms in polar regions.</strong> Obliquity is one of several natural factors that drive long-term climate cycles.' },
+    a:'<strong>Greater tilt &rarr; more extreme seasons &rarr; the poles receive more solar energy during their summer (warmer summers).</strong><br><strong>Smaller tilt &rarr; milder seasons &rarr; the poles receive less solar energy during their summer, so cooler summers melt less of the winter snow and ice &rarr; ice builds up in polar regions over time.</strong> The poles get little to no sunlight in winter either way, so it is the change in <em>summer</em> insolation that drives ice growth. Obliquity is one of several natural factors behind long-term climate cycles.' },
 
   // TOPIC: EARTH HISTORY
   { topic:'history', color:'#b34a00', label:'Earth History',
@@ -1700,112 +1965,153 @@ const MATCH = [
 ];
 
 // ── CRQ JUDGE DATA ───────────────────────────────────────────────────────
+// Plain study scenarios (no exam/question/stem-type labels shown to players).
+// GRADE GENEROUSLY: imagine a remedial student. If the answer gets the core
+// idea across - even in simple, clumsy wording - it earns FULL credit. Save
+// NO credit for answers that are blank, off-topic, just repeat the question,
+// or leave out a whole required part of a clearly two-part question.
 const CRQ = [
-  // Climate
-  { topic:'climate', color:'#1a6b3c', label:'Climate',
-    stem:'Explain how an increase in atmospheric CO₂ concentration leads to an increase in global average temperature.',
-    answer:'CO₂ is a greenhouse gas that traps heat from the Sun.',
+
+  // ── Explain & describe (mechanism: what changed and the effect) ──────
+
+  { topic:'stars', color:'#1a4a7a', label:'Stars & Universe',
+    stem:'Betelgeuse is a very large, massive star. The Sun is much smaller and less massive. Explain how the mass of a star affects how fast nucleosynthesis (fusion) happens inside it.',
+    answer:'Betelgeuse has more mass, so it fuses elements faster than the Sun does.',
     rating:'full',
-    feedback:'Full credit - identifying CO₂ as a greenhouse gas that traps heat is sufficient for HS-ESS. Students are not required to specify the direction of radiation or distinguish incoming solar from outgoing Earth radiation.' },
-  { topic:'climate', color:'#1a6b3c', label:'Climate',
-    stem:'Explain how an increase in atmospheric CO₂ concentration leads to an increase in global average temperature.',
-    answer:'CO₂ is a greenhouse gas. It absorbs infrared radiation emitted by Earth\'s surface and re-emits it back toward Earth, trapping heat and raising atmospheric temperature.',
-    rating:'full',
-    feedback:'Full credit - identifies CO₂ as a greenhouse gas AND explains the full mechanism: absorbs outgoing infrared radiation and re-emits it back, trapping heat. Both parts of the explanation are present.' },
-  { topic:'climate', color:'#1a6b3c', label:'Climate',
-    stem:'Explain how an increase in atmospheric CO₂ concentration leads to an increase in global average temperature.',
-    answer:'It gets hotter because there is more CO₂.',
+    feedback:'Full credit. It is short, but it makes the key connection: more mass → faster fusion. Don\'t hold out for textbook wording - if a student links greater mass to a faster rate, give the point.' },
+
+  { topic:'stars', color:'#1a4a7a', label:'Stars & Universe',
+    stem:'Betelgeuse is a very large, massive star. The Sun is much smaller and less massive. Explain how the mass of a star affects how fast nucleosynthesis (fusion) happens inside it.',
+    answer:'Betelgeuse is way bigger than the Sun.',
     rating:'none',
-    feedback:'No credit - this is circular: it restates "more CO₂ = higher temperature" without adding any scientific content. A creditworthy answer must identify something new, such as that CO₂ is a greenhouse gas that traps heat.' },
-  { topic:'climate', color:'#1a6b3c', label:'Climate',
-    stem:'Describe how the ice-albedo feedback loop amplifies warming in the Arctic.',
-    answer:'As ice melts, the darker ocean is exposed. Dark surfaces absorb more solar energy than white ice, causing more warming, which melts more ice.',
+    feedback:'No credit. This only describes size and never says anything about how FAST fusion happens. Be generous with wording, but the answer still has to connect mass to the rate of fusion - this one stops at "bigger."' },
+
+  { topic:'climate', color:'#1a6b3c', label:'Climate & CO₂',
+    stem:'Explain the process that trees use to make their own food. Then describe how that process lowers the amount of carbon dioxide in the atmosphere.',
+    answer:'Trees do photosynthesis to make food, and that takes carbon dioxide out of the air, so there is less CO₂ in the atmosphere.',
     rating:'full',
-    feedback:'Full credit - all links in the feedback loop are present: ice melts → dark surface exposed → more solar energy absorbed → more warming → more melting.' },
-  { topic:'climate', color:'#1a6b3c', label:'Climate',
-    stem:'Describe how the ice-albedo feedback loop amplifies warming in the Arctic.',
-    answer:'Ice reflects sunlight but when it melts the ocean absorbs heat.',
-    rating:'full',
-    feedback:'Full credit - the student correctly identifies the core mechanism: ice reflects solar energy, and when it melts the darker ocean absorbs more heat, amplifying warming. HS-ESS does not require spelling out every link in the feedback cycle.' },
-  // Astronomy
-  { topic:'stars', color:'#1a4a7a', label:'Astronomy',
-    stem:'Explain why the Sun appears to rise and set each day.',
-    answer:'Earth rotates on its axis once every 24 hours. As Earth spins, different sides face the Sun, making the Sun appear to rise in the east and set in the west.',
-    rating:'full',
-    feedback:'Full credit - correctly identifies Earth\'s rotation as the cause and explains how the spin produces the apparent east-to-west movement of the Sun.' },
-  { topic:'stars', color:'#1a4a7a', label:'Astronomy',
-    stem:'Explain why the Sun appears to rise and set each day.',
-    answer:'The Sun moves around Earth once every 24 hours.',
+    feedback:'Full credit. Both parts are there: it names photosynthesis AND says the process removes CO₂ from the air. Simple, plain phrasing is fine - the ideas are what matter.' },
+
+  { topic:'climate', color:'#1a6b3c', label:'Climate & CO₂',
+    stem:'Explain the process that trees use to make their own food. Then describe how that process lowers the amount of carbon dioxide in the atmosphere.',
+    answer:'Trees are good for the air and the environment.',
     rating:'none',
-    feedback:'No credit - factually incorrect. The Sun does not orbit Earth. Earth rotates on its axis, which causes the Sun\'s apparent daily motion. A scientifically incorrect explanation earns no credit regardless of how it is worded.' },
-  { topic:'stars', color:'#1a4a7a', label:'Astronomy',
-    stem:'State one reason why summer days in New York State are longer than winter days.',
-    answer:'In summer, New York is tilted toward the Sun, so the Sun is above the horizon for more hours each day.',
+    feedback:'No credit. This names no process and never mentions carbon dioxide. Even a simple "trees use photosynthesis and take in CO₂" would earn it - "good for the air" just doesn\'t say anything specific.' },
+
+  { topic:'orbits', color:'#4a1a7a', label:'Orbital Mechanics',
+    stem:'Bennu is an asteroid whose path around the Sun crosses Earth\'s path. Using the way Bennu and Earth keep orbiting, describe what would have to happen for Bennu to collide with Earth.',
+    answer:'Bennu and Earth would have to be at the same crossing point at the same time.',
     rating:'full',
-    feedback:'Full credit - correctly identifies Earth\'s axial tilt toward the Sun in summer as the reason for longer daylight hours. Directly addresses the "State one reason" command.' },
-  { topic:'stars', color:'#1a4a7a', label:'Astronomy',
-    stem:'State one reason why summer days in New York State are longer than winter days.',
-    answer:'Because it is warmer in summer.',
+    feedback:'Full credit. It captures the key idea: both objects reach the place where the orbits cross at the same time. That is exactly what is needed.' },
+
+  { topic:'orbits', color:'#4a1a7a', label:'Orbital Mechanics',
+    stem:'Bennu is an asteroid whose path around the Sun crosses Earth\'s path. Using the way Bennu and Earth keep orbiting, describe what would have to happen for Bennu to collide with Earth.',
+    answer:'Bennu would crash if Earth\'s gravity pulled it in.',
     rating:'none',
-    feedback:'No credit - describes a result of longer days, not a reason for them. The question asks for a cause (Earth\'s axial tilt), not an effect.' },
-  { topic:'stars', color:'#1a4a7a', label:'Astronomy',
-    stem:'Explain why the same side of the Moon always faces Earth.',
-    answer:'The Moon rotates at the same rate as it revolves around Earth - both take about 27 days - so the same face is always toward us.',
+    feedback:'No credit. This misses the timing idea entirely. The point is that Earth and Bennu must arrive at the orbit-crossing spot at the same time - not gravity pulling it off course.' },
+
+  // ── Use the source (say what the graph / map / model actually shows) ──
+
+  { topic:'human', color:'#1a6b3c', label:'Human Impact',
+    stem:'A map shows that New York State\'s limestone and dolostone mines sit close to the major highways. Using the map, explain how the location of this rock may have affected a human activity.',
+    answer:'On the map the mines are right next to the highways, so the roads were probably built near the rock because limestone is used to make roads and buildings.',
     rating:'full',
-    feedback:'Full credit - correctly explains synchronous rotation: the Moon\'s rotation period equals its revolution period, keeping the same hemisphere facing Earth at all times.' },
-  { topic:'stars', color:'#1a4a7a', label:'Astronomy',
-    stem:'Explain why the same side of the Moon always faces Earth.',
-    answer:'The Moon does not rotate.',
+    feedback:'Full credit. It uses what the map shows (mines next to the highways) and ties it to a human activity. Give credit even when the wording is loose.' },
+
+  { topic:'human', color:'#1a6b3c', label:'Human Impact',
+    stem:'A map shows that New York State\'s limestone and dolostone mines sit close to the major highways. Using the map, explain how the location of this rock may have affected a human activity.',
+    answer:'Limestone is used to build a lot of things.',
     rating:'none',
-    feedback:'No credit - factually incorrect. The Moon does rotate; it completes one rotation per orbit (synchronous rotation). This is a common misconception and earns no credit.' },
-  // Geology
-  { topic:'history', color:'#b34a00', label:'Geology',
-    stem:'Describe two characteristics of P-waves that differ from S-waves.',
-    answer:'P-waves travel faster than S-waves and can travel through liquids, while S-waves can only travel through solids.',
+    feedback:'No credit. This is answered from memory and never looks at the map. The question says "using the map," so the answer needs to mention what the map shows (the mines line up with the highways).' },
+
+  { topic:'history', color:'#b34a00', label:'Earth History',
+    stem:'A model shows that land can drop suddenly during an earthquake, while land that turns into a "ghost forest" sinks slowly over many years. Use the model to compare how long each process takes.',
+    answer:'The earthquake drops the land really fast, but the ghost forest takes years, so it is way slower.',
     rating:'full',
-    feedback:'Full credit - two distinct differences stated: (1) P-waves are faster, and (2) P-waves travel through liquids while S-waves cannot. Both characteristics are accurate and distinct.' },
-  { topic:'history', color:'#b34a00', label:'Geology',
-    stem:'Describe two characteristics of P-waves that differ from S-waves.',
-    answer:'P-waves travel faster than S-waves.',
+    feedback:'Full credit. It clearly compares the two time scales (fast vs. slow / seconds vs. years). A simple comparison like this is all the question is asking for.' },
+
+  { topic:'history', color:'#b34a00', label:'Earth History',
+    stem:'A model shows that land can drop suddenly during an earthquake, while land that turns into a "ghost forest" sinks slowly over many years. Use the model to compare how long each process takes.',
+    answer:'They both change the land.',
     rating:'none',
-    feedback:'No credit - the question asks for two characteristics. Stating only one earns no credit in HS-ESS. A complete answer would state that P-waves are faster AND that P-waves travel through liquids while S-waves cannot.' },
-  { topic:'history', color:'#b34a00', label:'Geology',
-    stem:'Explain how index fossils are used to determine the relative age of rock layers.',
-    answer:'Index fossils are from organisms that lived for a short time but were found worldwide. If the same index fossil appears in two rock layers, those layers are the same relative age.',
+    feedback:'No credit. The question asks you to compare how long each one takes, and this never mentions time. Even "one is fast and one is slow" would earn the point - this doesn\'t get there.' },
+
+  // ── Claim / argument / justify (give a position AND back it up) ───────
+
+  { topic:'orbits', color:'#4a1a7a', label:'Orbital Mechanics',
+    stem:'A student says the same side of Charon always faces Pluto, the way the same side of the Moon always faces Earth. The data shows Charon\'s spin takes 6.4 days and its orbit around Pluto also takes 6.4 days. Do you Support or Refute the student, and why?',
+    answer:'Support - Charon\'s spin and its orbit both take 6.4 days, and when those match the same side keeps facing Pluto.',
     rating:'full',
-    feedback:'Full credit - identifies the key properties (short time span, wide geographic distribution) and explains how layer correlation works.' },
-  { topic:'history', color:'#b34a00', label:'Geology',
-    stem:'Explain how index fossils are used to determine the relative age of rock layers.',
-    answer:'Index fossils help scientists figure out how old rocks are.',
+    feedback:'Full credit. Correct choice plus a reason that uses the data (6.4 = 6.4). You don\'t need the term "tidal locking" - the matching numbers and the result are enough.' },
+
+  { topic:'orbits', color:'#4a1a7a', label:'Orbital Mechanics',
+    stem:'A student says the same side of Charon always faces Pluto, the way the same side of the Moon always faces Earth. The data shows Charon\'s spin takes 6.4 days and its orbit around Pluto also takes 6.4 days. Do you Support or Refute the student, and why?',
+    answer:'Support, I think that is right.',
     rating:'none',
-    feedback:'No credit - this restates the question without adding any information about how index fossils are actually used. A creditworthy answer must state something specific: for example, that index fossils lived during a short, well-defined time period, so rock layers containing the same index fossil can be matched as the same age.' },
-  { topic:'history', color:'#b34a00', label:'Geology',
-    stem:'State the principle of superposition and explain how it is used to determine the relative age of undisturbed rock layers.',
-    answer:'Superposition states that in undisturbed layers, the oldest rocks are on the bottom and youngest are on top. Scientists compare layers to determine which formed first.',
+    feedback:'No credit. The choice is right, but there is no reason at all. Even one line using the matching 6.4-day numbers would earn it - this gives nothing to back up the choice.' },
+
+  { topic:'orbits', color:'#4a1a7a', label:'Orbital Mechanics',
+    stem:'The Moon is slowly moving farther away from Earth. Support the claim that, far in the future, a total solar eclipse will no longer be possible. Explain your reasoning.',
+    answer:'As the Moon gets farther away it looks smaller, so eventually it will be too small to cover the whole Sun and there won\'t be total eclipses.',
     rating:'full',
-    feedback:'Full credit - correctly states the principle and explains how it is applied to determine relative age from layer position.' },
-  // Water & Erosion
-  { topic:'water', color:'#005a8e', label:'Water & Erosion',
-    stem:'Explain how the gradient of a stream affects its ability to erode sediment.',
-    answer:'A steeper gradient means the stream flows faster, giving it more energy to erode and carry sediment.',
-    rating:'full',
-    feedback:'Full credit - complete cause-and-effect chain: steeper gradient → faster velocity → more kinetic energy → greater erosion capacity.' },
-  { topic:'water', color:'#005a8e', label:'Water & Erosion',
-    stem:'Explain how the gradient of a stream affects its ability to erode sediment.',
-    answer:'A steeper gradient erodes more.',
+    feedback:'Full credit. The claim is backed by a reason: farther away → looks smaller → can\'t cover the Sun. That is a complete (if simple) explanation.' },
+
+  { topic:'orbits', color:'#4a1a7a', label:'Orbital Mechanics',
+    stem:'The Moon is slowly moving farther away from Earth. Support the claim that, far in the future, a total solar eclipse will no longer be possible. Explain your reasoning.',
+    answer:'There won\'t be any more total eclipses someday.',
     rating:'none',
-    feedback:'No credit - this is circular: "steeper gradient erodes more" restates the question without adding information. A creditworthy answer must say something new, such as that a steeper gradient increases stream velocity, which increases erosion.' },
-  // Human Impact
-  { topic:'human', color:'#2e7d32', label:'Human Impact',
-    stem:'Explain one way that deforestation increases atmospheric CO₂ levels.',
-    answer:'Trees absorb CO₂ during photosynthesis. When forests are removed, fewer trees absorb CO₂, so it builds up in the atmosphere.',
+    feedback:'No credit. This just repeats the claim with no reason. A generous rater still needs to see WHY - that the Moon will look too small to cover the Sun.' },
+
+  { topic:'history', color:'#b34a00', label:'Earth History',
+    stem:'Long ago, tiny microbes called stromatolites lived in Earth\'s oceans and carried out photosynthesis. Make an argument for how these microbes changed Earth\'s early atmosphere.',
+    answer:'The stromatolites did photosynthesis, which made oxygen. Over time that oxygen built up and went into the air, so the atmosphere ended up with oxygen in it.',
     rating:'full',
-    feedback:'Full credit - explains that trees act as a carbon sink via photosynthesis, and that removing them reduces CO₂ absorption, allowing it to accumulate. Complete cause-and-effect.' },
-  { topic:'human', color:'#2e7d32', label:'Human Impact',
-    stem:'Explain one way that deforestation increases atmospheric CO₂ levels.',
-    answer:'Cutting down trees releases CO₂.',
+    feedback:'Full credit. It has the cause (photosynthesis made oxygen) and the result (oxygen built up in the atmosphere). A clear cause-and-result like this is plenty.' },
+
+  { topic:'history', color:'#b34a00', label:'Earth History',
+    stem:'Long ago, tiny microbes called stromatolites lived in Earth\'s oceans and carried out photosynthesis. Make an argument for how these microbes changed Earth\'s early atmosphere.',
+    answer:'Stromatolites were really important for Earth.',
+    rating:'none',
+    feedback:'No credit. This makes no real argument. Be generous with wording, but the answer needs to say they made oxygen that changed the air. "Important" by itself says nothing.' },
+
+  { topic:'human', color:'#1a6b3c', label:'Human Impact',
+    stem:'Carbon released per passenger: Eurostar train = 6 g/km, ferry = 19 g/km, short-haul flight = 255 g/km. Name the Earth system the Eurostar affects the LEAST, and use the numbers to explain how it lowers the impact.',
+    answer:'The atmosphere. The Eurostar only puts out 6 g/km, way less than the flight\'s 255 g/km, so it adds much less CO₂ to the air.',
     rating:'full',
-    feedback:'Full credit - trees store carbon, and cutting them down releases that carbon as CO₂. This directly and correctly answers "one way deforestation increases CO₂." Students are not required to distinguish combustion from decomposition.' },
+    feedback:'Full credit. It names the system (atmosphere) and uses at least one number from the data (6 vs. 255). Any correct number comparison earns it.' },
+
+  { topic:'human', color:'#1a6b3c', label:'Human Impact',
+    stem:'Carbon released per passenger: Eurostar train = 6 g/km, ferry = 19 g/km, short-haul flight = 255 g/km. Name the Earth system the Eurostar affects the LEAST, and use the numbers to explain how it lowers the impact.',
+    answer:'The atmosphere, because trains are cleaner than planes.',
+    rating:'none',
+    feedback:'No credit. The system is right, but this question specifically asks you to use the numbers. "Cleaner" is not a number - even "6 g/km, which is low" would have earned the point.' },
+
+  // ── Ranking & ordering (these are checked the strict way: all-or-nothing) ──
+
+  { topic:'orbits', color:'#4a1a7a', label:'Orbital Mechanics',
+    stem:'Three of Pluto\'s moons and their distances from Pluto: Charon 19,640 km, Nix 48,694 km, Hydra 64,738 km. Put them in order from shortest to longest orbital period, and explain your order.',
+    answer:'Charon, then Nix, then Hydra. The closer a moon is, the faster it goes around, so it takes less time to orbit.',
+    rating:'full',
+    feedback:'Full credit. Correct order plus a correct reason (closer = shorter orbit time). You don\'t have to name "Kepler\'s third law" - the idea is enough.' },
+
+  { topic:'orbits', color:'#4a1a7a', label:'Orbital Mechanics',
+    stem:'Three of Pluto\'s moons and their distances from Pluto: Charon 19,640 km, Nix 48,694 km, Hydra 64,738 km. Put them in order from shortest to longest orbital period, and explain your order.',
+    answer:'Charon, Nix, Hydra.',
+    rating:'none',
+    feedback:'No credit. The order is right, but the question also asks you to explain it. A quick "closer moons orbit faster" would earn the point - with no reason at all, it doesn\'t.' },
+
+  { topic:'history', color:'#b34a00', label:'Earth History',
+    stem:'Put these Earth events in order from oldest to youngest: the Great Oxidation Event, the formation of Earth, the first oceans forming, the first banded iron rock layers.',
+    answer:'Earth forms, then the oceans form, then the banded iron layers, then the Great Oxidation Event.',
+    rating:'full',
+    feedback:'Full credit. The whole order is correct, oldest to youngest, with Earth forming first. Ordering questions need every event in the right spot - this one nails it.' },
+
+  { topic:'history', color:'#b34a00', label:'Earth History',
+    stem:'Put these Earth events in order from oldest to youngest: the Great Oxidation Event, the formation of Earth, the first oceans forming, the first banded iron rock layers.',
+    answer:'Earth forms, then the oceans form, then the Great Oxidation Event, then the banded iron layers.',
+    rating:'none',
+    feedback:'No credit. The last two are flipped - the banded iron layers came before the Great Oxidation Event. Ordering questions are all-or-nothing, so a single swap loses the point.' },
+
 ];
 
 // ── TOPIC COLORS ─────────────────────────────────────────────────────────
@@ -1819,12 +2125,17 @@ const TOPIC_COLORS = {
 };
 
 // ── SHARED STATE ─────────────────────────────────────────────────────────
-let deck = [], idx = 0, flipped = false;
-let ratings = { know: 0, almost: 0, nope: 0 };
+// Reading game state (mastery loop: wrong answers re-queue until answered correctly)
+let readQueue = [], readMastered = new Set(), readSeen = new Set();
+let readTotalUnique = 0, readShown = 0, readCurrent = null;
+let readFirstTryCorrect = 0, readAnswered = false, readInverted = false;
+const READING_INVERT_AT = 20;   // invert the screen + flip the game-nav once this many readings are shown
+let gameActive = false;         // a game is currently in progress (drives the "lose progress" warning)
 
-// MCQ state
-let mcqPool = [], mcqIdx = 0, mcqScore = 0, mcqStreak = 0, mcqBestStreak = 0;
-let mcqCorrect = 0, mcqTimerInterval = null, mcqSecsLeft = 0, mcqAnswered = false;
+// MCQ state (mastery loop: wrong questions re-queue until answered correctly)
+let mcqQueue = [], mcqScore = 0, mcqStreak = 0, mcqBestStreak = 0, mcqCorrect = 0;
+let mcqMastered = new Set(), mcqSeen = new Set(), mcqFirstTryCorrect = 0, mcqTotalUnique = 0, mcqCurrent = null;
+let mcqTimerInterval = null, mcqSecsLeft = 0, mcqAnswered = false;
 const MCQ_SECS = 20;
 
 // FIB state
@@ -1843,12 +2154,13 @@ const BOSS_MAX_HP = 15;
 let bossPool = [], bossIdx = 0, bossHp = 0, bossShields = 5, bossAnswered = false;
 let bossRegenInterval = null;
 
-// CRQ state
-let crqPool = [], crqIdx = 0, crqCorrect = 0, crqTotal = 0;
+// CRQ state (mastery loop: wrong rulings re-queue until judged correctly)
+let crqQueue = [], crqMastered = new Set(), crqSeen = new Set();
+let crqFirstTryCorrect = 0, crqTotalUnique = 0, crqCurrent = null, crqJudged = 0;
 
 // ── MODE / CHIP INTERACTION ───────────────────────────────────────────────
 const LIVE_MODES = {
-  flashcard: 'Start Flashcards',
+  flashcard: 'Start Reading',
   mcq:       'Start Multiple Choice',
   fillblank: 'Start Fill-in-Blank',
   sort:      'Start Temporal Sort',
@@ -1858,6 +2170,7 @@ const LIVE_MODES = {
 };
 
 document.querySelectorAll('.mode-card').forEach(card => {
+  card.tabIndex = 0;   // focusable, so the description popover can appear on focus (incl. tap)
   card.addEventListener('click', () => {
     document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('active'));
     card.classList.add('active');
@@ -1867,11 +2180,11 @@ document.querySelectorAll('.mode-card').forEach(card => {
     if (LIVE_MODES[mode]) {
       btn.textContent = LIVE_MODES[mode];
       btn.disabled = false;
-      if (pt) pt.innerHTML = `Choose topics above, then hit <strong>${LIVE_MODES[mode]}</strong>.`;
+      if (pt) pt.innerHTML = `Ready when you are &mdash; hit <strong>${LIVE_MODES[mode]}</strong>.`;
     } else {
       btn.textContent = 'Coming Soon';
       btn.disabled = true;
-      if (pt) pt.innerHTML = `Choose topics above, then hit <strong>Start</strong>.`;
+      if (pt) pt.innerHTML = `Pick a game on the left to begin.`;
     }
   });
 });
@@ -1889,127 +2202,307 @@ function setHudLabels(a, b, c, d) {
   const labels = [a, b, c, d];
   stats.forEach((s, i) => { s.lastChild.textContent = labels[i]; });
 }
-function updateHud() {
-  document.getElementById('hud-know').textContent   = ratings.know;
-  document.getElementById('hud-almost').textContent = ratings.almost;
-  document.getElementById('hud-nope').textContent   = ratings.nope;
-  document.getElementById('hud-q').textContent      = deck.length ? (idx + 1) + '/' + deck.length : '-';
+function updateReadHud() {
+  document.getElementById('hud-know').textContent   = readMastered.size + '/' + readTotalUnique;
+  document.getElementById('hud-almost').textContent = readShown;
+  document.getElementById('hud-nope').textContent   = readFirstTryCorrect;
+  document.getElementById('hud-q').textContent      = readQueue.length;
 }
 function updateMcqHud() {
   document.getElementById('hud-know').textContent   = mcqScore;
   document.getElementById('hud-almost').textContent = mcqStreak;
-  document.getElementById('hud-nope').textContent   = mcqCorrect + '/' + mcqPool.length;
+  document.getElementById('hud-nope').textContent   = mcqMastered.size + '/' + mcqTotalUnique;
   document.getElementById('hud-q').textContent      = mcqSecsLeft + 's';
 }
 
-// ── FLASHCARD RENDER ──────────────────────────────────────────────────────
-function renderCard() {
-  if (!deck.length) return;
-  const card = deck[idx];
-  flipped = false;
-  const pct = (idx / deck.length) * 100;
+// ── READING GAME ──────────────────────────────────────────────────────────
+// Read a short passage, then identify something from it (multiple choice or typed).
+// Content is drawn from the old flashcard facts. Mastery loop: a missed reading
+// returns until answered correctly. At 20 readings shown the whole screen inverts
+// and the game-nav flips upside down; it all reverts after the final reading.
+const READINGS = [
+  // STARS
+  { topic:'stars', color:'#1a4a7a', label:'Stars & Universe', type:'mc',
+    passage:'As the Sun ages it will swell into a red giant. Red giants are large, cool, and very bright, sitting in the upper-right of the H-R diagram.',
+    prompt:'According to the reading, where on the H-R diagram are red giants found?',
+    choices:['Upper right','Lower left','Lower right','Dead center'], correct:0 },
+
+  { topic:'stars', color:'#1a4a7a', label:'Stars & Universe', type:'text',
+    passage:'A star\'s mass controls how fast it fuses elements. The more massive a star is, the faster its rate of nucleosynthesis, the shorter its life, and the heavier the elements it can build.',
+    prompt:'What is the name for the process of building elements inside a star? (one word)',
+    accept:['nucleosynthesis','fusion'], answer:'nucleosynthesis (fusion)' },
+
+  { topic:'stars', color:'#1a4a7a', label:'Stars & Universe', type:'mc',
+    passage:'In a massive star, fusion builds elements in steps: hydrogen, then helium, carbon, oxygen, neon, and finally iron. Elements heavier than iron form only in a supernova.',
+    prompt:'What is the heaviest element a massive star makes by ordinary fusion (before any supernova)?',
+    choices:['Iron','Carbon','Helium','Uranium'], correct:0 },
+
+  { topic:'stars', color:'#1a4a7a', label:'Stars & Universe', type:'mc',
+    passage:'Light from distant galaxies is stretched to longer wavelengths, an effect called redshift. The farther away a galaxy is, the greater its redshift.',
+    prompt:'What does the redshift of distant galaxies tell us about the universe?',
+    choices:['It is expanding','It is shrinking','It is standing still','It is only cooling'], correct:0 },
+
+  { topic:'stars', color:'#1a4a7a', label:'Stars & Universe', type:'mc',
+    passage:'Cosmic Microwave Background Radiation (CMBR) is leftover energy from the Big Bang, found evenly in every direction. It appeared once the early universe cooled enough to become transparent.',
+    prompt:'CMBR first became detectable when the early universe...',
+    choices:['cooled and became transparent','suddenly heated up','collapsed inward','stopped expanding'], correct:0 },
+
+  { topic:'stars', color:'#1a4a7a', label:'Stars & Universe', type:'mc',
+    passage:'Sunspots are cooler regions on the Sun\'s surface. Their numbers rise and fall in roughly an 11-year cycle. More sunspots means higher solar irradiance - the Sun gives off more energy.',
+    prompt:'According to the reading, when there are more sunspots, the Sun\'s energy output is...',
+    choices:['higher','lower','unchanged','zero'], correct:0 },
+
+  // CLIMATE
+  { topic:'climate', color:'#1a6b3c', label:'Climate & CO₂', type:'mc',
+    passage:'Carbon dioxide is a greenhouse gas. It absorbs outgoing infrared energy, so as CO₂ rises, less energy escapes the atmosphere and the surface warms.',
+    prompt:'According to the reading, as atmospheric CO₂ increases, surface temperatures...',
+    choices:['rise','fall','stay exactly the same','drop to zero'], correct:0 },
+
+  { topic:'climate', color:'#1a6b3c', label:'Climate & CO₂', type:'text',
+    passage:'Plants and forests pull carbon dioxide out of the air and store the carbon in wood and soil, which lowers atmospheric CO₂.',
+    prompt:'Name the process plants use to take in CO₂ and make their food.',
+    accept:['photosynthesis'], answer:'photosynthesis' },
+
+  { topic:'climate', color:'#1a6b3c', label:'Climate & CO₂', type:'mc',
+    passage:'As more CO₂ dissolves into the ocean, carbonate ions decrease. Coral and shellfish need carbonate to build their shells, so their populations decline. This is ocean acidification.',
+    prompt:'As CO₂ in the ocean rises, the acidity of the water...',
+    choices:['decreases','increases','freezes','doubles'], correct:1 },
+
+  { topic:'climate', color:'#1a6b3c', label:'Climate & CO₂', type:'mc',
+    passage:'A smaller axial tilt gives Earth milder seasons. Cooler summers melt less of the winter snow at the poles, so ice slowly builds up over many years.',
+    prompt:'According to the reading, a smaller axial tilt leads to...',
+    choices:['more polar ice building up','less polar ice overall','no seasons at all','much hotter summers'], correct:0 },
+
+  // EARTH HISTORY
+  { topic:'history', color:'#b34a00', label:'Earth History', type:'text',
+    passage:'Around 2.4 billion years ago, photosynthetic cyanobacteria (stromatolites) in the oceans released a gas that built up in the air. This is called the Great Oxidation Event.',
+    prompt:'What gas did the stromatolites add to the atmosphere?',
+    accept:['oxygen','o2','o₂'], answer:'oxygen' },
+
+  { topic:'history', color:'#b34a00', label:'Earth History', type:'mc',
+    passage:'The oxygen made during the Great Oxidation Event reacted with methane, so methane levels fell. With less of this greenhouse gas, Earth cooled into its earliest ice ages.',
+    prompt:'During the Great Oxidation Event, methane levels...',
+    choices:['decreased','increased','stayed the same','became oxygen'], correct:0 },
+
+  { topic:'history', color:'#b34a00', label:'Earth History', type:'mc',
+    passage:'Earth\'s early timeline runs: Earth forms (~4.6 Ga), then the first oceans (~4.2 Ga), then the first life (~3.8 Ga), then the Great Oxidation Event (~2.4 Ga).',
+    prompt:'Which of these events happened FIRST?',
+    choices:['Earth forms','First life appears','First oceans form','Great Oxidation Event'], correct:0 },
+
+  { topic:'history', color:'#b34a00', label:'Earth History', type:'text',
+    passage:'Uranium-238 has a half-life of 4.5 billion years. A rock with about half of its original U-238 left is about 4.5 billion years old - about the age of Earth.',
+    prompt:'About how old is Earth, in billions of years? (give a number)',
+    accept:['4.5','4.6'], answer:'about 4.5 billion years' },
+
+  { topic:'history', color:'#b34a00', label:'Earth History', type:'mc',
+    passage:'The Hawaiian Islands get older toward the northwest, away from the hot spot. This shows the Pacific Plate is moving to the northwest.',
+    prompt:'The age pattern of the Hawaiian Islands shows the Pacific Plate moves toward the...',
+    choices:['northwest','southeast','center of the ocean','equator'], correct:0 },
+
+  { topic:'history', color:'#b34a00', label:'Earth History', type:'mc',
+    passage:'At divergent boundaries, plates pull apart and magma rises to form new ocean crust at mid-ocean ridges. At convergent boundaries, one plate sinks and magma builds volcanoes.',
+    prompt:'New ocean crust forms at which type of plate boundary?',
+    choices:['divergent','convergent','transform','none of these'], correct:0 },
+
+  // ORBITAL MECHANICS
+  { topic:'orbits', color:'#4a1a7a', label:'Orbital Mechanics', type:'mc',
+    passage:'Kepler\'s third law says objects that orbit farther from the central body take longer to go around - they have a longer period of revolution.',
+    prompt:'A moon that orbits farther from its planet has a period of revolution that is...',
+    choices:['longer','shorter','zero','exactly one day'], correct:0 },
+
+  { topic:'orbits', color:'#4a1a7a', label:'Orbital Mechanics', type:'mc',
+    passage:'A planet sweeps out equal areas in equal times. This means it travels faster when it is closer to the Sun and slower when it is farther away.',
+    prompt:'A planet moves fastest when it is...',
+    choices:['closest to the Sun','farthest from the Sun','exactly halfway out','never - its speed is constant'], correct:0 },
+
+  { topic:'orbits', color:'#4a1a7a', label:'Orbital Mechanics', type:'text',
+    passage:'A moon is tidally locked when its rotation period equals its orbital period, so the same side always faces its planet. Earth\'s Moon and Pluto\'s moon Charon are both tidally locked.',
+    prompt:'When a moon is tidally locked, the same ____ always faces the planet. (one word)',
+    accept:['side','face'], answer:'side (face)' },
+
+  { topic:'orbits', color:'#4a1a7a', label:'Orbital Mechanics', type:'text',
+    passage:'Eccentricity describes the shape of an orbit. An eccentricity of 0 is a perfect circle; higher values are more stretched-out ellipses.',
+    prompt:'An orbit with an eccentricity of 0 has what shape?',
+    accept:['circle','circular','perfect circle','round'], answer:'a circle' },
+
+  // WATER & EROSION
+  { topic:'water', color:'#7a1a1a', label:'Water & Erosion', type:'mc',
+    passage:'Water expands by about 10% when it freezes. Inside a crack, this expansion pushes the rock apart and breaks it down - this is freeze-thaw weathering.',
+    prompt:'What does water do when it freezes inside a crack in rock?',
+    choices:['expands and breaks the rock','shrinks away','disappears','warms the rock'], correct:0 },
+
+  { topic:'water', color:'#7a1a1a', label:'Water & Erosion', type:'mc',
+    passage:'In a cliff, sandstone is more resistant to erosion than shale. Resistant layers stick out farther from the cliff face, while weaker shale is worn back.',
+    prompt:'Which rock is MORE resistant to erosion?',
+    choices:['sandstone','shale','they erode equally','neither erodes'], correct:0 },
+
+  { topic:'water', color:'#7a1a1a', label:'Water & Erosion', type:'mc',
+    passage:'A dam traps sediment behind it, so less sediment reaches the coast. Downstream beaches and deltas shrink and coastal erosion increases.',
+    prompt:'After a dam is built, the amount of sediment reaching the coast...',
+    choices:['decreases','increases','stays the same','triples'], correct:0 },
+
+  { topic:'water', color:'#7a1a1a', label:'Water & Erosion', type:'text',
+    passage:'Rising sea level pushes ocean water inland, contaminating freshwater aquifers and wells and killing freshwater trees.',
+    prompt:'What kind of water gets pushed into freshwater aquifers as sea level rises?',
+    accept:['salt','saltwater','salt water','sea','ocean'], answer:'salt (sea) water' },
+
+  // HUMAN IMPACT
+  { topic:'human', color:'#1a6b3c', label:'Human Impact', type:'mc',
+    passage:'Clearing land for mining removes forests. This lowers biodiversity in the biosphere by destroying habitat for plants and animals.',
+    prompt:'Clearing land for mining most directly reduces biodiversity in which Earth system?',
+    choices:['biosphere','atmosphere','hydrosphere','geosphere'], correct:0 },
+
+  { topic:'human', color:'#1a6b3c', label:'Human Impact', type:'mc',
+    passage:'Different ways of traveling release different amounts of CO₂ per passenger. Trains and electric transport usually release far less CO₂ than airplanes.',
+    prompt:'Which option usually releases the LEAST CO₂ per passenger?',
+    choices:['a train','a short-haul flight','a private jet','a large airplane'], correct:0 },
+];
+
+function renderReading() {
+  if (!readQueue.length) { showReadingSummary(); return; }
+  const r = readQueue[0];
+  readCurrent = r;
+  readAnswered = false;
+  readShown++;
+  if (readShown >= READING_INVERT_AT && !readInverted) setReadInvert(true);   // the twist
+  const pct = readTotalUnique ? (readMastered.size / readTotalUnique) * 100 : 0;
+
+  let inputHtml;
+  if (r.type === 'mc') {
+    const order = r.choices.map((_, i) => i).sort(() => Math.random() - .5);   // scramble choices
+    inputHtml = '<div class="read-choices">' + order.map(oi =>
+      `<button class="read-choice" data-idx="${oi}" onclick="readAnswerMc(${oi})">${r.choices[oi]}</button>`
+    ).join('') + '</div>';
+  } else {
+    inputHtml = `
+      <div class="read-text-row">
+        <input type="text" id="read-input" class="read-input" autocomplete="off" autocapitalize="off"
+               placeholder="Type your answer, then press Enter"
+               onkeydown="if(event.key==='Enter'){event.preventDefault();readAnswerText();}">
+        <button class="read-submit" onclick="readAnswerText()">Submit</button>
+      </div>`;
+  }
 
   document.getElementById('game-arena').innerHTML = `
-    <div class="fc-wrap">
+    <div class="read-wrap">
       <div class="fc-progress-bar"><div class="fc-progress-fill" style="width:${pct}%"></div></div>
-      <div class="fc-counter">Card ${idx + 1} of ${deck.length}</div>
-      <div class="fc-scene" id="fc-scene">
-        <div class="fc-card" id="fc-card">
-          <div class="fc-front">
-            <span class="fc-topic-badge" style="background:${card.color}">${card.label}</span>
-            <div class="fc-label">Question - tap to reveal answer</div>
-            <div class="fc-question">${card.q}</div>
-          </div>
-          <div class="fc-back">
-            <div class="fc-label">Answer</div>
-            <div class="fc-answer">${card.a}</div>
-          </div>
-        </div>
+      <div class="read-meta">
+        <span class="read-badge" style="background:${r.color}">${r.label}</span>
+        <span>Reading ${readShown} &middot; ${readMastered.size}/${readTotalUnique} mastered</span>
       </div>
-      <div class="fc-nav">
-        <button class="btn-nope"   onclick="rate('nope')">&#x2717; Nope</button>
-        <button class="btn-almost" onclick="rate('almost')">&#x007E; Almost</button>
-        <button class="btn-know"   onclick="rate('know')">&#x2713; Know It</button>
-      </div>
-      <div class="fc-skip-nav">
-        <button onclick="prevCard()">&#8592; Prev</button>
-        <button onclick="flipCard()">Flip</button>
-        <button onclick="nextCard()">Next &#8594;</button>
-      </div>
+      <div class="read-passage">${r.passage}</div>
+      <div class="read-prompt">${r.prompt}</div>
+      ${inputHtml}
+      <div class="read-feedback" id="read-fb"></div>
     </div>`;
 
-  document.getElementById('fc-scene').addEventListener('click', flipCard);
-  updateHud();
+  const inp = document.getElementById('read-input');
+  if (inp) inp.focus();
+  updateReadHud();
 }
 
-function flipCard() {
-  flipped = !flipped;
-  document.getElementById('fc-card').classList.toggle('flipped', flipped);
+function readAnswerMc(chosen) {
+  if (readAnswered) return;
+  readAnswered = true;
+  const r = readCurrent;
+  const isCorrect = chosen === r.correct;
+  document.querySelectorAll('.read-choice').forEach(b => {
+    b.disabled = true;
+    const i = +b.dataset.idx;
+    if (i === r.correct) b.classList.add('correct');
+    else if (i === chosen && !isCorrect) b.classList.add('wrong');
+  });
+  resolveReading(isCorrect, r.choices[r.correct]);
 }
 
-function rate(r) {
-  if (!flipped) { flipCard(); return; }
-  ratings[r]++;
-  nextCard();
+function readAnswerText() {
+  if (readAnswered) return;
+  const inp = document.getElementById('read-input');
+  if (!inp) return;
+  const val = inp.value.trim();
+  if (!val) { inp.focus(); return; }
+  readAnswered = true;
+  inp.disabled = true;
+  const r = readCurrent;
+  // generous, remedial-friendly matching: normalize, then accept if any keyword is present
+  const norm = val.toLowerCase().replace(/[^a-z0-9.₂ ]/g, ' ').replace(/\s+/g, ' ').trim();
+  const words = norm.split(' ');
+  const isCorrect = r.accept.some(a => {
+    const k = a.toLowerCase();
+    return norm === k || words.includes(k) || norm.includes(k);
+  });
+  resolveReading(isCorrect, r.answer);
 }
 
-function nextCard() {
-  if (idx < deck.length - 1) { idx++; renderCard(); }
-  else showSummary();
+function resolveReading(isCorrect, correctText) {
+  const r = readCurrent;
+  const firstShowing = !readSeen.has(r._id);
+  readSeen.add(r._id);
+  if (isCorrect && firstShowing) readFirstTryCorrect++;
+  const fb = document.getElementById('read-fb');
+  if (isCorrect) {
+    readMastered.add(r._id);
+    readQueue.shift();                                  // mastered - remove from queue
+    fb.className = 'read-feedback ok';
+    fb.innerHTML = `&#10003; Correct! <button class="read-next" onclick="readNext()">Next &rarr;</button>`;
+  } else {
+    readQueue.push(readQueue.shift());                  // re-queue - it returns until correct
+    fb.className = 'read-feedback bad';
+    fb.innerHTML = `&#10007; Not quite &mdash; the answer is <strong>${correctText}</strong>. You'll see this one again. <button class="read-next" onclick="readNext()">Next &rarr;</button>`;
+  }
+  updateReadHud();
 }
 
-function prevCard() {
-  if (idx > 0) { idx--; renderCard(); }
+function readNext() { renderReading(); }
+
+function setReadInvert(on) {
+  readInverted = on;
+  document.documentElement.classList.toggle('screen-invert', on);
+  const nav = document.querySelector('.game-nav');
+  if (nav) nav.classList.toggle('flipped', on);
 }
 
-function showSummary() {
-  const total = ratings.know + ratings.almost + ratings.nope;
+function showReadingSummary() {
+  gameActive = false;
+  setReadInvert(false);   // put the screen and game-nav back after the final reading
   document.getElementById('game-arena').innerHTML = `
     <div class="fc-summary">
-      <h2>&#x1F3C6; Round Complete!</h2>
+      <h2>&#x1F3C6; All Readings Complete!</h2>
       <div class="fc-score-row">
-        <div class="s-know"><strong>${ratings.know}</strong>Know It</div>
-        <div class="s-almost"><strong>${ratings.almost}</strong>Almost</div>
-        <div class="s-nope"><strong>${ratings.nope}</strong>Nope</div>
+        <div class="s-know"><strong>${readTotalUnique}</strong>Readings</div>
+        <div class="s-almost"><strong>${readFirstTryCorrect}</strong>First-try</div>
+        <div class="s-nope"><strong>${readShown}</strong>Total</div>
       </div>
-      <p style="font-size:.85rem;color:var(--gray);margin-bottom:1rem">${total} cards reviewed</p>
-      ${ratings.nope > 0 ? `<button class="fc-restart" onclick="startNope()">Retry Missed Cards (${ratings.nope})</button>` : ''}
-      <button class="fc-restart" onclick="startGame()">Restart All</button>
+      <p style="font-size:.85rem;color:var(--gray);margin-bottom:1rem">You read and correctly answered all ${readTotalUnique} passages. &#9733; Gold star earned!</p>
+      <button class="fc-restart" onclick="startGame()">Play Again</button>
     </div>`;
-  updateHud();
-}
-
-function startNope() {
-  deck = deck.filter((_, i) => {
-    /* re-use nope deck - simpler: just reshuffle and restart with same deck */
-    return true;
-  });
-  /* restart with original deck filtered by nope - track was cleared, so just restart */
-  ratings = { know: 0, almost: 0, nope: 0 };
-  idx = 0;
-  shuffle(deck);
-  renderCard();
+  onFlashcardComplete();
 }
 
 // ── MCQ ENGINE ────────────────────────────────────────────────────────────
 function startMcq() {
-  const activeTopics = [...document.querySelectorAll('.chip.on')].map(c => c.dataset.topic);
-  if (!activeTopics.length) { alert('Select at least one topic.'); return; }
-  mcqPool = MCQ.filter(q => activeTopics.includes(q.topic));
-  if (!mcqPool.length) { alert('No questions for selected topics.'); return; }
-  shuffle(mcqPool);
-  mcqIdx = 0; mcqScore = 0; mcqStreak = 0; mcqBestStreak = 0; mcqCorrect = 0;
-  setHudLabels('Score', 'Streak', 'Progress', 'Time');
+  gameActive = true;
+  const all = MCQ.map((q, i) => ({ ...q, _id: 'mcq' + i }));
+  if (!all.length) return;
+  shuffle(all);
+  mcqQueue = all;                       // working queue; mastered questions are removed
+  mcqTotalUnique = all.length;
+  mcqMastered = new Set();
+  mcqSeen = new Set();
+  mcqFirstTryCorrect = 0;
+  mcqScore = 0; mcqStreak = 0; mcqBestStreak = 0; mcqCorrect = 0;
+  setHudLabels('Score', 'Streak', 'Mastered', 'Time');
   renderMcq();
 }
 
 function renderMcq() {
   clearInterval(mcqTimerInterval);
-  if (mcqIdx >= mcqPool.length) { showMcqSummary(); return; }
-  const q = mcqPool[mcqIdx];
+  if (!mcqQueue.length) { showMcqSummary(); return; }
+  const q = mcqQueue[0];
+  mcqCurrent = q;
   mcqAnswered = false;
   mcqSecsLeft = MCQ_SECS;
-  const pct = (mcqIdx / mcqPool.length) * 100;
+  const pct = (mcqMastered.size / mcqTotalUnique) * 100;
 
   // Shuffle choices while tracking the correct answer's new index
   const order = [0,1,2,3].sort(() => Math.random() - .5);
@@ -2022,7 +2515,7 @@ function renderMcq() {
       <div class="mcq-timer-track"><div class="mcq-timer-fill" id="mcq-tbar" style="width:100%"></div></div>
       <div class="mcq-meta">
         <span class="mcq-topic-badge" style="background:${q.color}">${q.label}</span>
-        <span>Question ${mcqIdx + 1} of ${mcqPool.length}</span>
+        <span>${mcqMastered.size} of ${mcqTotalUnique} mastered</span>
       </div>
       <div class="mcq-question">${q.q}</div>
       <div class="mcq-choices" id="mcq-choices">
@@ -2062,23 +2555,30 @@ function mcqAnswer(chosen, correct) {
   const fb = document.getElementById('mcq-fb');
   const sb = document.getElementById('mcq-sb');
 
+  const firstShowing = !mcqSeen.has(mcqCurrent._id);
+  mcqSeen.add(mcqCurrent._id);
+
   if (isCorrect) {
+    if (firstShowing) mcqFirstTryCorrect++;
     mcqCorrect++;
     mcqStreak++;
     if (mcqStreak > mcqBestStreak) mcqBestStreak = mcqStreak;
     const bonus = mcqStreak >= 3 ? 5 : 0;
     mcqScore += 10 + bonus;
+    mcqMastered.add(mcqCurrent._id);
+    mcqQueue.shift();                              // mastered - remove from queue
     fb.textContent = '✓ Correct!';
     fb.className = 'mcq-feedback ok';
     sb.textContent = mcqStreak >= 3 ? `🔥 ${mcqStreak} in a row! +5 bonus` : mcqStreak >= 2 ? `${mcqStreak} streak!` : '';
   } else {
     mcqStreak = 0;
-    fb.textContent = '✗ Incorrect';
+    mcqQueue.push(mcqQueue.shift());               // re-queue - you'll see it again
+    fb.textContent = '✗ Incorrect - this one comes back until you get it right.';
     fb.className = 'mcq-feedback bad';
     sb.textContent = '';
   }
   updateMcqHud();
-  setTimeout(() => { mcqIdx++; renderMcq(); }, 1600);
+  setTimeout(renderMcq, 1600);
 }
 
 function mcqTimeout(correct) {
@@ -2088,40 +2588,47 @@ function mcqTimeout(correct) {
   const buttons = document.querySelectorAll('.mcq-choice');
   buttons.forEach(b => b.disabled = true);
   if (buttons[correct]) buttons[correct].classList.add('reveal');
+  mcqSeen.add(mcqCurrent._id);                     // counts against first-try accuracy
+  mcqQueue.push(mcqQueue.shift());                 // re-queue on timeout
   const fb = document.getElementById('mcq-fb');
-  if (fb) { fb.textContent = '⏱ Time\'s up!'; fb.className = 'mcq-feedback bad'; }
+  if (fb) { fb.textContent = '⏱ Time\'s up! - this one comes back until you get it right.'; fb.className = 'mcq-feedback bad'; }
   updateMcqHud();
-  setTimeout(() => { mcqIdx++; renderMcq(); }, 1600);
+  setTimeout(renderMcq, 1600);
 }
 
 function showMcqSummary() {
+  gameActive = false;
   clearInterval(mcqTimerInterval);
-  const pct = Math.round(mcqCorrect / mcqPool.length * 100);
-  const grade = pct >= 85 ? '🏆 Excellent!' : pct >= 65 ? '👍 Good work!' : '📖 Keep studying!';
+  const pct = mcqTotalUnique ? Math.round(mcqFirstTryCorrect / mcqTotalUnique * 100) : 0;
+  const earnedStar = pct >= MCQ_STAR_PCT;
+  const grade = earnedStar ? '🏆 Gold Star earned!' : '📖 Completed - keep practicing!';
   document.getElementById('game-arena').innerHTML = `
     <div class="mcq-summary">
       <h2>${grade}</h2>
       <div class="mcq-score-grid">
         <div class="mscore-pts"><strong>${mcqScore}</strong>Points</div>
-        <div class="mscore-right"><strong>${mcqCorrect}/${mcqPool.length} (${pct}%)</strong>Correct</div>
+        <div class="mscore-right"><strong>${mcqFirstTryCorrect}/${mcqTotalUnique} (${pct}%)</strong>First-try</div>
         <div class="mscore-streak"><strong>${mcqBestStreak}</strong>Best Streak</div>
       </div>
+      <p class="mcq-star-note">${earnedStar
+        ? 'You answered every question correctly and hit ' + pct + '% first-try accuracy (≥ ' + MCQ_STAR_PCT + '% needed). ★ Gold star awarded!'
+        : 'You answered every question correctly, but the gold star needs ≥ ' + MCQ_STAR_PCT + '% first-try accuracy - you got ' + pct + '%. Play again to earn the star.'}</p>
       <button class="mcq-restart" onclick="startMcq()">Play Again</button>
-      <button class="mcq-restart" onclick="startGame()">Switch to Flashcards</button>
+      <button class="mcq-restart" onclick="startGame()">Switch to Reading</button>
     </div>`;
-  setHudLabels('Score', 'Streak', 'Progress', 'Time');
+  setHudLabels('Score', 'Streak', 'Mastered', 'Time');
   document.getElementById('hud-know').textContent   = mcqScore;
   document.getElementById('hud-almost').textContent = mcqBestStreak;
-  document.getElementById('hud-nope').textContent   = pct + '%';
+  document.getElementById('hud-nope').textContent   = mcqMastered.size + '/' + mcqTotalUnique;
   document.getElementById('hud-q').textContent      = '--';
+  onMcqComplete(pct, earnedStar);
 }
 
 // ── FILL-IN-BLANK ENGINE ──────────────────────────────────────────────────
 function startFib() {
-  const activeTopics = [...document.querySelectorAll('.chip.on')].map(c => c.dataset.topic);
-  if (!activeTopics.length) { alert('Select at least one topic.'); return; }
-  fibPool = FILL.filter(q => activeTopics.includes(q.topic));
-  if (!fibPool.length) { alert('No questions for selected topics.'); return; }
+  gameActive = true;
+  fibPool = [...FILL];
+  if (!fibPool.length) return;
   shuffle(fibPool);
   fibIdx = 0; fibCorrect = 0; fibTries = 0;
   setHudLabels('Correct', 'Tries', 'Progress', 'Q#');
@@ -2322,6 +2829,7 @@ function checkFib() {
 }
 
 function showFibSummary() {
+  gameActive = false;
   const pct = fibPool.length > 0 ? Math.round(fibCorrect / fibPool.length * 100) : 0;
   const grade = pct >= 90 ? 'Excellent!' : pct >= 70 ? 'Good work!' : 'Keep studying!';
   document.getElementById('game-arena').innerHTML = `
@@ -2333,17 +2841,19 @@ function showFibSummary() {
         <div class="mscore-streak"><strong>${pct}%</strong>Accuracy</div>
       </div>
       <button class="mcq-restart" onclick="startFib()">Play Again</button>
-      <button class="mcq-restart" onclick="startGame()">Switch to Flashcards</button>
+      <button class="mcq-restart" onclick="startGame()">Switch to Reading</button>
     </div>`;
   setHudLabels('Correct', 'Tries', 'Progress', 'Q#');
   document.getElementById('hud-know').textContent   = fibCorrect;
   document.getElementById('hud-almost').textContent = fibTries;
   document.getElementById('hud-nope').textContent   = pct + '%';
   document.getElementById('hud-q').textContent      = '--';
+  onFibComplete();
 }
 
 // ── TEMPORAL SORT ENGINE ──────────────────────────────────────────────────
 function startSort() {
+  gameActive = true;
   sortCorrect = 0; sortTotal = 0;
   setHudLabels('Correct', 'Rounds', 'Rate', 'Round');
   newSortRound();
@@ -2365,7 +2875,7 @@ function renderSort() {
       <span class="sort-handle">⋮⋮</span>
       <div class="sort-text">
         <div class="sort-label">${ev.label}</div>
-        <div class="sort-hint">${ev.period} &mdash; ${ev.age}</div>
+        <div class="sort-hint">${ev.period} - ${ev.age}</div>
       </div>
       <div class="sort-btn-group">
         <button class="sort-move-btn" data-dir="-1" title="Move up">▲</button>
@@ -2472,6 +2982,7 @@ function checkSortRound() {
     document.getElementById('sort-check').disabled = true;
     document.getElementById('sort-next').classList.add('show');
     updateSortHud();
+    onSortRoundComplete();
   } else {
     fb.textContent = 'Not quite - red cards are out of place. Adjust and try again.';
     fb.className = 'sort-feedback bad';
@@ -2494,10 +3005,9 @@ function updateSortHud() {
 
 // ── MATCH-UP ENGINE ───────────────────────────────────────────────────────
 function startMatch() {
-  const activeTopics = [...document.querySelectorAll('.chip.on')].map(c => c.dataset.topic);
-  if (!activeTopics.length) { alert('Select at least one topic.'); return; }
-  matchPool = MATCH.filter(m => activeTopics.includes(m.topic));
-  if (!matchPool.length) { alert('No items for selected topics.'); return; }
+  gameActive = true;
+  matchPool = [...MATCH];
+  if (!matchPool.length) return;
   matchCorrect = 0; matchTotal = 0; matchErrors = 0;
   setHudLabels('Rounds', 'Errors', 'Pairs Left', 'Round');
   newMatchRound();
@@ -2589,6 +3099,7 @@ function matchClick(el) {
       fb.textContent = 'All pairs matched!';
       fb.className = 'match-feedback ok';
       document.getElementById('match-next').style.display = 'block';
+      onMatchRoundComplete();
     } else {
       fb.textContent = `✓ Matched! ${matchMatched.size} of ${matchPick.length} done.`;
       fb.className = 'match-feedback ok';
@@ -2626,20 +3137,27 @@ function shuffle(arr) {
 }
 
 function startGame() {
-  const activeTopics = [...document.querySelectorAll('.chip.on')].map(c => c.dataset.topic);
-  if (!activeTopics.length) { alert('Select at least one topic.'); return; }
-  deck = CARDS.filter(c => activeTopics.includes(c.topic));
-  if (!deck.length) { alert('No cards for selected topics.'); return; }
-  shuffle(deck);
-  idx = 0;
-  ratings = { know: 0, almost: 0, nope: 0 };
+  gameActive = true;
+  const all = READINGS.map((r, i) => ({ ...r, _id: 'rd' + i }));
+  if (!all.length) return;
+  shuffle(all);
+  readQueue = all;
+  readTotalUnique = all.length;
+  readMastered = new Set();
+  readSeen = new Set();
+  readShown = 0;
+  readFirstTryCorrect = 0;
+  readAnswered = false;
+  setReadInvert(false);
+  setHudLabels('Mastered', 'Read', 'First-try', 'Left');
   showHud();
-  renderCard();
+  renderReading();
 }
 
 // ── BOSS ROUND ────────────────────────────────────────────────────────────
 
 function startBoss() {
+  gameActive = true;
   const activeTopic = document.querySelector('.topic-chip.active')?.dataset.topic || 'all';
   let pool = activeTopic === 'all' ? [...MCQ] : MCQ.filter(q => q.topic === activeTopic);
   if (!pool.length) pool = [...MCQ];
@@ -2828,6 +3346,7 @@ function bossWrongAnswer() {
   });
 
   if (bossShields <= 0) {
+    gameActive = false;
     clearInterval(bossRegenInterval);
     bossRegenInterval = null;
     setTimeout(() => {
@@ -2847,8 +3366,10 @@ function bossWrongAnswer() {
 }
 
 function bossExplode() {
+  gameActive = false;
   clearInterval(bossRegenInterval);
   bossRegenInterval = null;
+  onBossComplete();
   const blob = document.getElementById('boss-blob');
   if (blob) { blob.classList.remove('exploding'); void blob.offsetWidth; blob.classList.add('exploding'); }
   setTimeout(() => {
@@ -2866,36 +3387,32 @@ function bossExplode() {
 // ── CRQ JUDGE ────────────────────────────────────────────────────────────
 
 function startCrq() {
+  gameActive = true;
   const activeTopics = [...document.querySelectorAll('.chip.on')].map(c => c.dataset.topic);
-  let pool = activeTopics.length ? CRQ.filter(q => activeTopics.includes(q.topic)) : [...CRQ];
-  if (!pool.length) pool = [...CRQ];
-  for (let i = pool.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [pool[i], pool[j]] = [pool[j], pool[i]];
-  }
-  crqPool = pool;
-  crqIdx = 0;
-  crqCorrect = 0;
-  crqTotal = 0;
-  setHudLabels('Correct', 'Judged', 'Accuracy', 'Q#');
+  let all = activeTopics.length ? CRQ.filter(q => activeTopics.includes(q.topic)) : [...CRQ];
+  if (!all.length) all = [...CRQ];
+  all = all.map((q, i) => ({ ...q, _id: 'crq' + i }));
+  shuffle(all);
+  crqQueue = all;                       // working queue; mastered items are removed
+  crqTotalUnique = all.length;
+  crqMastered = new Set();
+  crqSeen = new Set();
+  crqFirstTryCorrect = 0;
+  crqJudged = 0;
+  setHudLabels('Mastered', 'Rulings', 'First-try', 'Left');
   renderCrq();
 }
 
 function renderCrq() {
-  if (crqIdx >= crqPool.length) {
-    for (let i = crqPool.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [crqPool[i], crqPool[j]] = [crqPool[j], crqPool[i]];
-    }
-    crqIdx = 0;
-  }
+  if (!crqQueue.length) { showCrqSummary(); return; }
+  const q = crqQueue[0];
+  crqCurrent = q;
   updateCrqHud();
-  const q = crqPool[crqIdx];
   document.getElementById('game-arena').innerHTML = `
     <div class="crq-wrap">
       <div class="crq-header">
         <span class="crq-title">📝 CRQ Judge</span>
-        <span>Q ${crqIdx + 1} of ${crqPool.length}</span>
+        <span>${crqMastered.size} of ${crqTotalUnique} mastered</span>
       </div>
       <div class="crq-stem">
         <span class="crq-box-label">Question Stem</span>
@@ -2918,16 +3435,26 @@ function crqJudge(btn, chosen) {
   document.querySelectorAll('.crq-btn').forEach(b => { b.disabled = true; });
   btn.classList.add('selected');
 
-  const q = crqPool[crqIdx];
+  const q = crqCurrent;
   const isCorrect = chosen === q.rating;
-  crqTotal++;
-  if (isCorrect) crqCorrect++;
+  crqJudged++;
+
+  const firstShowing = !crqSeen.has(q._id);
+  crqSeen.add(q._id);
+  if (isCorrect && firstShowing) crqFirstTryCorrect++;
+
+  if (isCorrect) {
+    crqMastered.add(q._id);
+    crqQueue.shift();                            // mastered - remove from queue
+  } else {
+    crqQueue.push(crqQueue.shift());             // re-queue - you'll judge it again
+  }
   updateCrqHud();
 
   const ratingLabel = { full: 'Full Credit', none: 'No Credit' };
   const verdict = isCorrect
     ? `✅ Correct - this answer earns <strong>${ratingLabel[q.rating]}</strong>.`
-    : `❌ Not quite - this answer earns <strong>${ratingLabel[q.rating]}</strong>, not ${ratingLabel[chosen]}.`;
+    : `❌ Not quite - this answer earns <strong>${ratingLabel[q.rating]}</strong>, not ${ratingLabel[chosen]}. It will come back until you rule correctly.`;
 
   const reveal = document.getElementById('crq-reveal');
   reveal.className = 'crq-reveal ' + (isCorrect ? 'correct' : 'wrong');
@@ -2938,21 +3465,44 @@ function crqJudge(btn, chosen) {
 }
 
 function crqNext() {
-  crqIdx++;
   renderCrq();
 }
 
 function updateCrqHud() {
-  const acc = crqTotal ? Math.round(crqCorrect / crqTotal * 100) + '%' : '-';
-  document.getElementById('hud-know').textContent   = crqCorrect;
-  document.getElementById('hud-almost').textContent = crqTotal;
-  document.getElementById('hud-nope').textContent   = acc;
-  document.getElementById('hud-q').textContent      = crqIdx + 1;
+  const pct = crqSeen.size ? Math.round(crqFirstTryCorrect / crqTotalUnique * 100) + '%' : '-';
+  document.getElementById('hud-know').textContent   = crqMastered.size + '/' + crqTotalUnique;
+  document.getElementById('hud-almost').textContent = crqJudged;
+  document.getElementById('hud-nope').textContent   = pct;
+  document.getElementById('hud-q').textContent      = crqQueue.length;
+}
+
+function showCrqSummary() {
+  gameActive = false;
+  const pct = crqTotalUnique ? Math.round(crqFirstTryCorrect / crqTotalUnique * 100) : 0;
+  const earnedStar = pct >= CRQ_STAR_PCT;
+  const grade = earnedStar ? '🏆 Gold Star earned!' : '📖 Completed - keep practicing!';
+  document.getElementById('game-arena').innerHTML = `
+    <div class="mcq-summary">
+      <h2>${grade}</h2>
+      <div class="mcq-score-grid">
+        <div class="mscore-right"><strong>${crqFirstTryCorrect}/${crqTotalUnique} (${pct}%)</strong>First-try</div>
+        <div class="mscore-pts"><strong>${crqJudged}</strong>Total Rulings</div>
+        <div class="mscore-streak"><strong>${earnedStar ? '★' : '-'}</strong>Gold Star</div>
+      </div>
+      <p class="mcq-star-note">${earnedStar
+        ? 'You judged every answer correctly and hit ' + pct + '% first-try accuracy (≥ ' + CRQ_STAR_PCT + '% needed). ★ Gold star awarded!'
+        : 'You judged every answer correctly, but the gold star needs ≥ ' + CRQ_STAR_PCT + '% first-try accuracy - you got ' + pct + '%. Play again to earn the star.'}</p>
+      <button class="mcq-restart" onclick="startCrq()">Play Again</button>
+      <button class="mcq-restart" onclick="startGame()">Switch to Reading</button>
+    </div>`;
+  document.getElementById('hud-q').textContent = '--';
+  onCrqComplete(pct, earnedStar);
 }
 
 // ─────────────────────────────────────────────────────────────────────────
 
 document.getElementById('start-btn').addEventListener('click', () => {
+  if (gameActive && !confirm('You have a game in progress. Starting another game will erase the progress you have made in it. Continue?')) return;
   const mode = document.querySelector('.mode-card.active')?.dataset.mode;
   if (mode === 'flashcard') startGame();
   else if (mode === 'mcq') startMcq();
@@ -2962,6 +3512,251 @@ document.getElementById('start-btn').addEventListener('click', () => {
   else if (mode === 'boss') startBoss();
   else if (mode === 'crq') startCrq();
 });
+
+// ── LOCAL STORAGE & GAME PROGRESS ────────────────────────────────────────
+
+const STORAGE_KEY = 'ess_regents_progress_v1';
+const SORT_ROUNDS_NEEDED  = 3;
+const MATCH_ROUNDS_NEEDED = 3;
+const MCQ_STAR_PCT = 80;   // first-try accuracy needed for the Multiple Choice gold star
+const CRQ_STAR_PCT = 80;   // first-try accuracy needed for the CRQ Judge gold star
+
+function defaultProgress() {
+  return {
+    games: {
+      flashcard: { completed: false, timesCompleted: 0 },
+      mcq:       { completed: false, timesCompleted: 0, bestScore: 0, bestPct: 0 },
+      fillblank: { completed: false, timesCompleted: 0, bestPct: 0 },
+      sort:      { completed: false, correctRounds: 0 },
+      match:     { completed: false, correctRounds: 0 },
+      boss:      { completed: false, timesDefeated: 0 },
+      crq:       { completed: false, timesCompleted: 0, bestAcc: 0 },
+    },
+    playerName: null,
+    allComplete: false,
+  };
+}
+
+function loadProgress() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return defaultProgress();
+    const d = defaultProgress();
+    const p = JSON.parse(raw);
+    d.allComplete = !!p.allComplete;
+    d.playerName  = p.playerName || null;
+    if (p.games) {
+      Object.keys(d.games).forEach(k => {
+        if (p.games[k]) Object.assign(d.games[k], p.games[k]);
+      });
+    }
+    return d;
+  } catch(e) { return defaultProgress(); }
+}
+
+function saveProgress(prog) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(prog)); } catch(e) {}
+}
+
+function markGameComplete(gameKey, extra) {
+  const prog = loadProgress();
+  const g = prog.games[gameKey];
+  if (!g) return;
+  const wasComplete = g.completed;
+  g.completed = true;
+  if (extra) Object.assign(g, extra);
+  saveProgress(prog);
+  updateModeCardUI();
+  if (!wasComplete) checkAllComplete(prog);
+}
+
+function checkAllComplete(prog) {
+  if (!prog) prog = loadProgress();
+  const allDone = Object.keys(prog.games).every(k => prog.games[k].completed);
+  if (!allDone) return;
+  if (!prog.allComplete) {
+    prog.allComplete = true;
+    saveProgress(prog);
+    setTimeout(promptForName, 600);
+  } else if (!document.getElementById('gold-rain-overlay')) {
+    startGoldRain(prog.playerName || 'Champion');
+  }
+}
+
+function promptForName() {
+  const raw = prompt('🏆 INCREDIBLE! You completed all 7 games!\n\nEnter your name for the Hall of Fame:');
+  const name = (raw !== null ? raw.trim() : '') || 'Champion';
+  const prog = loadProgress();
+  prog.playerName = name;
+  saveProgress(prog);
+  startGoldRain(name);
+}
+
+// ── MODE CARD UI ──────────────────────────────────────────────────────────
+
+function updateModeCardUI() {
+  const prog = loadProgress();
+  let doneCount = 0;
+
+  document.querySelectorAll('.mode-card').forEach(card => {
+    const mode = card.dataset.mode;
+    const g = prog.games[mode];
+    if (!g) return;
+    if (g.completed) doneCount++;
+    card.classList.toggle('completed', !!g.completed);
+
+    let badge = card.querySelector('.mode-progress');
+    if (!badge) {
+      badge = document.createElement('div');
+      badge.className = 'mode-progress';
+      card.appendChild(badge);
+    }
+
+    if (g.completed) {
+      badge.innerHTML = '<span class="mode-done">★ Complete</span>';
+    } else if (mode === 'sort') {
+      const r = g.correctRounds || 0;
+      badge.textContent = r > 0 ? r + '/' + SORT_ROUNDS_NEEDED + ' rounds' : '';
+    } else if (mode === 'match') {
+      const r = g.correctRounds || 0;
+      badge.textContent = r > 0 ? r + '/' + MATCH_ROUNDS_NEEDED + ' rounds' : '';
+    } else {
+      badge.textContent = '';
+    }
+  });
+
+  const fill  = document.getElementById('op-fill');
+  const count = document.getElementById('op-count');
+  if (fill)  fill.style.width  = (doneCount / 7 * 100) + '%';
+  if (count) count.textContent = doneCount + '/7';
+
+  if (prog.allComplete && prog.playerName && !document.getElementById('gold-rain-overlay')) {
+    startGoldRain(prog.playerName);
+  }
+}
+
+// ── GOLD RAIN ─────────────────────────────────────────────────────────────
+
+function startGoldRain(playerName) {
+  if (document.getElementById('gold-rain-overlay')) return;
+
+  document.body.style.background = 'linear-gradient(160deg, #0d0800 0%, #1c1000 50%, #080400 100%)';
+
+  const overlay = document.createElement('div');
+  overlay.id = 'gold-rain-overlay';
+  document.body.appendChild(overlay);
+
+  function spawn(isName) {
+    const el = document.createElement('div');
+    el.className = isName ? 'gold-name-el' : 'gold-coin-el';
+    el.textContent = isName ? playerName : '🪙';
+    const dur   = 3.5 + Math.random() * 5;
+    const delay = -(Math.random() * dur);
+    el.style.left             = (Math.random() * 100) + '%';
+    el.style.animationDuration = dur + 's';
+    el.style.animationDelay   = delay + 's';
+    el.style.fontSize = isName
+      ? (0.65 + Math.random() * 0.65) + 'rem'
+      : (1.0  + Math.random() * 1.1)  + 'rem';
+    overlay.appendChild(el);
+  }
+
+  for (let i = 0; i < 55; i++) spawn(false);
+  for (let i = 0; i < 10; i++) spawn(true);
+}
+
+// ── COMPLETION HOOKS ──────────────────────────────────────────────────────
+
+function onFlashcardComplete() {
+  const prog = loadProgress();
+  markGameComplete('flashcard', {
+    timesCompleted: (prog.games.flashcard.timesCompleted || 0) + 1,
+  });
+}
+
+function onMcqComplete(firstTryPct, earnedStar) {
+  const prog = loadProgress();
+  const g = prog.games.mcq;
+  g.timesCompleted = (g.timesCompleted || 0) + 1;
+  g.bestScore = Math.max(g.bestScore || 0, mcqScore);
+  g.bestPct   = Math.max(g.bestPct   || 0, firstTryPct);
+  saveProgress(prog);
+  // Gold star (completion) only when first-try accuracy clears the bar
+  if (earnedStar) markGameComplete('mcq');
+  else updateModeCardUI();
+}
+
+function onFibComplete() {
+  const prog = loadProgress();
+  const pct = fibPool.length ? Math.round(fibCorrect / fibPool.length * 100) : 0;
+  markGameComplete('fillblank', {
+    timesCompleted: (prog.games.fillblank.timesCompleted || 0) + 1,
+    bestPct: Math.max(prog.games.fillblank.bestPct || 0, pct),
+  });
+}
+
+function onSortRoundComplete() {
+  const prog = loadProgress();
+  const rounds = (prog.games.sort.correctRounds || 0) + 1;
+  prog.games.sort.correctRounds = rounds;
+  const wasComplete = prog.games.sort.completed;
+  if (rounds >= SORT_ROUNDS_NEEDED) prog.games.sort.completed = true;
+  saveProgress(prog);
+  updateModeCardUI();
+  if (!wasComplete && prog.games.sort.completed) checkAllComplete(prog);
+}
+
+function onMatchRoundComplete() {
+  const prog = loadProgress();
+  const rounds = (prog.games.match.correctRounds || 0) + 1;
+  prog.games.match.correctRounds = rounds;
+  const wasComplete = prog.games.match.completed;
+  if (rounds >= MATCH_ROUNDS_NEEDED) prog.games.match.completed = true;
+  saveProgress(prog);
+  updateModeCardUI();
+  if (!wasComplete && prog.games.match.completed) checkAllComplete(prog);
+}
+
+function onBossComplete() {
+  const prog = loadProgress();
+  markGameComplete('boss', {
+    timesDefeated: (prog.games.boss.timesDefeated || 0) + 1,
+  });
+}
+
+function onCrqComplete(firstTryPct, earnedStar) {
+  const prog = loadProgress();
+  const g = prog.games.crq;
+  g.timesCompleted = (g.timesCompleted || 0) + 1;
+  g.bestAcc = Math.max(g.bestAcc || 0, firstTryPct);
+  saveProgress(prog);
+  // Gold star (completion) only when first-try accuracy clears the bar
+  if (earnedStar) markGameComplete('crq');
+  else updateModeCardUI();
+}
+
+// ── INTRO OVERLAY ──────────────────────────────────────────────────────────
+function dismissIntro() {
+  const o = document.getElementById('intro-overlay');
+  if (o) o.classList.add('hidden');
+}
+
+// ── RESET ALL PROGRESS ──────────────────────────────────────────────────────
+function showResetConfirm() {
+  const o = document.getElementById('reset-overlay');
+  if (o) o.classList.remove('hidden');
+}
+function cancelReset() {
+  const o = document.getElementById('reset-overlay');
+  if (o) o.classList.add('hidden');
+}
+function confirmReset() {
+  try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
+  location.reload();   // clears gold rain, resets every mode card and the progress bar
+}
+
+// ── INIT ─────────────────────────────────────────────────────────────────
+updateModeCardUI();
 </script>
 
 </body>
