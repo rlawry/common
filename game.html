@@ -1400,7 +1400,7 @@
     <ul>
       <li><strong>Finish 100% to get credit.</strong> A game counts as complete - and earns its gold star - only when you finish the <em>entire</em> assignment. Leaving early earns nothing.</li>
       <li><strong>Every question must be answered correctly.</strong> Each question is tracked. If you miss one, it comes back later and keeps returning until you finally get it right.</li>
-      <li><strong>Some games need a minimum accuracy.</strong> <em>Multiple Choice</em> and <em>CRQ Judge</em> also require at least <strong>80% first-try accuracy</strong> before the gold star is awarded - so answer carefully the first time you see a question.</li>
+      <li><strong>Some games need a minimum accuracy.</strong> <em>Reading</em> requires at least <strong>70% first-try accuracy</strong>. <em>Multiple Choice</em> and <em>CRQ Judge</em> require at least <strong>80% first-try accuracy</strong>. Answer carefully the first time you see a question &mdash; guessing and retrying will cost you the star.</li>
     </ul>
     <button class="intro-btn" onclick="dismissIntro()">Got it - let's study!</button>
   </div>
@@ -2415,6 +2415,29 @@ function readAnswerMc(chosen) {
   resolveReading(isCorrect, r.choices[r.correct]);
 }
 
+function levenshtein(a, b) {
+  const m = a.length, n = b.length;
+  const dp = Array.from({length: m + 1}, (_, i) => [i, ...Array(n).fill(0)]);
+  for (let j = 0; j <= n; j++) dp[0][j] = j;
+  for (let i = 1; i <= m; i++)
+    for (let j = 1; j <= n; j++)
+      dp[i][j] = a[i-1] === b[j-1] ? dp[i-1][j-1]
+        : 1 + Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]);
+  return dp[m][n];
+}
+function fuzzyMatchesKeyword(input, keyword) {
+  const k = keyword.toLowerCase();
+  // exact / substring match (existing behaviour)
+  if (input === k || input.includes(k)) return true;
+  // per-word fuzzy: allow 1 edit for 5-7 letter words, 2 edits for 8+ letter words
+  for (const w of input.split(' ')) {
+    if (w.length < 4) continue;
+    const maxDist = w.length >= 8 ? 2 : 1;
+    if (levenshtein(w, k) <= maxDist) return true;
+  }
+  return false;
+}
+
 function readAnswerText() {
   if (readAnswered) return;
   const inp = document.getElementById('read-input');
@@ -2424,13 +2447,8 @@ function readAnswerText() {
   readAnswered = true;
   inp.disabled = true;
   const r = readCurrent;
-  // generous, remedial-friendly matching: normalize, then accept if any keyword is present
   const norm = val.toLowerCase().replace(/[^a-z0-9.₂ ]/g, ' ').replace(/\s+/g, ' ').trim();
-  const words = norm.split(' ');
-  const isCorrect = r.accept.some(a => {
-    const k = a.toLowerCase();
-    return norm === k || words.includes(k) || norm.includes(k);
-  });
+  const isCorrect = r.accept.some(a => fuzzyMatchesKeyword(norm, a));
   resolveReading(isCorrect, r.answer);
 }
 
@@ -2465,18 +2483,24 @@ function setReadInvert(on) {
 function showReadingSummary() {
   gameActive = false;
   setReadInvert(false);   // put the screen and game-nav back after the final reading
+  const pct = readTotalUnique ? Math.round(readFirstTryCorrect / readTotalUnique * 100) : 0;
+  const earnedStar = pct >= READ_STAR_PCT;
+  const grade = earnedStar ? '&#x1F3C6; Gold Star Earned!' : '&#x1F4D6; Completed &mdash; keep practicing!';
+  const note = earnedStar
+    ? `You got ${readFirstTryCorrect}/${readTotalUnique} (${pct}%) correct on the first try (&ge;&nbsp;${READ_STAR_PCT}% needed). &#9733; Gold star awarded!`
+    : `You answered every passage correctly, but the gold star needs &ge;&nbsp;${READ_STAR_PCT}% first-try accuracy &mdash; you got ${pct}%. Play again to earn the star.`;
   document.getElementById('game-arena').innerHTML = `
     <div class="fc-summary">
-      <h2>&#x1F3C6; All Readings Complete!</h2>
+      <h2>${grade}</h2>
       <div class="fc-score-row">
         <div class="s-know"><strong>${readTotalUnique}</strong>Readings</div>
-        <div class="s-almost"><strong>${readFirstTryCorrect}</strong>First-try</div>
-        <div class="s-nope"><strong>${readShown}</strong>Total</div>
+        <div class="s-almost"><strong>${readFirstTryCorrect}/${readTotalUnique} (${pct}%)</strong>First-try</div>
+        <div class="s-nope"><strong>${readShown}</strong>Total shown</div>
       </div>
-      <p style="font-size:.85rem;color:var(--gray);margin-bottom:1rem">You read and correctly answered all ${readTotalUnique} passages. &#9733; Gold star earned!</p>
+      <p style="font-size:.85rem;color:var(--gray);margin-bottom:1rem">${note}</p>
       <button class="fc-restart" onclick="startGame()">Play Again</button>
     </div>`;
-  onFlashcardComplete();
+  onFlashcardComplete(earnedStar);
 }
 
 // ── MCQ ENGINE ────────────────────────────────────────────────────────────
@@ -3518,6 +3542,7 @@ document.getElementById('start-btn').addEventListener('click', () => {
 const STORAGE_KEY = 'ess_regents_progress_v1';
 const SORT_ROUNDS_NEEDED  = 3;
 const MATCH_ROUNDS_NEEDED = 3;
+const READ_STAR_PCT = 70;  // first-try accuracy needed for the Reading gold star
 const MCQ_STAR_PCT = 80;   // first-try accuracy needed for the Multiple Choice gold star
 const CRQ_STAR_PCT = 80;   // first-try accuracy needed for the CRQ Judge gold star
 
@@ -3667,11 +3692,14 @@ function startGoldRain(playerName) {
 
 // ── COMPLETION HOOKS ──────────────────────────────────────────────────────
 
-function onFlashcardComplete() {
+function onFlashcardComplete(earnedStar) {
   const prog = loadProgress();
-  markGameComplete('flashcard', {
-    timesCompleted: (prog.games.flashcard.timesCompleted || 0) + 1,
-  });
+  prog.games.flashcard.timesCompleted = (prog.games.flashcard.timesCompleted || 0) + 1;
+  prog.games.flashcard.bestPct = Math.max(prog.games.flashcard.bestPct || 0,
+    readTotalUnique ? Math.round(readFirstTryCorrect / readTotalUnique * 100) : 0);
+  saveProgress(prog);
+  if (earnedStar) markGameComplete('flashcard');
+  else updateModeCardUI();
 }
 
 function onMcqComplete(firstTryPct, earnedStar) {
