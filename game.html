@@ -1271,6 +1271,19 @@
     0%,100% { box-shadow: 0 0 8px 3px rgba(255,215,0,.55), 0 0 18px 6px rgba(255,180,0,.3); }
     50%     { box-shadow: 0 0 18px 7px rgba(255,215,0,.9), 0 0 34px 12px rgba(255,180,0,.55); }
   }
+  /* ── NEEDS-RETRY NUDGE ── */
+  .mode-card.needs-retry {
+    position: relative;
+    z-index: 10;
+    transform: rotate(-2.5deg);
+    border-color: var(--purple) !important;
+    animation: retryNudge 2.8s ease-in-out infinite;
+  }
+  @keyframes retryNudge {
+    0%,100% { box-shadow: 0 2px 8px 2px rgba(74,26,122,.35); }
+    50%     { box-shadow: 0 4px 16px 5px rgba(74,26,122,.65); }
+  }
+
   .mode-progress {
     font-size: .58rem;
     margin-top: .2rem;
@@ -3549,13 +3562,13 @@ const CRQ_STAR_PCT = 80;   // first-try accuracy needed for the CRQ Judge gold s
 function defaultProgress() {
   return {
     games: {
-      flashcard: { completed: false, timesCompleted: 0 },
-      mcq:       { completed: false, timesCompleted: 0, bestScore: 0, bestPct: 0 },
+      flashcard: { completed: false, timesCompleted: 0, needsRetry: false },
+      mcq:       { completed: false, timesCompleted: 0, bestScore: 0, bestPct: 0, needsRetry: false },
       fillblank: { completed: false, timesCompleted: 0, bestPct: 0 },
       sort:      { completed: false, correctRounds: 0 },
       match:     { completed: false, correctRounds: 0 },
       boss:      { completed: false, timesDefeated: 0 },
-      crq:       { completed: false, timesCompleted: 0, bestAcc: 0 },
+      crq:       { completed: false, timesCompleted: 0, bestAcc: 0, needsRetry: false },
     },
     playerName: null,
     allComplete: false,
@@ -3629,6 +3642,7 @@ function updateModeCardUI() {
     if (!g) return;
     if (g.completed) doneCount++;
     card.classList.toggle('completed', !!g.completed);
+    card.classList.toggle('needs-retry', !g.completed && !!g.needsRetry);
 
     let badge = card.querySelector('.mode-progress');
     if (!badge) {
@@ -3697,6 +3711,7 @@ function onFlashcardComplete(earnedStar) {
   prog.games.flashcard.timesCompleted = (prog.games.flashcard.timesCompleted || 0) + 1;
   prog.games.flashcard.bestPct = Math.max(prog.games.flashcard.bestPct || 0,
     readTotalUnique ? Math.round(readFirstTryCorrect / readTotalUnique * 100) : 0);
+  prog.games.flashcard.needsRetry = !earnedStar;
   saveProgress(prog);
   if (earnedStar) markGameComplete('flashcard');
   else updateModeCardUI();
@@ -3708,8 +3723,8 @@ function onMcqComplete(firstTryPct, earnedStar) {
   g.timesCompleted = (g.timesCompleted || 0) + 1;
   g.bestScore = Math.max(g.bestScore || 0, mcqScore);
   g.bestPct   = Math.max(g.bestPct   || 0, firstTryPct);
+  g.needsRetry = !earnedStar;
   saveProgress(prog);
-  // Gold star (completion) only when first-try accuracy clears the bar
   if (earnedStar) markGameComplete('mcq');
   else updateModeCardUI();
 }
@@ -3757,8 +3772,8 @@ function onCrqComplete(firstTryPct, earnedStar) {
   const g = prog.games.crq;
   g.timesCompleted = (g.timesCompleted || 0) + 1;
   g.bestAcc = Math.max(g.bestAcc || 0, firstTryPct);
+  g.needsRetry = !earnedStar;
   saveProgress(prog);
-  // Gold star (completion) only when first-try accuracy clears the bar
   if (earnedStar) markGameComplete('crq');
   else updateModeCardUI();
 }
