@@ -147,6 +147,7 @@
   .mode-text { min-width: 0; }
   .mode-card h3 { font-size: .76rem; color: var(--blue); margin-bottom: .05rem; }
   .mode-card p { font-size: .62rem; color: var(--gray); line-height: 1.25; }
+  .mode-threshold { display: block; font-size: .57rem; color: #b38a00; font-weight: bold; margin-top: .1rem; }
 
   /* Compact mode: when the window is narrow OR short, so the game-nav never runs off the bottom */
   @media (max-width: 900px), (max-height: 760px) {
@@ -1458,11 +1459,11 @@
       <div class="mode-grid">
         <div class="mode-card active" data-mode="flashcard">
           <div class="mode-icon">&#x1F4D6;</div>
-          <div class="mode-text"><h3>Reading</h3><p>Read a passage, then identify the answer</p></div>
+          <div class="mode-text"><h3>Reading</h3><p>Read a passage, then identify the answer</p><span class="mode-threshold">★ needs &ge;70% first-try</span></div>
         </div>
         <div class="mode-card" data-mode="mcq">
           <div class="mode-icon">&#x2753;</div>
-          <div class="mode-text"><h3>Multiple Choice</h3><p>Timed questions from real stems</p></div>
+          <div class="mode-text"><h3>Multiple Choice</h3><p>Timed questions from real stems</p><span class="mode-threshold">★ needs &ge;80% first-try</span></div>
         </div>
         <div class="mode-card" data-mode="fillblank">
           <div class="mode-icon">&#x270F;&#xFE0F;</div>
@@ -1482,7 +1483,7 @@
         </div>
         <div class="mode-card" data-mode="crq">
           <div class="mode-icon">&#x1F4DD;</div>
-          <div class="mode-text"><h3>CRQ Judge</h3><p>Rate sample constructed responses</p></div>
+          <div class="mode-text"><h3>CRQ Judge</h3><p>Rate sample constructed responses</p><span class="mode-threshold">★ needs &ge;80% first-try</span></div>
         </div>
       </div>
     </aside>
@@ -2154,6 +2155,7 @@ const MCQ_SECS = 20;
 // FIB state
 let fibPool = [], fibIdx = 0, fibCorrect = 0, fibTries = 0;
 let fibCurrent = null, fibSlotValues = [], fibSlotLocked = [], fibDragging = null;
+let fibAnswered = false;
 
 // Sort state
 let sortPick = [], sortCorrect = 0, sortTotal = 0, sortDragging = null;
@@ -2505,6 +2507,7 @@ function showReadingSummary() {
   document.getElementById('game-arena').innerHTML = `
     <div class="fc-summary">
       <h2>${grade}</h2>
+      <p style="font-size:.7rem;color:#b38a00;font-weight:bold;margin-bottom:.7rem">★ Gold star requires &ge;${READ_STAR_PCT}% first-try accuracy</p>
       <div class="fc-score-row">
         <div class="s-know"><strong>${readTotalUnique}</strong>Readings</div>
         <div class="s-almost"><strong>${readFirstTryCorrect}/${readTotalUnique} (${pct}%)</strong>First-try</div>
@@ -2642,6 +2645,7 @@ function showMcqSummary() {
   document.getElementById('game-arena').innerHTML = `
     <div class="mcq-summary">
       <h2>${grade}</h2>
+      <p style="font-size:.7rem;color:#b38a00;font-weight:bold;margin-bottom:.7rem">★ Gold star requires &ge;${MCQ_STAR_PCT}% first-try accuracy</p>
       <div class="mcq-score-grid">
         <div class="mscore-pts"><strong>${mcqScore}</strong>Points</div>
         <div class="mscore-right"><strong>${mcqFirstTryCorrect}/${mcqTotalUnique} (${pct}%)</strong>First-try</div>
@@ -2667,7 +2671,7 @@ function startFib() {
   fibPool = [...FILL];
   if (!fibPool.length) return;
   shuffle(fibPool);
-  fibIdx = 0; fibCorrect = 0; fibTries = 0;
+  fibIdx = 0; fibCorrect = 0; fibTries = 0; fibAnswered = false;
   setHudLabels('Correct', 'Tries', 'Progress', 'Q#');
   renderFib();
 }
@@ -2678,6 +2682,7 @@ function renderFib() {
   fibSlotValues = fibCurrent.blanks.map(() => null);
   fibSlotLocked = fibCurrent.blanks.map(() => false);
   fibDragging = null;
+  fibAnswered = false;
 
   const pct = (fibIdx / fibPool.length) * 100;
 
@@ -2815,6 +2820,7 @@ function updateFibHud() {
 }
 
 function checkFib() {
+  if (fibAnswered) return;
   const hasUnfilled = fibSlotValues.some((v, i) => !fibSlotLocked[i] && v === null);
   if (hasUnfilled) {
     const fb = document.getElementById('fib-fb');
@@ -2853,6 +2859,7 @@ function checkFib() {
 
   const fb = document.getElementById('fib-fb');
   if (allCorrect) {
+    fibAnswered = true;
     fibCorrect++;
     fb.textContent = 'All correct!';
     fb.className = 'fib-feedback ok';
@@ -3521,6 +3528,7 @@ function showCrqSummary() {
   document.getElementById('game-arena').innerHTML = `
     <div class="mcq-summary">
       <h2>${grade}</h2>
+      <p style="font-size:.7rem;color:#b38a00;font-weight:bold;margin-bottom:.7rem">★ Gold star requires &ge;${CRQ_STAR_PCT}% first-try accuracy</p>
       <div class="mcq-score-grid">
         <div class="mscore-right"><strong>${crqFirstTryCorrect}/${crqTotalUnique} (${pct}%)</strong>First-try</div>
         <div class="mscore-pts"><strong>${crqJudged}</strong>Total Rulings</div>
@@ -3602,6 +3610,7 @@ function markGameComplete(gameKey, extra) {
   if (!g) return;
   const wasComplete = g.completed;
   g.completed = true;
+  g.needsRetry = false;
   if (extra) Object.assign(g, extra);
   saveProgress(prog);
   updateModeCardUI();
@@ -3659,6 +3668,10 @@ function updateModeCardUI() {
     } else if (mode === 'match') {
       const r = g.correctRounds || 0;
       badge.textContent = r > 0 ? r + '/' + MATCH_ROUNDS_NEEDED + ' rounds' : '';
+    } else if (g.needsRetry) {
+      const best = g.bestPct || g.bestAcc || 0;
+      const needed = mode === 'flashcard' ? READ_STAR_PCT : mode === 'crq' ? CRQ_STAR_PCT : MCQ_STAR_PCT;
+      badge.innerHTML = `<span style="color:var(--purple);font-weight:bold">Best: ${best}% &mdash; need ${needed}%</span>`;
     } else {
       badge.textContent = '';
     }
@@ -3708,10 +3721,11 @@ function startGoldRain(playerName) {
 
 function onFlashcardComplete(earnedStar) {
   const prog = loadProgress();
-  prog.games.flashcard.timesCompleted = (prog.games.flashcard.timesCompleted || 0) + 1;
-  prog.games.flashcard.bestPct = Math.max(prog.games.flashcard.bestPct || 0,
+  const gfc = prog.games.flashcard;
+  gfc.timesCompleted = (gfc.timesCompleted || 0) + 1;
+  gfc.bestPct = Math.max(gfc.bestPct || 0,
     readTotalUnique ? Math.round(readFirstTryCorrect / readTotalUnique * 100) : 0);
-  prog.games.flashcard.needsRetry = !earnedStar;
+  if (!gfc.completed) gfc.needsRetry = !earnedStar;
   saveProgress(prog);
   if (earnedStar) markGameComplete('flashcard');
   else updateModeCardUI();
@@ -3723,7 +3737,7 @@ function onMcqComplete(firstTryPct, earnedStar) {
   g.timesCompleted = (g.timesCompleted || 0) + 1;
   g.bestScore = Math.max(g.bestScore || 0, mcqScore);
   g.bestPct   = Math.max(g.bestPct   || 0, firstTryPct);
-  g.needsRetry = !earnedStar;
+  if (!g.completed) g.needsRetry = !earnedStar;
   saveProgress(prog);
   if (earnedStar) markGameComplete('mcq');
   else updateModeCardUI();
@@ -3772,7 +3786,7 @@ function onCrqComplete(firstTryPct, earnedStar) {
   const g = prog.games.crq;
   g.timesCompleted = (g.timesCompleted || 0) + 1;
   g.bestAcc = Math.max(g.bestAcc || 0, firstTryPct);
-  g.needsRetry = !earnedStar;
+  if (!g.completed) g.needsRetry = !earnedStar;
   saveProgress(prog);
   if (earnedStar) markGameComplete('crq');
   else updateModeCardUI();
