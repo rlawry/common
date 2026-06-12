@@ -1467,7 +1467,7 @@
         </div>
         <div class="mode-card" data-mode="fillblank">
           <div class="mode-icon">&#x270F;&#xFE0F;</div>
-          <div class="mode-text"><h3>Fill in the Blank</h3><p>Complete the cause-effect chain</p></div>
+          <div class="mode-text"><h3>Fill in the Blank</h3><p>Complete the cause-effect chain</p><span class="mode-threshold">★ needs &ge;80% first-try</span></div>
         </div>
         <div class="mode-card" data-mode="sort">
           <div class="mode-icon">&#x1F522;</div>
@@ -2153,9 +2153,9 @@ let mcqTimerInterval = null, mcqSecsLeft = 0, mcqAnswered = false;
 const MCQ_SECS = 20;
 
 // FIB state
-let fibPool = [], fibIdx = 0, fibCorrect = 0, fibTries = 0;
+let fibPool = [], fibIdx = 0, fibCorrect = 0, fibTries = 0, fibFirstTryCorrect = 0;
 let fibCurrent = null, fibSlotValues = [], fibSlotLocked = [], fibDragging = null;
-let fibAnswered = false;
+let fibAnswered = false, fibIsFirstTry = true;
 
 // Sort state
 let sortPick = [], sortCorrect = 0, sortTotal = 0, sortDragging = null;
@@ -2671,7 +2671,7 @@ function startFib() {
   fibPool = [...FILL];
   if (!fibPool.length) return;
   shuffle(fibPool);
-  fibIdx = 0; fibCorrect = 0; fibTries = 0; fibAnswered = false;
+  fibIdx = 0; fibCorrect = 0; fibTries = 0; fibFirstTryCorrect = 0; fibAnswered = false;
   setHudLabels('Correct', 'Tries', 'Progress', 'Q#');
   renderFib();
 }
@@ -2683,6 +2683,7 @@ function renderFib() {
   fibSlotLocked = fibCurrent.blanks.map(() => false);
   fibDragging = null;
   fibAnswered = false;
+  fibIsFirstTry = true;
 
   const pct = (fibIdx / fibPool.length) * 100;
 
@@ -2830,6 +2831,8 @@ function checkFib() {
   }
 
   fibTries++;
+  const wasFirstTry = fibIsFirstTry;
+  fibIsFirstTry = false;
   let allCorrect = true;
 
   fibSlotValues.forEach((val, i) => {
@@ -2859,6 +2862,7 @@ function checkFib() {
 
   const fb = document.getElementById('fib-fb');
   if (allCorrect) {
+    if (wasFirstTry) fibFirstTryCorrect++;
     fibAnswered = true;
     fibCorrect++;
     fb.textContent = 'All correct!';
@@ -2874,25 +2878,30 @@ function checkFib() {
 
 function showFibSummary() {
   gameActive = false;
-  const pct = fibPool.length > 0 ? Math.round(fibCorrect / fibPool.length * 100) : 0;
-  const grade = pct >= 90 ? 'Excellent!' : pct >= 70 ? 'Good work!' : 'Keep studying!';
+  const pct = fibPool.length > 0 ? Math.round(fibFirstTryCorrect / fibPool.length * 100) : 0;
+  const earnedStar = pct >= FIB_STAR_PCT;
+  const grade = earnedStar ? '🏆 Gold Star earned!' : '📖 Completed - keep practicing!';
   document.getElementById('game-arena').innerHTML = `
     <div class="fib-summary">
       <h2>${grade}</h2>
+      <p style="font-size:.7rem;color:#b38a00;font-weight:bold;margin-bottom:.7rem">★ Gold star requires &ge;${FIB_STAR_PCT}% first-try accuracy</p>
       <div class="mcq-score-grid">
-        <div class="mscore-right"><strong>${fibCorrect}/${fibPool.length}</strong>Correct</div>
+        <div class="mscore-right"><strong>${fibFirstTryCorrect}/${fibPool.length} (${pct}%)</strong>First-try</div>
         <div class="mscore-pts"><strong>${fibTries}</strong>Total Tries</div>
-        <div class="mscore-streak"><strong>${pct}%</strong>Accuracy</div>
+        <div class="mscore-streak"><strong>${earnedStar ? '★' : '-'}</strong>Gold Star</div>
       </div>
+      <p class="mcq-star-note">${earnedStar
+        ? 'You filled every blank correctly and hit ' + pct + '% first-try accuracy (&ge;&nbsp;' + FIB_STAR_PCT + '% needed). ★ Gold star awarded!'
+        : 'You completed every question, but the gold star needs &ge;&nbsp;' + FIB_STAR_PCT + '% first-try accuracy &mdash; you got ' + pct + '%. Play again to earn the star.'}</p>
       <button class="mcq-restart" onclick="startFib()">Play Again</button>
       <button class="mcq-restart" onclick="startGame()">Switch to Reading</button>
     </div>`;
-  setHudLabels('Correct', 'Tries', 'Progress', 'Q#');
-  document.getElementById('hud-know').textContent   = fibCorrect;
+  setHudLabels('First-try', 'Tries', 'Accuracy', 'Q#');
+  document.getElementById('hud-know').textContent   = fibFirstTryCorrect;
   document.getElementById('hud-almost').textContent = fibTries;
   document.getElementById('hud-nope').textContent   = pct + '%';
   document.getElementById('hud-q').textContent      = '--';
-  onFibComplete();
+  onFibComplete(pct, earnedStar);
 }
 
 // ── TEMPORAL SORT ENGINE ──────────────────────────────────────────────────
@@ -3565,6 +3574,7 @@ const SORT_ROUNDS_NEEDED  = 3;
 const MATCH_ROUNDS_NEEDED = 3;
 const READ_STAR_PCT = 70;  // first-try accuracy needed for the Reading gold star
 const MCQ_STAR_PCT = 80;   // first-try accuracy needed for the Multiple Choice gold star
+const FIB_STAR_PCT = 80;   // first-try accuracy needed for the Fill-in-Blank gold star
 const CRQ_STAR_PCT = 80;   // first-try accuracy needed for the CRQ Judge gold star
 
 function defaultProgress() {
@@ -3572,7 +3582,7 @@ function defaultProgress() {
     games: {
       flashcard: { completed: false, timesCompleted: 0, needsRetry: false },
       mcq:       { completed: false, timesCompleted: 0, bestScore: 0, bestPct: 0, needsRetry: false },
-      fillblank: { completed: false, timesCompleted: 0, bestPct: 0 },
+      fillblank: { completed: false, timesCompleted: 0, bestPct: 0, needsRetry: false },
       sort:      { completed: false, correctRounds: 0 },
       match:     { completed: false, correctRounds: 0 },
       boss:      { completed: false, timesDefeated: 0 },
@@ -3670,7 +3680,7 @@ function updateModeCardUI() {
       badge.textContent = r > 0 ? r + '/' + MATCH_ROUNDS_NEEDED + ' rounds' : '';
     } else if (g.needsRetry) {
       const best = g.bestPct || g.bestAcc || 0;
-      const needed = mode === 'flashcard' ? READ_STAR_PCT : mode === 'crq' ? CRQ_STAR_PCT : MCQ_STAR_PCT;
+      const needed = mode === 'flashcard' ? READ_STAR_PCT : mode === 'crq' ? CRQ_STAR_PCT : mode === 'fillblank' ? FIB_STAR_PCT : MCQ_STAR_PCT;
       badge.innerHTML = `<span style="color:var(--purple);font-weight:bold">Best: ${best}% &mdash; need ${needed}%</span>`;
     } else {
       badge.textContent = '';
@@ -3743,13 +3753,15 @@ function onMcqComplete(firstTryPct, earnedStar) {
   else updateModeCardUI();
 }
 
-function onFibComplete() {
+function onFibComplete(firstTryPct, earnedStar) {
   const prog = loadProgress();
-  const pct = fibPool.length ? Math.round(fibCorrect / fibPool.length * 100) : 0;
-  markGameComplete('fillblank', {
-    timesCompleted: (prog.games.fillblank.timesCompleted || 0) + 1,
-    bestPct: Math.max(prog.games.fillblank.bestPct || 0, pct),
-  });
+  const g = prog.games.fillblank;
+  g.timesCompleted = (g.timesCompleted || 0) + 1;
+  g.bestPct = Math.max(g.bestPct || 0, firstTryPct);
+  if (!g.completed) g.needsRetry = !earnedStar;
+  saveProgress(prog);
+  if (earnedStar) markGameComplete('fillblank');
+  else updateModeCardUI();
 }
 
 function onSortRoundComplete() {
